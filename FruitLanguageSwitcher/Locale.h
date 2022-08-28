@@ -3,8 +3,6 @@
 #include <iostream>
 #include <map>
 
-#define LOCALE_COUNT 842
-
 typedef struct {
     const wchar_t* name;
     const wchar_t* desc;

@@ -130,9 +130,13 @@
   <ItemGroup>
     <ClCompile Include="Language.cpp" />
     <ClCompile Include="FruitLanguageSwitcher.cpp" />
+    <ClCompile Include="LanguageSwitcher.cpp">
+      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4312;4267</DisableSpecificWarnings>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Language.h" />
+    <ClInclude Include="LanguageSwitcher.h" />
     <ClInclude Include="Locale.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
