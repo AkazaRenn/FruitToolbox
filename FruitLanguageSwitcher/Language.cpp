@@ -1,8 +1,8 @@
 #include "Language.h"
 
 constexpr long LANGUAGE_TO_LOCALE_OFFSET = 0x400;
-#define IS_LOCALE(lcid)		  (lcid >= LANGUAGE_TO_LOCALE_OFFSET)
-#define LANGUAGE_TO_LOCALE(lcid)  (lcid += LANGUAGE_TO_LOCALE_OFFSET)
+#define		   IS_LOCALE(lcid)			 (lcid >= LANGUAGE_TO_LOCALE_OFFSET)
+#define		   LANGUAGE_TO_LOCALE(lcid)	 (lcid += LANGUAGE_TO_LOCALE_OFFSET)
 
 Language::Language(const WCHAR* localeName)
 	: Language((WCHAR*)localeName) {}
