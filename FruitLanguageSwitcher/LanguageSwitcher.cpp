@@ -1,14 +1,14 @@
 #include "LanguageSwitcher.h"
 #include <vector>
 
-constexpr unsigned long REG_LANGUAGE_MULTI_SZ_MAX_LENGTH = 1024;
-constexpr LPCWSTR       REG_LANGUAGES_DIR = L"Control Panel\\International\\User Profile";
-constexpr LPCWSTR       REG_LANGUAGES_KEY = L"Languages";
+constexpr size_t             REG_LANGUAGE_MULTI_SZ_MAX_LENGTH = 1024;
+constexpr LPCWSTR            REG_LANGUAGES_DIR                = L"Control Panel\\International\\User Profile";
+constexpr LPCWSTR            REG_LANGUAGES_KEY                = L"Languages";
 
-constexpr LPCWSTR       REG_LANGUAGE_PER_WINDOW_DIR = L"HKEY_CURRENT_USER\\Control Panel\\Desktop";
-constexpr LPCWSTR       REG_LANGUAGE_PER_WINDOW_KEY = L"UserPreferencesMask";
-constexpr unsigned int  REG_LANGUAGE_PER_WINDOW_OFFSET = 31;
-constexpr unsigned long REG_LANGUAGE_PER_WINDOW_MASK = (0x1 << 31);
+constexpr LPCWSTR            REG_LANGUAGE_PER_WINDOW_DIR      = L"HKEY_CURRENT_USER\\Control Panel\\Desktop";
+constexpr LPCWSTR            REG_LANGUAGE_PER_WINDOW_KEY      = L"UserPreferencesMask";
+constexpr unsigned int       REG_LANGUAGE_PER_WINDOW_OFFSET   = 31;
+constexpr unsigned long long REG_LANGUAGE_PER_WINDOW_MASK     = (0x1 << REG_LANGUAGE_PER_WINDOW_OFFSET);
 
 void LanguageSwitcher::getLanguageList() {
     WCHAR buffer[REG_LANGUAGE_MULTI_SZ_MAX_LENGTH];
