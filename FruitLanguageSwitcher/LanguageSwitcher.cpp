@@ -8,13 +8,9 @@ constexpr LPCWSTR       REG_LANGUAGES_KEY                = L"Languages";
 void LanguageSwitcher::getLanguageList() {
     WCHAR buffer[REG_LANGUAGE_MULTI_SZ_MAX_LENGTH];
     DWORD dwLen = sizeof(buffer);
-    RegGetValueW(HKEY_CURRENT_USER, REG_LANGUAGES_DIR, REG_LANGUAGES_KEY, RRF_RT_REG_MULTI_SZ, NULL, buffer, &dwLen);
+    RegGetValue(HKEY_CURRENT_USER, REG_LANGUAGES_DIR, REG_LANGUAGES_KEY, RRF_RT_REG_MULTI_SZ, NULL, buffer, &dwLen);
 
-    for (size_t i = 0; i < REG_LANGUAGE_MULTI_SZ_MAX_LENGTH; i++) {
-        if (buffer[i] == L'\0') {
-            break;
-        }
-
+    for (size_t i = 0; (buffer[i] != L'\0' && i < REG_LANGUAGE_MULTI_SZ_MAX_LENGTH); i++) {
         auto newLang = Language(buffer + i);
         newLang.isImeLanguage() ? categories[1].langs.push_back(newLang) : categories[0].langs.push_back(newLang);
 
@@ -22,10 +18,9 @@ void LanguageSwitcher::getLanguageList() {
     }
 }
 
-void LanguageSwitcher::updateInputLanguage()
-{
+void LanguageSwitcher::updateInputLanguage() {
     auto newLanguage = HKL(categories[inImeMode].langs[categories[inImeMode].index].getLocaleId());
-    SendMessageW(GetForegroundWindow(), WM_INPUTLANGCHANGEREQUEST, 0, reinterpret_cast<LPARAM>(newLanguage));
+    SendMessage(GetForegroundWindow(), WM_INPUTLANGCHANGEREQUEST, 0, reinterpret_cast<LPARAM>(newLanguage));
 }
 
 void LanguageSwitcher::swapCategory() {
@@ -43,18 +38,42 @@ void LanguageSwitcher::nextLanguage() {
 
 void LanguageSwitcher::lastLanguage() {
     categories[inImeMode].index--;
-    if (categories[inImeMode].index < 0) {
+    if (categories[inImeMode].index >= categories[inImeMode].langs.size()) {
         categories[inImeMode].index = categories[inImeMode].langs.size() - 1;
     }
     updateInputLanguage();
 }
 
+bool LanguageSwitcher::isInImeMode() {
+    return inImeMode;
+}
 
-LanguageSwitcher::LanguageSwitcher() {
-    inImeMode = false;
+LCID LanguageSwitcher::getCurrentLanguage() {
+    return categories[inImeMode].langs[categories[inImeMode].index].getLocaleId();
+}
+
+bool LanguageSwitcher::setCurrentLanguage(LCID lcid) {
+    return false; // todo
+}
+
+vector<LCID> LanguageSwitcher::getLanguageList(bool getImeLanguageList)
+{
+    vector<LCID> languageList;
+
+    for (auto &lang : categories[getImeLanguageList].langs) {
+        languageList.push_back(lang.getLocaleId());
+    }
+
+    return languageList;
+}
+
+LanguageSwitcher::LanguageSwitcher() : LanguageSwitcher(false) {}
+
+LanguageSwitcher::LanguageSwitcher(bool defaultImeMode) {
+    inImeMode = defaultImeMode;
     getLanguageList();
 
-    for (auto cate : categories) {
+    for (auto &cate : categories) {
         if (cate.langs.empty()) {
             exit(0); // you don't need it
         }

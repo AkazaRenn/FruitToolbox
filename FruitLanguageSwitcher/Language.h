@@ -32,4 +32,6 @@ public:
 
 	LCID getLocaleId();
 	bool isImeLanguage();
+
+	static LCID localeNameToLcid(WCHAR* localeName);
 };
