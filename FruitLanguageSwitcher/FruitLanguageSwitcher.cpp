@@ -38,13 +38,13 @@ bool registerHotkeys() {
 
 static LanguageSwitcher switcher;
 
-void CALLBACK WinEventProcCallback(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    LCID lcid = HKL_TO_LCID(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr)));
+void CALLBACK activeWindowChangeHandler(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
+    switcher.setCurrentLanguage(HKL_TO_LCID(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))));
+    wcout << L"Active window change, new language: " << localeMap.at(switcher.getCurrentLanguage()).desc << endl;
 }
 
-int main()
-{
-    auto hEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, WinEventProcCallback, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+int main() {
+    auto hEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, activeWindowChangeHandler, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
 
     if (!registerHotkeys()) {
         exit(-1);
@@ -67,7 +67,6 @@ int main()
                 switcher.lastLanguage();
                 cout << "lastLanguage" << endl;
             }
-            Sleep(100); // to avoid flooding
         }
     }
 }

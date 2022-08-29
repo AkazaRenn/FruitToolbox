@@ -12,7 +12,7 @@ class LanguageSwitcher
 {
 private:
 	languageCategory categories[2];
-	void getLanguageList();
+	void buildLanguageList();
 	bool inImeMode;
 	void updateInputLanguage();
 
