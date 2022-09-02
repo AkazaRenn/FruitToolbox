@@ -3,6 +3,8 @@
 #include "LanguageSwitcher.h"
 #include "Locale.h"
 
+#pragma comment(lib, "imm32")
+
 #define HOTKEY_SWAP_CATEGORY_MODIFIER (MOD_ALT | MOD_CONTROL | MOD_SHIFT | MOD_WIN | MOD_NOREPEAT)
 #define HOTKEY_SWAP_CATEGORY_KEY      ('A')
 

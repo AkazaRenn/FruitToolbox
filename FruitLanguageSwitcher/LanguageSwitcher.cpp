@@ -1,6 +1,9 @@
 #include "LanguageSwitcher.h"
 #include <vector>
 
+constexpr UINT               IMC_GETCONVERSIONMODE = 0x1;
+constexpr UINT               IMC_SETCONVERSIONMODE = 0x2;
+
 constexpr size_t             REG_LANGUAGE_MULTI_SZ_MAX_LENGTH = 1024;
 constexpr LPCWSTR            REG_LANGUAGES_DIR                = L"Control Panel\\International\\User Profile";
 constexpr LPCWSTR            REG_LANGUAGES_KEY                = L"Languages";
@@ -25,7 +28,10 @@ void LanguageSwitcher::buildLanguageList() {
 
 void LanguageSwitcher::updateInputLanguage() {
     auto newLanguage = categories[inImeMode].langs[categories[inImeMode].index].getLocaleId();
-    SendMessage(GetForegroundWindow(), WM_INPUTLANGCHANGEREQUEST, 0, newLanguage);
+    auto hwnd = GetForegroundWindow();
+    SendMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, newLanguage);
+
+    fixImeConversionMode(hwnd, newLanguage);
 }
 
 void LanguageSwitcher::swapCategory() {
@@ -72,8 +78,20 @@ bool LanguageSwitcher::setCurrentLanguage(LCID lcid) {
     return false;
 }
 
-vector<LCID> LanguageSwitcher::getLanguageList(bool getImeLanguageList)
-{
+void LanguageSwitcher::fixImeConversionMode(HWND hWnd, LCID language) {
+    auto imeHwnd = ImmGetDefaultIMEWnd(hWnd);
+    LRESULT dwConversion = SendMessage(imeHwnd, WM_IME_CONTROL, IMC_GETCONVERSIONMODE, 0);
+    if (imeConversionModeCodeMap.find(language) == imeConversionModeCodeMap.end()) {
+        return;
+    }
+    wcout << "Current: " << dwConversion << " new: " << imeConversionModeCodeMap.at(language).conversionModeCode << endl;
+    if (dwConversion == imeConversionModeCodeMap.at(language).noConversionModeCode) {
+       SendMessage(imeHwnd, WM_IME_CONTROL, IMC_SETCONVERSIONMODE, imeConversionModeCodeMap.at(language).conversionModeCode);
+    }
+}
+
+
+vector<LCID> LanguageSwitcher::getLanguageList(bool getImeLanguageList) {
     vector<LCID> languageList;
 
     for (auto &lang : categories[getImeLanguageList].langs) {
