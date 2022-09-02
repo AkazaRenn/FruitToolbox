@@ -43,6 +43,7 @@ static LanguageSwitcher switcher;
 void CALLBACK activeWindowChangeHandler(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     switcher.setCurrentLanguage(HKL_TO_LCID(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))));
     wcout << L"Active window change, new language: " << localeMap.at(switcher.getCurrentLanguage()).desc << endl;
+    switcher.fixImeConversionMode(hwnd);
 }
 
 int main() {
