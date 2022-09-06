@@ -87,7 +87,7 @@ bool LanguageSwitcher::setCurrentLanguage(LCID lcid) {
 void LanguageSwitcher::fixImeConversionMode(HWND hWnd, LCID language) {
     const static map<long, vector<long>> imeConversionModeCodeMap{
         {0x404,  {1}}, // zh-TW, Chinese (Traditional, Taiwan)
-        {0x411,  {9, 27}}, // ja-JP, Japanese (Japan)
+        {0x411,  {9, 11, 27}}, // ja-JP, Japanese (Japan)
         //{0x412,  {}}, // ko-KR, Korean (Korea)
         //{0x45E,  {}}, // am-ET, Amharic (Ethiopia)
         //{0x473,  {}}, // ti-ET, Tigrinya (Ethiopia)

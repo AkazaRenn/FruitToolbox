@@ -47,7 +47,7 @@ void CALLBACK activeWindowChangeHandler(HWINEVENTHOOK hWinEventHook, DWORD dwEve
 }
 
 int main() {
-    auto hEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, activeWindowChangeHandler, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+    auto windowChangeEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, activeWindowChangeHandler, 0, 0, WINEVENT_OUTOFCONTEXT);
 
     if (!registerHotkeys()) {
         exit(-1);
