@@ -34,7 +34,7 @@ bool registerHotkeys() {
     else if (!(rc && RegisterHotKey(NULL, LastLanguage, HOTKEY_LAST_LANG_MODIFIER, HOTKEY_LAST_LANG_KEY))) {
         cout << "Failed registering hotkey for last language" << endl;
     }
-
+    
     return rc;
 }
 
