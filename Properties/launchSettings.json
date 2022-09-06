@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "FruitLanguageSwitcher (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "FruitLanguageSwitcher (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
