@@ -3,6 +3,8 @@
 #include "LanguageSwitcher.h"
 #include "Locale.h"
 
+#pragma comment(lib, "imm32")
+
 #define HOTKEY_SWAP_CATEGORY_MODIFIER (MOD_ALT | MOD_CONTROL | MOD_SHIFT | MOD_WIN | MOD_NOREPEAT)
 #define HOTKEY_SWAP_CATEGORY_KEY      ('A')
 
@@ -32,7 +34,7 @@ bool registerHotkeys() {
     else if (!(rc && RegisterHotKey(NULL, LastLanguage, HOTKEY_LAST_LANG_MODIFIER, HOTKEY_LAST_LANG_KEY))) {
         cout << "Failed registering hotkey for last language" << endl;
     }
-
+    
     return rc;
 }
 
@@ -41,10 +43,11 @@ static LanguageSwitcher switcher;
 void CALLBACK activeWindowChangeHandler(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     switcher.setCurrentLanguage(HKL_TO_LCID(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))));
     wcout << L"Active window change, new language: " << localeMap.at(switcher.getCurrentLanguage()).desc << endl;
+    switcher.fixImeConversionMode(hwnd);
 }
 
 int main() {
-    auto hEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, activeWindowChangeHandler, 0, 0, WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+    auto windowChangeEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, activeWindowChangeHandler, 0, 0, WINEVENT_OUTOFCONTEXT);
 
     if (!registerHotkeys()) {
         exit(-1);
