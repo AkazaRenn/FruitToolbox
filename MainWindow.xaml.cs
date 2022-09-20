@@ -12,11 +12,16 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using static System.Net.Mime.MediaTypeNames;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Reflection.Metadata;
+using FruitLanguageSwitcher.Interlop;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace FruitLanguageSwitcher
+namespace LanguageSwitcher
 {
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
@@ -26,11 +31,25 @@ namespace FruitLanguageSwitcher
         public MainWindow()
         {
             this.InitializeComponent();
+            output.Text = "Outputs:";
+
+            var switcher = new LanguageSwitcher(false, null, 0);
+            LanguageSwitcher.OnLanguageChange handler =
+                (inImeMode, index) =>
+                {
+                    log($"New: {inImeMode} {index}");
+                };
+            switcher.setOnLanguageChange(handler);
         }
 
         private void myButton_Click(object sender, RoutedEventArgs e)
         {
             myButton.Content = "Clicked";
+        }
+
+        private void log(String text)
+        {
+            output.Text += $"\n{text}";
         }
     }
 }

@@ -6,33 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid x:Name="AppTitleBar" Height="48">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
-                <ColumnDefinition x:Name="IconColumn" Width="Auto"/>
-                <ColumnDefinition x:Name="TitleColumn" Width="Auto"/>
-                <ColumnDefinition x:Name="DragColumn" Width="*"/>
-                <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
-            </Grid.ColumnDefinitions>
-            <Image x:Name="TitleBarIcon" Source="/Assets/logo.png"
-           Grid.Column="1"
-           Width="16" Height="16"
-           Margin="8,0,0,0"/>
-            <TextBlock x:Name="TitleTextBlock" 
-               Text="Language Switcher Settings" 
-               Style="{StaticResource CaptionTextBlockStyle}"
-               Grid.Column="2"
-               VerticalAlignment="Center"
-               Margin="4,0,0,0"/>
-        </Grid>
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
 
-        </StackPanel>
-    </Grid>
-
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <TextBlock x:Name="output"/>
+        <Button x:Name="myButton" Click="myButton_Click">Click Me</Button>
+    </StackPanel>
 </Window>
