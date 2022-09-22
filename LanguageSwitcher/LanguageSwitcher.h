@@ -3,7 +3,7 @@
 #include <vector>
 #include "Language.h"
 #include <map>
-#include <chrono>
+//#include <chrono>
 
 using namespace std;
 
@@ -47,8 +47,8 @@ namespace FruitLanguageSwitcher {
         // keyboard status
         bool winDown = false;
         WinKeyUsage winKeyUsage = NONE;
-        bool capslockDown = false;
-        chrono::system_clock::time_point capslockDownTime;
+        //bool capslockDown = false;
+        //chrono::system_clock::time_point capslockDownTime;
 
 
         void buildLanguageList();

@@ -193,12 +193,13 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
                     }
                     break;
                 case VK_CAPITAL:
-                    if(GET_CAPS_LOCK()) { // when capslock is on, turn if off and do nothing more
-                        SET_CAPS_LOCK(false);
-                    } else if(!capslockDown) {
-                        capslockDown = true;
-                        capslockDownTime = chrono::system_clock::now();
-                    }
+                    //if(GET_CAPS_LOCK()) { // when capslock is on, turn if off and do nothing more
+                    //    SET_CAPS_LOCK(false);
+                    //} else if(!capslockDown) {
+                    //    capslockDown = true;
+                    //    capslockDownTime = chrono::system_clock::now();
+                    //}
+                    swapCategory();
                     return 1;
                 case VK_SPACE:
                 case VK_RIGHT:
@@ -243,14 +244,14 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
                     }
                     break;
                 case VK_CAPITAL:
-                    if(capslockDown) {
-                        if(chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - capslockDownTime).count() < 200) {
-                            swapCategory();
-                        } else {
-                            SET_CAPS_LOCK(true);
-                        }
-                    }
-                    capslockDown = false;
+                    //if(capslockDown) {
+                    //    if(chrono::duration_cast<chrono::milliseconds>(chrono::system_clock::now() - capslockDownTime).count() < 200) {
+                    //        swapCategory();
+                    //    } else {
+                    //        SET_CAPS_LOCK(true);
+                    //    }
+                    //}
+                    //capslockDown = false;
                     return 1;
             }
             break;
