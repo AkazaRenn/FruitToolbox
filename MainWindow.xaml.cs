@@ -16,7 +16,7 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Reflection.Metadata;
-using FruitLanguageSwitcher.Interlop;
+using FruitLanguageSwitcher.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,7 +33,7 @@ namespace FruitLanguageSwitcher
             this.InitializeComponent();
             output.Text = "Outputs:";
 
-            var switcher = new LanguageSwitcher(false, null, 0);
+            var switcher = new LanguageSwitcher(false);
             LanguageSwitcher.OnLanguageChange handler =
                 (inImeMode, index) =>
                 {

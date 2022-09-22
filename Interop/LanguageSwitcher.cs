@@ -1,15 +1,15 @@
 ﻿using System.Runtime.InteropServices;
 using System;
 
-namespace FruitLanguageSwitcher.Interlop
+namespace FruitLanguageSwitcher.Interop
 {
     internal class LanguageSwitcher
     {
         private readonly IntPtr wrappedObject;
 
         [DllImport("LanguageSwitcher")]
-        private static extern IntPtr LanguageSwitcher_new(bool defaultImeMode, uint[] imeLanguageOrder, uint n);
-        public LanguageSwitcher(bool defaultImeMode, uint[] imeLanguageOrder, uint n) => wrappedObject = LanguageSwitcher_new(defaultImeMode, imeLanguageOrder, n);
+        private static extern IntPtr LanguageSwitcher_new(bool defaultImeMode);
+        public LanguageSwitcher(bool defaultImeMode) => wrappedObject = LanguageSwitcher_new(defaultImeMode);
 
         [DllImport("LanguageSwitcher")]
         private static extern bool LanguageSwitcher_swapCategory(IntPtr obj);
@@ -40,8 +40,8 @@ namespace FruitLanguageSwitcher.Interlop
         public uint getLanguageList(bool isImeLanguageList, uint[] list) => LanguageSwitcher_getLanguageList(wrappedObject, isImeLanguageList, list);
 
         [DllImport("LanguageSwitcher")]
-        private static extern void LanguageSwitcher_orderLanguageList(IntPtr obj, bool isImeLanguageList, uint[] list);
-        public void orderLanguageList(bool isImeLanguageList, uint[] list) => LanguageSwitcher_orderLanguageList(wrappedObject, isImeLanguageList, list);
+        private static extern void LanguageSwitcher_orderLanguageList(IntPtr obj, bool isImeLanguageList, uint[] list, uint n);
+        public void orderLanguageList(bool isImeLanguageList, uint[] list) => LanguageSwitcher_orderLanguageList(wrappedObject, isImeLanguageList, list, (uint)list.Length);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate void OnLanguageChange(bool inImeMode, uint index);

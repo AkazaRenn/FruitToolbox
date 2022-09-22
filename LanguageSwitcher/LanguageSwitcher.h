@@ -3,110 +3,82 @@
 #include <vector>
 #include "Language.h"
 #include <map>
-
-#define DLLEXPORT __declspec(dllexport)
+#include <chrono>
 
 using namespace std;
 
 typedef void(__stdcall* OnLanguageChange)(bool inImeMode, unsigned int languageIndex);
 
 namespace FruitLanguageSwitcher {
-	struct languageCategory {
-		vector<Language> langs;
-		unsigned int index = 0;
-	};
+    struct LanguageCategory {
+        vector<Language> langs;
+        unsigned int index = 0;
+    };
 
-	class LanguageSwitcher
-	{
-	private:
-		static LanguageSwitcher* instance;
+    const static map<long, vector<long>> imeConversionModeCodeMap{
+        {0x404,  {1}}, // zh-TW, Chinese (Traditional, Taiwan)
+        {0x411,  {9, 11, 27}}, // ja-JP, Japanese (Japan)
+        //{0x412,  {}}, // ko-KR, Korean (Korea)
+        //{0x45E,  {}}, // am-ET, Amharic (Ethiopia)
+        //{0x473,  {}}, // ti-ET, Tigrinya (Ethiopia)
+        {0x804,  {1}}, // zh-CN, Chinese (Simplified, PRC)
+        //{0x873,  {}}, // ti-ER, Tigrinya (Eritrea)
+        {0xC04,  {1}}, // zh-HK, Chinese (Traditional, Hong Kong S.A.R.)
+        {0x1004, {1}}, // zh-SG, Chinese (Simplified, Singapore)
+        {0x1404, {1}}, // zh-MO, Chinese (Traditional, Macao S.A.R.)
+    };
 
-		languageCategory categories[2];
-		void buildLanguageList();
-		bool inImeMode;
-		void updateInputLanguage();
-		void fixImeConversionMode(HWND hWnd);
-		void fixImeConversionMode(HWND hWnd, LCID language);
+    enum WinKeyUsage {
+        NONE = 0x0,
+        KEY = 0x01,
+        MODIFIER_INTERNAL = 0x10,
+        MODIFIER_EXTERNAL = 0x11,
+    };
 
-		HWINEVENTHOOK windowChangeEvent;
-		//void CALLBACK onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-		OnLanguageChange onLanguageChange = nullptr;
+    class LanguageSwitcher {
+    private:
+        LanguageCategory categories[2];
+        bool inImeMode;
+        HWINEVENTHOOK windowChangeEvent;
+        HHOOK keyboardEvent;
+        //void CALLBACK onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+        OnLanguageChange onLanguageChange = nullptr;
 
-	public:
-		explicit LanguageSwitcher(bool defaultImeMode, vector<LCID> imeLanguageOrder);
-		explicit LanguageSwitcher();
-		~LanguageSwitcher();
+        // keyboard status
+        bool winDown = false;
+        WinKeyUsage winKeyUsage = NONE;
+        bool capslockDown = false;
+        chrono::system_clock::time_point capslockDownTime;
 
-		bool swapCategory();
-		bool getCategory();
-		unsigned int nextLanguage();
-		unsigned int lastLanguage();
-		LCID getCurrentLanguage();
-		bool setCurrentLanguage(LCID lcid); // returns true if lcid is in the list, false otherwise
-		vector<LCID> getLanguageList(bool getImeLanguageList);
-		void setOnLanguageChange(OnLanguageChange handler);
 
-		static bool registerHotkeys();
-		static void CALLBACK onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-	};
+        void buildLanguageList();
+        void updateInputLanguage();
+        void fixImeConversionMode(HWND hWnd);
+        void fixImeConversionMode(HWND hWnd, LCID language);
+
+        static LanguageSwitcher* instance;
+
+    public:
+        explicit LanguageSwitcher(bool defaultImeMode);
+        explicit LanguageSwitcher();
+        ~LanguageSwitcher();
+
+        bool swapCategory();
+        bool getCategory();
+        unsigned int nextLanguage();
+        unsigned int lastLanguage();
+        LCID getCurrentLanguage();
+        bool setCurrentLanguage(LCID lcid); // returns true if lcid is in the list, false otherwise
+        vector<LCID> getLanguageList(bool getImeLanguageList);
+        void setOnLanguageChange(OnLanguageChange handler);
+        void orderLanguageList(bool isImeLanguageList,
+                               vector<LCID> list);
+        void activeWindowChangeHandler(HWND hwnd);
+        LRESULT keyPressHandler(int nCode, WPARAM wParam, LPARAM lParam);
+
+        static bool registerHotkeys();
+        static void CALLBACK onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+        static LRESULT CALLBACK onKeyPress(int nCode, WPARAM wParam, LPARAM lParam);
+    };
 }
 
-extern "C"
-{
-	DLLEXPORT void* LanguageSwitcher_new(bool defaultImeMode, DWORD* imeLanguageOrder, unsigned int n)
-	{
-		return (void*) new FruitLanguageSwitcher::LanguageSwitcher(defaultImeMode, vector<LCID>(imeLanguageOrder, imeLanguageOrder + n));
-	}
-
-	DLLEXPORT void LanguageSwitcher_delete(FruitLanguageSwitcher::LanguageSwitcher* s)
-	{
-		delete s;
-	}
-
-	DLLEXPORT bool LanguageSwitcher_swapCategory(FruitLanguageSwitcher::LanguageSwitcher * s)
-	{
-		return s->swapCategory();
-	}
-
-	DLLEXPORT bool LanguageSwitcher_getCategory(FruitLanguageSwitcher::LanguageSwitcher * s)
-	{
-		return s->getCategory();
-	}
-
-	DLLEXPORT unsigned int LanguageSwitcher_nextLanguage(FruitLanguageSwitcher::LanguageSwitcher * s)
-	{
-		return s->nextLanguage();
-	}
-
-	DLLEXPORT unsigned int LanguageSwitcher_lastLanguage(FruitLanguageSwitcher::LanguageSwitcher * s)
-	{
-		return s->lastLanguage();
-	}
-
-	DLLEXPORT DWORD LanguageSwitcher_getCurrentLanguage(FruitLanguageSwitcher::LanguageSwitcher * s)
-	{
-		return s->getCurrentLanguage();
-	}
-
-	DLLEXPORT bool LanguageSwitcher_setCurrentLanguage(FruitLanguageSwitcher::LanguageSwitcher * s, DWORD newLanguage)
-	{
-		return s->setCurrentLanguage(newLanguage);
-	}
-
-	DLLEXPORT unsigned int LanguageSwitcher_getLanguageList(FruitLanguageSwitcher::LanguageSwitcher * s, bool isImeLanguageList, DWORD * list)
-	{
-		auto langVec = s->getLanguageList(isImeLanguageList);
-		list = &(langVec[0]);
-		return langVec.size();
-	}
-
-	DLLEXPORT void LanguageSwitcher_orderLanguageList(FruitLanguageSwitcher::LanguageSwitcher * s, bool isImeLanguageList, DWORD * list)
-	{
-		return;
-	}
-
-	DLLEXPORT void LanguageSwitcher_setOnLanguageChange(FruitLanguageSwitcher::LanguageSwitcher* s, OnLanguageChange handler)
-	{
-		s->setOnLanguageChange(handler);
-	}
-}

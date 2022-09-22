@@ -1,7 +1,7 @@
-    #pragma once
+#pragma once
 
-    #include <iostream>
-    #include <map>
+#include <iostream>
+#include <map>
 
 namespace FruitLanguageSwitcher {
     typedef struct {
@@ -10,7 +10,7 @@ namespace FruitLanguageSwitcher {
         const wchar_t* localizedDesc;
     } localeString;
 
-    const std::map<long, localeString> localeMap {
+    const std::map<long, localeString> localeMap{
         {0x401,  {L"ar-SA",          L"Arabic (Saudi Arabia)",                          L"العربية (المملكة العربية السعودية)"}},
         {0x402,  {L"bg-BG",          L"Bulgarian (Bulgaria)",                           L"български (България)"}},
         {0x403,  {L"ca-ES",          L"Catalan (Spain)",                                L"català (Espanya)"}},
