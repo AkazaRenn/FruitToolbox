@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "LanguageSwitcher.h"
-#include "PerLanguageMethods.h
+#include "PerLanguageMethods.h"
 #include <vector>
 
 #pragma comment(lib, "imm32")
