@@ -1,18 +1,7 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using FruitLanguageSwitcher.Interop;
 using H.NotifyIcon;
-using FruitLanguageSwitcher.Interop;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Input;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -52,11 +41,15 @@ namespace FruitLanguageSwitcher {
         protected override void OnLaunched(LaunchActivatedEventArgs args) {
             InitializeTrayIcon();
             InitializeFunction();
+            //CheckStartup();
         }
 
         private void InitializeTrayIcon() {
             var exitApplicationCommand = (XamlUICommand)Resources["ExitApplicationCommand"];
             exitApplicationCommand.ExecuteRequested += ExitApplicationCommand_ExecuteRequested;
+
+            var reloadApplicationCommand = (XamlUICommand)Resources["ReloadApplicationCommand"];
+            reloadApplicationCommand.ExecuteRequested += ReloadApplicationCommand_ExecuteRequested;
 
             TrayIcon = (TaskbarIcon)Resources["TrayIcon"];
             TrayIcon.ForceCreate();
@@ -84,6 +77,22 @@ namespace FruitLanguageSwitcher {
             TrayIcon?.Dispose();
             Window?.Close();
         }
+
+        private void ReloadApplicationCommand_ExecuteRequested(object? _, ExecuteRequestedEventArgs args) {
+            switcher.reload();
+        }
+
+        #endregion
+
+        #region Startup Related
+
+        //private async void CheckStartup() {
+        //    StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
+        //    if(startupTask.State == StartupTaskState.Disabled) {
+        //        // Task is disabled but can be enabled.
+        //        await startupTask.RequestEnableAsync();
+        //    }
+        //}
 
         #endregion
     }

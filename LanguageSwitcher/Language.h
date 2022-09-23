@@ -7,17 +7,28 @@
 using namespace std;
 
 namespace FruitLanguageSwitcher {
-    const static set<LCID> imeLangSet = {
-        0x404, // zh-TW, Chinese (Traditional, Taiwan)
-        0x411, // ja-JP, Japanese (Japan)
-        0x412, // ko-KR, Korean (Korea)
-        0x45E, // am-ET, Amharic (Ethiopia)
-        0x473, // ti-ET, Tigrinya (Ethiopia)
-        0x804, // zh-CN, Chinese (Simplified, PRC)
-        0x873, // ti-ER, Tigrinya (Eritrea)
-        0xC04, // zh-HK, Chinese (Traditional, Hong Kong S.A.R.)
-        0x1004, // zh-SG, Chinese (Simplified, Singapore)
-        0x1404, // zh-MO, Chinese (Traditional, Macao S.A.R.)
+    constexpr LCID zh_TW = 0x404; // Chinese (Traditional, Taiwan)
+    constexpr LCID ja_JP = 0x411; // Japanese (Japan)
+    constexpr LCID ko_KR = 0x412; // Korean (Korea)
+    constexpr LCID am_ET = 0x45E; // Amharic (Ethiopia)
+    constexpr LCID ti_ET = 0x473; // Tigrinya (Ethiopia)
+    constexpr LCID zh_CN = 0x804; // Chinese (Simplified, PRC)
+    constexpr LCID ti_ER = 0x873; // Tigrinya (Eritrea)
+    constexpr LCID zh_HK = 0xC04; // Chinese (Traditional, Hong Kong S.A.R.)
+    constexpr LCID zh_SG = 0x1004; // Chinese (Simplified, Singapore)
+    constexpr LCID zh_MO = 0x1404; // Chinese (Traditional, Macao S.A.R.)
+
+    const static set<LCID> ImeLanguages = {
+        zh_TW,
+        ja_JP,
+        ko_KR,
+        am_ET,
+        ti_ET,
+        zh_CN,
+        ti_ER,
+        zh_HK,
+        zh_SG,
+        zh_MO,
     };
 
     class Language {
@@ -32,7 +43,5 @@ namespace FruitLanguageSwitcher {
 
         LCID getLocaleId();
         bool isImeLanguage();
-
-        static LCID localeNameToLcid(WCHAR* localeName);
     };
 }

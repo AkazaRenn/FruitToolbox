@@ -24,8 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="H.NotifyIcon" Version="2.0.66" />
-    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.66" />
+    <PackageReference Include="H.NotifyIcon" Version="2.0.67" />
+    <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.67" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.5" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.1" />
     <PackageReference Include="SettingsUI" Version="2.1.8" />
@@ -36,6 +36,16 @@
 
   <PropertyGroup>
     <WindowsSdkPackageVersion>10.0.22621.27</WindowsSdkPackageVersion>
+    <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+    <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundle>Auto</AppxBundle>
+    <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+	<PublishReadyToRun>true</PublishReadyToRun>
+	<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
   </PropertyGroup>
 
   <!-- 

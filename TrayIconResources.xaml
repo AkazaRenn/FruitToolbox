@@ -4,12 +4,27 @@
     xmlns:tb="using:H.NotifyIcon"
     >
     <XamlUICommand
+        x:Key="ReloadApplicationCommand"
+        Label="Reload"
+        Description="Reload"
+        >
+        <XamlUICommand.IconSource>
+            <SymbolIconSource Symbol="Refresh" />
+        </XamlUICommand.IconSource>
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator
+                Key="R"
+                Modifiers="Control"
+                />
+        </XamlUICommand.KeyboardAccelerators>
+    </XamlUICommand>
+    <XamlUICommand
         x:Key="ExitApplicationCommand"
         Label="Exit"
         Description="Exit"
         >
         <XamlUICommand.IconSource>
-            <SymbolIconSource Symbol="ClosePane" />
+            <SymbolIconSource Symbol="Cancel" />
         </XamlUICommand.IconSource>
         <XamlUICommand.KeyboardAccelerators>
             <KeyboardAccelerator
@@ -23,15 +38,22 @@
         Visibility="Visible"
         ContextMenuMode="SecondWindow"
         NoLeftClickDelay="True"
+        MenuActivation="RightClick"
+        ToolTipText="Fruit Language Switcher"
         >
         <tb:TaskbarIcon.GeneratedIcon>
             <tb:GeneratedIcon
-                Text="❤️"
+                Text="❤"
                 Foreground="Red"
+                FontFamily="Segoe UI Emoji"
+                Background="AliceBlue"
+                FontWeight="Bold"
+                FontSize="38"
                 />
         </tb:TaskbarIcon.GeneratedIcon>
         <tb:TaskbarIcon.ContextFlyout>
             <MenuFlyout>
+                <MenuFlyoutItem Command="{StaticResource ReloadApplicationCommand}" />
                 <MenuFlyoutItem Command="{StaticResource ExitApplicationCommand}" />
             </MenuFlyout>
         </tb:TaskbarIcon.ContextFlyout>
