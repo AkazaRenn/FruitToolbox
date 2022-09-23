@@ -1,4 +1,4 @@
-﻿using FruitLanguageSwitcher.Interop;
+using FruitLanguageSwitcher.Interop;
 using H.NotifyIcon;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
