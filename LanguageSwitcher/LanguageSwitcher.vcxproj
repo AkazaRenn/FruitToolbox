@@ -146,6 +146,7 @@
     <ClInclude Include="LanguageSwitcher.h" />
     <ClInclude Include="Locale.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PerLanguageMethods.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

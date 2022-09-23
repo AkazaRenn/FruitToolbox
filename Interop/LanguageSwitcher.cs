@@ -5,11 +5,18 @@ namespace FruitLanguageSwitcher.Interop
 {
     internal class LanguageSwitcher
     {
-        private readonly IntPtr wrappedObject;
+        private IntPtr wrappedObject;
 
         [DllImport("LanguageSwitcher")]
         private static extern IntPtr LanguageSwitcher_new(bool defaultImeMode);
         public LanguageSwitcher(bool defaultImeMode) => wrappedObject = LanguageSwitcher_new(defaultImeMode);
+
+        [DllImport("LanguageSwitcher")]
+        private static extern void LanguageSwitcher_delete(IntPtr obj);
+        public void reload() {
+            LanguageSwitcher_delete(wrappedObject);
+            wrappedObject = LanguageSwitcher_new(false);
+        }
 
         [DllImport("LanguageSwitcher")]
         private static extern bool LanguageSwitcher_swapCategory(IntPtr obj);

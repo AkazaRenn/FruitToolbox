@@ -28,5 +28,5 @@ LCID Language::getLocaleId() {
 }
 
 bool Language::isImeLanguage() {
-    return imeLangSet.count(localeId);
+    return ImeLanguages.count(localeId);
 }
