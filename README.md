@@ -11,7 +11,7 @@ to switch within or between categories.
 
 Currently, `capslock` is used to switch between the categories, so the original `capslock` function will be blocked.
 To use the toggle the actual `capslock` state, use `alt + capslock` instead.
-`lwin + space`, `lwin + down` and `lwin + right` will be used to switch to the next language in current category, while `lwin + up` and `lwin + left` will switch to the previous one.
+`lwin + space` will be used to switch to the next language in current category.
 
 For example, as a user with `[en-US, zh-TW, fr-CA, ja-JP]` as the
 available languages for the OS, if current language is `en-US`, hitting `lwin + space` will switch to
