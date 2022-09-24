@@ -52,7 +52,7 @@
 
 				<!--Specify which CLSID to activate when toast clicked-->
 				<desktop:Extension Category="windows.toastNotificationActivation">
-					<desktop:ToastNotificationActivation ToastActivatorCLSID="4609A5B4-3B06-42DC-BA5B-DD1C15376781" />
+					<desktop:ToastNotificationActivation ToastActivatorCLSID="9A19103F-16F7-4668-BE54-9A1E7A4F7556" />
 				</desktop:Extension>
 				<desktop:Extension Category="windows.startupTask" Executable="FruitLanguageSwitcher.exe" EntryPoint="Windows.FullTrustApplication">
 					<desktop:StartupTask TaskId="MyStartupId" Enabled="false" DisplayName="Fruit Language Switcher" />
@@ -62,7 +62,7 @@
 				<com:Extension Category="windows.comServer">
 					<com:ComServer>
 						<com:ExeServer Executable="FruitLanguageSwitcher.exe" Arguments="-ToastActivated" DisplayName="Toast activator">
-							<com:Class Id="4609A5B4-3B06-42DC-BA5B-DD1C15376781" DisplayName="Toast activator"/>
+							<com:Class Id="9A19103F-16F7-4668-BE54-9A1E7A4F7556" DisplayName="Toast activator"/>
 						</com:ExeServer>
 					</com:ComServer>
 				</com:Extension>

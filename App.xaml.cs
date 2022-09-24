@@ -94,7 +94,7 @@ namespace FruitLanguageSwitcher {
 
         #endregion
 
-        #region Startup Related
+        #region Startup Checker
 
         private async void CheckStartup() {
             StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
