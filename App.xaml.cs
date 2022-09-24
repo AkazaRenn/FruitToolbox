@@ -1,7 +1,13 @@
 using FruitLanguageSwitcher.Interop;
 using H.NotifyIcon;
+using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
+using System;
+using System.Diagnostics;
+using Windows.ApplicationModel;
+using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -41,7 +47,7 @@ namespace FruitLanguageSwitcher {
         protected override void OnLaunched(LaunchActivatedEventArgs args) {
             InitializeTrayIcon();
             InitializeFunction();
-            //CheckStartup();
+            CheckStartup();
         }
 
         private void InitializeTrayIcon() {
@@ -86,13 +92,28 @@ namespace FruitLanguageSwitcher {
 
         #region Startup Related
 
-        //private async void CheckStartup() {
-        //    StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
-        //    if(startupTask.State == StartupTaskState.Disabled) {
-        //        // Task is disabled but can be enabled.
-        //        await startupTask.RequestEnableAsync();
-        //    }
-        //}
+        private async void CheckStartup() {
+            StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
+
+            ToastNotificationManagerCompat.OnActivated += async toastArgs => {
+                // Obtain the arguments from the notification
+                ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
+                if(args.Contains("TOAST_REGISTER_STARTUP")) {
+                    StartupTaskState newState = await startupTask.RequestEnableAsync();
+                } else if(args.Contains("TOAST_DISABLE_STARTUP")) {
+                    startupTask.Disable();
+                }
+            };
+
+            if(startupTask.State == StartupTaskState.Disabled) {
+                // Task is disabled but can be enabled
+                new ToastContentBuilder()
+                        .AddText($"{startupTask.State}Would you like the app to start with Windows logging?")
+                        .AddButton("Yes", ToastActivationType.Background, "TOAST_REGISTER_STARTUP")
+                        .AddButton("No", ToastActivationType.Background, "TOAST_DISABLE_STARTUP")
+                        .Show();
+            }
+        }
 
         #endregion
     }

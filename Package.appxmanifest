@@ -5,53 +5,76 @@
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
-  IgnorableNamespaces="uap rescap mp">
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  IgnorableNamespaces="uap rescap mp com desktop">
 
-  <Identity
-    Name="AkazaRenn.82975CBC0BB1"
-    Publisher="CN=akazarenn"
-    Version="0.0.2.0" />
+	<Identity
+	  Name="AkazaRenn.82975CBC0BB1"
+	  Publisher="CN=akazarenn"
+	  Version="0.0.2.0" />
 
-  <Properties>
-    <DisplayName>Fruit Language Switcher</DisplayName>
-    <PublisherDisplayName>Akaza Renn</PublisherDisplayName>
-    <Logo>Assets\StoreLogo.png</Logo>
-  </Properties>
+	<Properties>
+		<DisplayName>Fruit Language Switcher</DisplayName>
+		<PublisherDisplayName>Akaza Renn</PublisherDisplayName>
+		<Logo>Assets\StoreLogo.png</Logo>
+	</Properties>
 
-  <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
-  </Dependencies>
+	<Dependencies>
+		<TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+		<TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+	</Dependencies>
 
-  <Resources>
-    <Resource Language="x-generate"/>
-  </Resources>
+	<Resources>
+		<Resource Language="x-generate"/>
+	</Resources>
 
-  <Applications>
-    <Application Id="App"
-      Executable="$targetnametoken$.exe"
-      EntryPoint="$targetentrypoint$">
-      <uap:VisualElements
-        DisplayName="Fruit Language Switcher"
-        Description="FruitLanguageSwitcher"
-        BackgroundColor="transparent"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
-        <uap:InitialRotationPreference>
-          <uap:Rotation Preference="portraitFlipped"/>
-          <uap:Rotation Preference="landscapeFlipped"/>
-          <uap:Rotation Preference="portrait"/>
-          <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
-      </uap:VisualElements>
-    </Application>
-  </Applications>
+	<Applications>
+		<Application Id="App"
+		  Executable="$targetnametoken$.exe"
+		  EntryPoint="$targetentrypoint$">
+			<uap:VisualElements
+			  DisplayName="Fruit Language Switcher"
+			  Description="FruitLanguageSwitcher"
+			  BackgroundColor="transparent"
+			  Square150x150Logo="Assets\Square150x150Logo.png"
+			  Square44x44Logo="Assets\Square44x44Logo.png">
+				<uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+				<uap:SplashScreen Image="Assets\SplashScreen.png" />
+				<uap:InitialRotationPreference>
+					<uap:Rotation Preference="portraitFlipped"/>
+					<uap:Rotation Preference="landscapeFlipped"/>
+					<uap:Rotation Preference="portrait"/>
+					<uap:Rotation Preference="landscape"/>
+				</uap:InitialRotationPreference>
+			</uap:VisualElements>
+			<Extensions>
 
-  <Capabilities>
-    <rescap:Capability Name="runFullTrust" />
-  </Capabilities>
+				<!--Specify which CLSID to activate when toast clicked-->
+				<desktop:Extension Category="windows.toastNotificationActivation">
+					<desktop:ToastNotificationActivation ToastActivatorCLSID="4609A5B4-3B06-42DC-BA5B-DD1C15376781" />
+				</desktop:Extension>
+				<desktop:Extension Category="windows.startupTask" Executable="FruitLanguageSwitcher.exe" EntryPoint="Windows.FullTrustApplication">
+					<desktop:StartupTask TaskId="MyStartupId" Enabled="false" DisplayName="Fruit Language Switcher" />
+				</desktop:Extension>
 
-  <mp:PhoneIdentity PhoneProductId="96fcb100-33e4-4922-bef7-1a6b5a8b96ad"
-					PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+				<!--Register COM CLSID LocalServer32 registry key-->
+				<com:Extension Category="windows.comServer">
+					<com:ComServer>
+						<com:ExeServer Executable="FruitLanguageSwitcher.exe" Arguments="-ToastActivated" DisplayName="Toast activator">
+							<com:Class Id="4609A5B4-3B06-42DC-BA5B-DD1C15376781" DisplayName="Toast activator"/>
+						</com:ExeServer>
+					</com:ComServer>
+				</com:Extension>
+
+			</Extensions>
+		</Application>
+	</Applications>
+
+	<Capabilities>
+		<rescap:Capability Name="runFullTrust" />
+	</Capabilities>
+
+	<mp:PhoneIdentity PhoneProductId="96fcb100-33e4-4922-bef7-1a6b5a8b96ad"
+					  PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 </Package>
