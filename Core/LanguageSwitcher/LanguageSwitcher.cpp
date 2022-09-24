@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "LanguageSwitcher.h"
 #include "PerLanguageMethods.h"
-#include "Utils.h"
 #include <vector>
 
 #pragma comment(lib, "imm32")
@@ -222,11 +221,7 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
         case VK_LWIN:
             winDown = false;
             if(!winAsModifier) {
-                if(isInGameMode()) {
-                    SEND_MOCK_KEY();
-                } else {
-                    SEND_PT_RUN_HOTKEYS();
-                }
+                SEND_PT_RUN_HOTKEYS();
             }
             break;
         case VK_CAPITAL:
