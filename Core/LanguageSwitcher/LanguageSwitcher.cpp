@@ -41,7 +41,7 @@ void LanguageSwitcher::buildLanguageList() {
     DWORD dwLen = sizeof(buffer);
     RegGetValue(HKEY_CURRENT_USER, REG_LANGUAGES_DIR, REG_LANGUAGES_KEY, RRF_RT_REG_MULTI_SZ, NULL, buffer, &dwLen);
 
-    for (size_t i = 0; (buffer[i] != L'\0' && i < REG_LANGUAGE_MULTI_SZ_MAX_LENGTH); i++) {
+    for(size_t i = 0; (buffer[i] != L'\0' && i < REG_LANGUAGE_MULTI_SZ_MAX_LENGTH); i++) {
         auto newLang = Language(buffer + i);
         newLang.isImeLanguage() ? categories[1].langs.push_back(newLang) : categories[0].langs.push_back(newLang);
 
@@ -61,7 +61,7 @@ bool LanguageSwitcher::swapCategory() {
     inImeMode = !inImeMode;
     updateInputLanguage();
 
-    if (onLanguageChange) {
+    if(onLanguageChange) {
         onLanguageChange(inImeMode, categories[inImeMode].index);
     }
     return inImeMode;
@@ -69,12 +69,12 @@ bool LanguageSwitcher::swapCategory() {
 
 unsigned int LanguageSwitcher::nextLanguage() {
     categories[inImeMode].index++;
-    if (categories[inImeMode].index >= categories[inImeMode].langs.size() || categories[inImeMode].index < 0) {
+    if(categories[inImeMode].index >= categories[inImeMode].langs.size() || categories[inImeMode].index < 0) {
         categories[inImeMode].index = 0;
     }
     updateInputLanguage();
 
-    if (onLanguageChange) {
+    if(onLanguageChange) {
         onLanguageChange(inImeMode, categories[inImeMode].index);
     }
 
@@ -83,12 +83,12 @@ unsigned int LanguageSwitcher::nextLanguage() {
 
 unsigned int LanguageSwitcher::lastLanguage() {
     categories[inImeMode].index--;
-    if (categories[inImeMode].index >= categories[inImeMode].langs.size() || categories[inImeMode].index < 0) {
+    if(categories[inImeMode].index >= categories[inImeMode].langs.size() || categories[inImeMode].index < 0) {
         categories[inImeMode].index = categories[inImeMode].langs.size() - 1;
     }
     updateInputLanguage();
 
-    if (onLanguageChange) {
+    if(onLanguageChange) {
         onLanguageChange(inImeMode, categories[inImeMode].index);
     }
 
@@ -104,13 +104,13 @@ LCID LanguageSwitcher::getCurrentLanguage() {
 }
 
 bool LanguageSwitcher::setCurrentLanguage(LCID lcid) {
-    if (getCurrentLanguage() != lcid) {
-        for (unsigned int i = 0; i < (sizeof(categories) / sizeof(categories[0])); i++) {
-            for (unsigned int j = 0; j < categories[i].langs.size(); j++) {
-                if (categories[i].langs[j].getLocaleId() == lcid) {
+    if(getCurrentLanguage() != lcid) {
+        for(unsigned int i = 0; i < (sizeof(categories) / sizeof(categories[0])); i++) {
+            for(unsigned int j = 0; j < categories[i].langs.size(); j++) {
+                if(categories[i].langs[j].getLocaleId() == lcid) {
                     inImeMode = i;
                     categories[i].index = j;
-                    if (onLanguageChange) {
+                    if(onLanguageChange) {
                         onLanguageChange(inImeMode, categories[inImeMode].index);
                     }
                     return true;
@@ -128,14 +128,14 @@ bool LanguageSwitcher::setCurrentLanguage(LCID lcid) {
 void LanguageSwitcher::fixImeConversionMode(HWND hWnd, LCID language) {
     auto retryCount = 0;
     auto perLangMethods = getPerLanguageMethods(language);
-    while ((!perLangMethods.inConversionMode(hWnd)) && (retryCount++ < MAX_RETRY_TIMES)) {
+    while((!perLangMethods.inConversionMode(hWnd)) && (retryCount++ < MAX_RETRY_TIMES)) {
         perLangMethods.fixConversionMode(hWnd);
         //Sleep(50);
     }
 }
 
 void LanguageSwitcher::fixImeConversionMode(HWND hWnd) {
-    if (categories[inImeMode].langs[categories[inImeMode].index].isImeLanguage()) {
+    if(categories[inImeMode].langs[categories[inImeMode].index].isImeLanguage()) {
         fixImeConversionMode(hWnd, categories[inImeMode].langs[categories[inImeMode].index].getLocaleId());
     }
 }
@@ -144,7 +144,7 @@ void LanguageSwitcher::fixImeConversionMode(HWND hWnd) {
 vector<LCID> LanguageSwitcher::getLanguageList(bool getImeLanguageList) {
     vector<LCID> languageList;
 
-    for (auto& lang : categories[getImeLanguageList].langs) {
+    for(auto& lang : categories[getImeLanguageList].langs) {
         languageList.push_back(lang.getLocaleId());
     }
 
@@ -160,11 +160,11 @@ bool LanguageSwitcher::registerHotkeys() {
 }
 
 void LanguageSwitcher::orderLanguageList(bool isImeLanguageList,
-    vector<LCID> list) {
-    for (int i = list.size() - 1; i >= 0; i--) {
+                                         vector<LCID> list) {
+    for(int i = list.size() - 1; i >= 0; i--) {
         auto currentLanguageList = getLanguageList(true);
         auto it = find(currentLanguageList.begin(), currentLanguageList.end(), list[i]);
-        if (it != currentLanguageList.end()) {
+        if(it != currentLanguageList.end()) {
             auto actualIterator = categories[true].langs.begin() + (it - currentLanguageList.begin());
             auto temp = *actualIterator;
             categories[true].langs.erase(actualIterator);
@@ -183,7 +183,7 @@ static bool GET_CAPS_LOCK() {
 }
 
 static void SET_CAPS_LOCK(bool on) {
-    if (GET_CAPS_LOCK() != on) {
+    if(GET_CAPS_LOCK() != on) {
         keybd_event(VK_CAPITAL, 0x3a, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
         keybd_event(VK_CAPITAL, 0x3a, KEYEVENTF_EXTENDEDKEY, 0);
     }
@@ -191,11 +191,11 @@ static void SET_CAPS_LOCK(bool on) {
 
 LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lParam) {
     auto data = (PKBDLLHOOKSTRUCT)lParam;
-    switch (wParam) {
+    switch(wParam) {
     case WM_KEYDOWN:
-        switch (data->vkCode) {
+        switch(data->vkCode) {
         case VK_LWIN:
-            if (!winDown) {
+            if(!winDown) {
                 winAsModifier = false;
                 winDown = true;
             }
@@ -204,7 +204,7 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
             swapCategory();
             return 1;
         case VK_SPACE:
-            if (winDown) {
+            if(winDown) {
                 SEND_MOCK_KEY(); // must have to be here or start menu will pop in some cases. I blame Microsoft
                 winAsModifier = true;
                 isKeyDown(VK_LCONTROL) ? lastLanguage() : nextLanguage();
@@ -212,20 +212,19 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
             }
             break;
         default:
-            if (winDown) {
+            if(winDown) {
                 winAsModifier = true;
             }
         }
         break;
     case WM_KEYUP:
-        switch (data->vkCode) {
+        switch(data->vkCode) {
         case VK_LWIN:
             winDown = false;
-            if (!winAsModifier) {
-                if (isInGameMode()) {
+            if(!winAsModifier) {
+                if(isInGameMode()) {
                     SEND_MOCK_KEY();
-                }
-                else {
+                } else {
                     SEND_PT_RUN_HOTKEYS();
                 }
             }
@@ -233,14 +232,14 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
         case VK_CAPITAL:
             return 1;
         case VK_RMENU:
-            if (!getPerLanguageMethods(getCurrentLanguage()).onRaltUp()) {
+            if(!getPerLanguageMethods(getCurrentLanguage()).onRaltUp()) {
                 return 1;
             }
         }
         break;
     case WM_SYSKEYDOWN: // yes they use different events for Alt up and down
-        if (data->vkCode == VK_RMENU) {
-            if (!getPerLanguageMethods(getCurrentLanguage()).onRaltDown()) {
+        if(data->vkCode == VK_RMENU) {
+            if(!getPerLanguageMethods(getCurrentLanguage()).onRaltDown()) {
                 return 1;
             }
         }
@@ -254,15 +253,15 @@ LanguageSwitcher::LanguageSwitcher() : LanguageSwitcher(false) {}
 
 LanguageSwitcher::LanguageSwitcher(bool defaultImeMode) {
     instance = this;
-    if (instance != this) {
+    if(instance != this) {
         return;
     }
 
     inImeMode = defaultImeMode;
     buildLanguageList();
 
-    for (auto& cate : categories) {
-        if (cate.langs.empty()) {
+    for(auto& cate : categories) {
+        if(cate.langs.empty()) {
             exit(0); // you don't need it
         }
     }
@@ -281,13 +280,13 @@ LanguageSwitcher::~LanguageSwitcher() {
 
 LanguageSwitcher* LanguageSwitcher::instance;
 void CALLBACK LanguageSwitcher::onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    if (instance) {
+    if(instance) {
         instance->activeWindowChangeHandler(hwnd);
     }
 }
 
 LRESULT CALLBACK LanguageSwitcher::onKeyPress(int nCode, WPARAM wParam, LPARAM lParam) {
-    if (nCode == HC_ACTION && instance) {
+    if(nCode == HC_ACTION && instance) {
         return instance->keyPressHandler(nCode, wParam, lParam);
     }
 

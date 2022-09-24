@@ -1,10 +1,14 @@
 using FruitLanguageSwitcher.Interop;
+
 using H.NotifyIcon;
+
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
+
 using System;
 using System.Diagnostics;
+
 using Windows.ApplicationModel;
 using Windows.Foundation.Collections;
 using Windows.UI.Popups;

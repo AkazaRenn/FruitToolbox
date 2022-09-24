@@ -11,8 +11,7 @@ namespace FruitLanguageSwitcher {
     typedef bool (*conversionModeGetter)(HWND);
     typedef void (*conversionModeSetter)(HWND);
 
-    struct PerLanguageMethods
-    {
+    struct PerLanguageMethods {
         keyHandler onRaltDown;
         keyHandler onRaltUp;
         conversionModeGetter inConversionMode;
@@ -24,14 +23,14 @@ namespace FruitLanguageSwitcher {
             keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYDOWN, 0); // RAlt to AltGr
             return true;
         },
-        []()-> bool {
+        [] ()-> bool {
             keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
             return true;
         },
-        [](HWND hwnd) -> bool {
+        [] (HWND hwnd) -> bool {
             return true;
         },
-        [](HWND hwnd) -> void {},
+        [] (HWND hwnd) -> void {},
     };
 
     static PerLanguageMethods JapaneseMethods = {
@@ -39,14 +38,14 @@ namespace FruitLanguageSwitcher {
             keybd_event(VK_NONCONVERT, 0, KEYEVENTF_KEYDOWN, 0);
             return false;
         },
-        []() -> bool {
+        [] () -> bool {
             keybd_event(VK_NONCONVERT, 0, KEYEVENTF_KEYUP, 0);
             return false;
         },
-        [](HWND hwnd) -> bool {
+        [] (HWND hwnd) -> bool {
             return false;
         },
-        [](HWND hwnd) -> void {
+        [] (HWND hwnd) -> void {
             keybd_event(VK_CONVERT, 0, KEYEVENTF_KEYDOWN, 0);
             keybd_event(VK_CONVERT, 0, KEYEVENTF_KEYUP, 0);
         },
@@ -57,19 +56,19 @@ namespace FruitLanguageSwitcher {
         []() -> bool {
             return true;
         },
-        []() -> bool {
+        [] () -> bool {
             return true;
         },
-        [](HWND hwnd) -> bool {
+        [] (HWND hwnd) -> bool {
             return SendMessage(ImmGetDefaultIMEWnd(hwnd), WM_IME_CONTROL, IMC_GETCONVERSIONMODE, 0) == ChineseImeConversionModeCode;
         },
-        [](HWND hwnd) -> void {
+        [] (HWND hwnd) -> void {
             SendMessage(ImmGetDefaultIMEWnd(hwnd), WM_IME_CONTROL, IMC_SETCONVERSIONMODE, ChineseImeConversionModeCode);
         },
     };
 
     inline static PerLanguageMethods getPerLanguageMethods(LCID lcid) {
-        switch (lcid) {
+        switch(lcid) {
         case zh_TW:
         case zh_CN:
         case zh_HK:

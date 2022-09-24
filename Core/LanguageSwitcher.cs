@@ -1,10 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 using System;
 
-namespace FruitLanguageSwitcher.Interop
-{
-    internal class LanguageSwitcher
-    {
+namespace FruitLanguageSwitcher.Interop {
+    internal class LanguageSwitcher {
         private IntPtr wrappedObject;
 
         [DllImport("LanguageSwitcher")]
