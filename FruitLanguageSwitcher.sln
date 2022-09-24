@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FruitLanguageSwitcher", "FruitLanguageSwitcher.csproj", "{064A958E-8766-4B13-9DCA-BC5150B597D7}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LanguageSwitcher", "LanguageSwitcher\LanguageSwitcher.vcxproj", "{8EABF3AD-23D8-49FD-88A8-13C7A0CACBD0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LanguageSwitcher", "Core\LanguageSwitcher\LanguageSwitcher.vcxproj", "{8EABF3AD-23D8-49FD-88A8-13C7A0CACBD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

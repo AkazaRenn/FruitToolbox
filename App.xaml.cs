@@ -100,15 +100,14 @@ namespace FruitLanguageSwitcher {
                 ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
                 if(args.Contains("TOAST_REGISTER_STARTUP")) {
                     StartupTaskState newState = await startupTask.RequestEnableAsync();
-                } else if(args.Contains("TOAST_DISABLE_STARTUP")) {
-                    startupTask.Disable();
                 }
             };
 
             if(startupTask.State == StartupTaskState.Disabled) {
                 // Task is disabled but can be enabled
                 new ToastContentBuilder()
-                        .AddText($"{startupTask.State}Would you like the app to start with Windows logging?")
+                        .AddText("Would you like the app to start with Windows logging?")
+                        .AddText("You can disable this notification if you want, or turn off startup in settings.")
                         .AddButton("Yes", ToastActivationType.Background, "TOAST_REGISTER_STARTUP")
                         .AddButton("No", ToastActivationType.Background, "TOAST_DISABLE_STARTUP")
                         .Show();

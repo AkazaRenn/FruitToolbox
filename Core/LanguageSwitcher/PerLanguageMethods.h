@@ -68,7 +68,7 @@ namespace FruitLanguageSwitcher {
         },
     };
 
-    static PerLanguageMethods getPerLanguageMethods(LCID lcid) {
+    inline static PerLanguageMethods getPerLanguageMethods(LCID lcid) {
         switch (lcid) {
         case zh_TW:
         case zh_CN:

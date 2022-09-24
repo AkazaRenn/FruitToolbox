@@ -1,17 +1,12 @@
 #include "pch.h"
 #include "LanguageSwitcher.h"
 #include "PerLanguageMethods.h"
+#include "Utils.h"
 #include <vector>
 
 #pragma comment(lib, "imm32")
 
 using namespace FruitLanguageSwitcher;
-
-#define SEND_MOCK_WIN_HOTKEY() {                \
-    winAsModifier = true;                       \
-    keybd_event(0x9F, 0, 0, 0);                 \
-    keybd_event(0x9F, 0, KEYEVENTF_KEYUP, 0);   \
-}
 
 constexpr size_t             REG_LANGUAGE_MULTI_SZ_MAX_LENGTH = 1024;
 constexpr LPCWSTR            REG_LANGUAGES_DIR = L"Control Panel\\International\\User Profile";
@@ -19,11 +14,27 @@ constexpr LPCWSTR            REG_LANGUAGES_KEY = L"Languages";
 
 constexpr UINT               MAX_RETRY_TIMES = 2;
 
-constexpr LCID hkl_to_lcid(HKL hkl) {
+inline constexpr LCID hklToLcid(HKL hkl) {
     return (long(hkl) & 0xffff);
 }
 
-#define isNotInVector(l, v) (std::find(l.begin(), l.end(),v) == l.end())
+#define SEND_MOCK_KEY() {                           \
+    keybd_event(0x9F, 0, 0, 0);                     \
+    keybd_event(0x9F, 0, KEYEVENTF_KEYUP, 0);       \
+}
+
+#define SEND_PT_RUN_HOTKEYS() {                     \
+    keybd_event(VK_CONTROL, 0, 0, 0);               \
+    keybd_event(VK_SHIFT, 0, 0, 0);                 \
+    keybd_event(VK_MENU, 0, 0, 0);                  \
+    keybd_event('S', 0, 0, 0);                      \
+    keybd_event('S', 0, KEYEVENTF_KEYUP, 0);        \
+    keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0);    \
+    keybd_event(VK_SHIFT, 0, KEYEVENTF_KEYUP, 0);   \
+    keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0); \
+}
+
+#define isKeyDown(nVirtKey) (GetKeyState(nVirtKey) & 0x8000)
 
 void LanguageSwitcher::buildLanguageList() {
     WCHAR buffer[REG_LANGUAGE_MULTI_SZ_MAX_LENGTH];
@@ -163,7 +174,7 @@ void LanguageSwitcher::orderLanguageList(bool isImeLanguageList,
 }
 
 void LanguageSwitcher::activeWindowChangeHandler(HWND hwnd) {
-    setCurrentLanguage(hkl_to_lcid(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))));
+    setCurrentLanguage(hklToLcid(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))));
     fixImeConversionMode(hwnd);
 }
 
@@ -194,8 +205,9 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
             return 1;
         case VK_SPACE:
             if (winDown) {
-                SEND_MOCK_WIN_HOTKEY(); // must have to be here or start menu will pop in some cases. I blame Microsoft
-                nextLanguage();
+                SEND_MOCK_KEY(); // must have to be here or start menu will pop in some cases. I blame Microsoft
+                winAsModifier = true;
+                isKeyDown(VK_LCONTROL) ? lastLanguage() : nextLanguage();
                 return 1;
             }
             break;
@@ -210,14 +222,12 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
         case VK_LWIN:
             winDown = false;
             if (!winAsModifier) {
-                keybd_event(VK_CONTROL, 0, 0, 0);
-                keybd_event(VK_SHIFT, 0, 0, 0);
-                keybd_event(VK_MENU, 0, 0, 0);
-                keybd_event('S', 0, 0, 0);
-                keybd_event('S', 0, KEYEVENTF_KEYUP, 0);
-                keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0);
-                keybd_event(VK_SHIFT, 0, KEYEVENTF_KEYUP, 0);
-                keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
+                if (isInGameMode()) {
+                    SEND_MOCK_KEY();
+                }
+                else {
+                    SEND_PT_RUN_HOTKEYS();
+                }
             }
             break;
         case VK_CAPITAL:

@@ -58,9 +58,6 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="LanguageSwitcher\LanguageSwitcher.vcxproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="LanguageSwitcher">
       <HintPath>Debug\LanguageSwitcher.dll</HintPath>
     </Reference>
