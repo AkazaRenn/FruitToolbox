@@ -1,4 +1,4 @@
-using FruitLanguageSwitcher.Interop;
+using FruitLanguageSwitcher.Core;
 
 using H.NotifyIcon;
 

@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System;
 
-namespace FruitLanguageSwitcher.Interop {
+namespace FruitLanguageSwitcher.Core {
     internal class LanguageSwitcher {
         private IntPtr wrappedObject;
 
@@ -11,6 +11,8 @@ namespace FruitLanguageSwitcher.Interop {
 
         [DllImport("LanguageSwitcher")]
         private static extern void LanguageSwitcher_delete(IntPtr obj);
+        ~LanguageSwitcher() => LanguageSwitcher_delete(wrappedObject);
+
         public void reload() {
             LanguageSwitcher_delete(wrappedObject);
             wrappedObject = LanguageSwitcher_new(false);
