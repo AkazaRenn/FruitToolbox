@@ -38,7 +38,7 @@
 	<PropertyGroup>
 		<WindowsSdkPackageVersion>10.0.22621.27</WindowsSdkPackageVersion>
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
-		<GenerateAppInstallerFile>True</GenerateAppInstallerFile>
+		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
@@ -47,6 +47,9 @@
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 		<PublishReadyToRun>True</PublishReadyToRun>
 		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+		<PackageCertificateThumbprint>54A6039F5AFD8389FE77765304D7ECD24BB8692B</PackageCertificateThumbprint>
+		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+		<AppxPackageDir>C:\Users\fraxu\GitHub\FruitLanguageSwitcher\bin\</AppxPackageDir>
 	</PropertyGroup>
 
 	<!--
