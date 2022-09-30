@@ -153,7 +153,6 @@
     <ClInclude Include="Locale.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PerLanguageMethods.h" />
-    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

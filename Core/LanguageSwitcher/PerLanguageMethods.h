@@ -74,10 +74,10 @@ namespace FruitLanguageSwitcher {
         case zh_HK:
         case zh_SG:
         case zh_MO:
+        case ko_KR:
             return ChineseMethods;
         case ja_JP:
             return JapaneseMethods;
-        case ko_KR:
         case am_ET:
         case ti_ET:
         case ti_ER:
