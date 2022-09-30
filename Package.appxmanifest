@@ -12,7 +12,7 @@
 	<Identity
 	  Name="AkazaRenn.82975CBC0BB1"
 	  Publisher="CN=akazarenn"
-	  Version="0.0.2.0" />
+	  Version="1.0.0.0" />
 
 	<Properties>
 		<DisplayName>Fruit Language Switcher</DisplayName>

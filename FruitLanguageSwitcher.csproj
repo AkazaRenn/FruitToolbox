@@ -45,7 +45,7 @@
 		<AppxBundle>Auto</AppxBundle>
 		<AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-		<PublishReadyToRun>true</PublishReadyToRun>
+		<PublishReadyToRun>True</PublishReadyToRun>
 		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
 	</PropertyGroup>
 
