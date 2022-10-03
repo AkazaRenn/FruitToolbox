@@ -47,7 +47,7 @@
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 		<PublishReadyToRun>True</PublishReadyToRun>
 		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-		<PackageCertificateThumbprint>54A6039F5AFD8389FE77765304D7ECD24BB8692B</PackageCertificateThumbprint>
+		<PackageCertificateThumbprint>68BA80FB8E0CE0DA249475B5280DA5CDBB1BFF4B</PackageCertificateThumbprint>
 		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
 		<AppxPackageDir>C:\Users\fraxu\GitHub\FruitLanguageSwitcher\bin\</AppxPackageDir>
 	</PropertyGroup>
