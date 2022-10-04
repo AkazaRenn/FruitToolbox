@@ -255,8 +255,8 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
             if(!data->scanCode) { // sent by software
                 return CallNextHookEx(NULL, nCode, wParam, lParam);
             }
-            capslockDown = false;
             thread t([&] () {
+                capslockDown = false;
                 capsLockTimer.stop([&] () { swapCategory(); });
                      });
             t.detach();
