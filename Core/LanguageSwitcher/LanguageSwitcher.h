@@ -1,9 +1,9 @@
 #pragma once
-
+#pragma unmanaged
 #include <vector>
 #include "Language.h"
 #include <map>
-//#include <chrono>
+#include "Timer.h"
 
 using namespace std;
 
@@ -32,6 +32,8 @@ namespace FruitLanguageSwitcher {
         // keyboard status
         bool winDown = false;
         bool winAsModifier = false;
+        bool capslockDown = false;
+        Timer capsLockTimer;
 
         // Windows hook related
         static LanguageSwitcher* instance;

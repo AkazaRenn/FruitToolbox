@@ -2,6 +2,7 @@
 #include "LanguageSwitcher.h"
 #include "PerLanguageMethods.h"
 #include <vector>
+#include <thread>
 
 #pragma comment(lib, "imm32")
 
@@ -12,6 +13,8 @@ constexpr LPCWSTR            REG_LANGUAGES_DIR = L"Control Panel\\International\
 constexpr LPCWSTR            REG_LANGUAGES_KEY = L"Languages";
 
 constexpr UINT               MAX_RETRY_TIMES = 1;
+
+constexpr UINT               CAPSLOCK_WAIT_TIME_MS = 500;
 
 inline constexpr LCID hklToLcid(HKL hkl) {
     return (long(hkl) & 0xffff);
@@ -177,14 +180,14 @@ void LanguageSwitcher::activeWindowChangeHandler(HWND hwnd) {
     fixImeConversionMode(hwnd);
 }
 
-static bool GET_CAPS_LOCK() {
+static inline bool GET_CAPS_LOCK() {
     return ((GetKeyState(VK_CAPITAL) & 0x0001) != 0);
 }
 
-static void SET_CAPS_LOCK(bool on) {
+static inline void SET_CAPS_LOCK(bool on) {
     if(GET_CAPS_LOCK() != on) {
-        keybd_event(VK_CAPITAL, 0x3a, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
-        keybd_event(VK_CAPITAL, 0x3a, KEYEVENTF_EXTENDEDKEY, 0);
+        keybd_event(VK_CAPITAL, 0, KEYEVENTF_EXTENDEDKEY, 0);
+        keybd_event(VK_CAPITAL, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
     }
 }
 
@@ -194,51 +197,83 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
     case WM_KEYDOWN:
         switch(data->vkCode) {
         case VK_LWIN:
+        {
             if(!winDown) {
                 winAsModifier = false;
                 winDown = true;
             }
-            break;
+            return CallNextHookEx(NULL, nCode, wParam, lParam);
+        }
         case VK_CAPITAL:
-            swapCategory();
+        {
+            if(!data->scanCode) { // sent by software
+                return CallNextHookEx(NULL, nCode, wParam, lParam);
+            }
+            if((!capslockDown)) {
+                capslockDown = true;
+                if(GET_CAPS_LOCK()) {
+                    SET_CAPS_LOCK(false);
+                } else {
+                    capsLockTimer.setTimeout(CAPSLOCK_WAIT_TIME_MS, [&] () { SET_CAPS_LOCK(true); });
+                }
+            }
             return 1;
+        }
         case VK_SPACE:
+        {
             if(winDown) {
+                thread t([&] () { isKeyDown(VK_LCONTROL) ? lastLanguage() : nextLanguage(); });
+                t.detach();
                 SEND_MOCK_KEY(); // must have to be here or start menu will pop in some cases. I blame Microsoft
                 winAsModifier = true;
-                isKeyDown(VK_LCONTROL) ? lastLanguage() : nextLanguage();
                 return 1;
             }
-            break;
+            return CallNextHookEx(NULL, nCode, wParam, lParam);
+        }
         default:
+        {
             if(winDown) {
                 winAsModifier = true;
             }
         }
-        break;
+        }
+        return CallNextHookEx(NULL, nCode, wParam, lParam);
     case WM_KEYUP:
         switch(data->vkCode) {
         case VK_LWIN:
+        {
             winDown = false;
             if(!winAsModifier) {
                 SEND_PT_RUN_HOTKEYS();
             }
-            break;
+            return CallNextHookEx(NULL, nCode, wParam, lParam);
+        }
         case VK_CAPITAL:
+        {
+            if(!data->scanCode) { // sent by software
+                return CallNextHookEx(NULL, nCode, wParam, lParam);
+            }
+            capsLockTimer.stop([&] () { swapCategory(); });
+            capslockDown = false;
             return 1;
+        }
         case VK_RMENU:
+        {
             if(!getPerLanguageMethods(getCurrentLanguage()).onRaltUp()) {
                 return 1;
             }
         }
-        break;
+        }
+        return CallNextHookEx(NULL, nCode, wParam, lParam);
     case WM_SYSKEYDOWN: // yes they use different events for Alt up and down
+    {
         if(data->vkCode == VK_RMENU) {
             if(!getPerLanguageMethods(getCurrentLanguage()).onRaltDown()) {
                 return 1;
             }
         }
-        break;
+        return CallNextHookEx(NULL, nCode, wParam, lParam);
+    }
     }
     return CallNextHookEx(NULL, nCode, wParam, lParam);
 }

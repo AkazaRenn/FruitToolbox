@@ -1,15 +1,18 @@
 #pragma once
 
 #include "Language.h"
+#include <functional>
 
 namespace FruitLanguageSwitcher {
+    using namespace std;
+
     constexpr UINT KEYEVENTF_KEYDOWN = 0;
     constexpr UINT IMC_GETCONVERSIONMODE = 0x1;
     constexpr UINT IMC_SETCONVERSIONMODE = 0x2;
 
-    typedef bool (*keyHandler)(); // return true if the captured key should be passed through
-    typedef bool (*conversionModeGetter)(HWND);
-    typedef void (*conversionModeSetter)(HWND);
+    typedef function<bool(void)> keyHandler; // return true if the captured key should be passed through
+    typedef function<bool(HWND)> conversionModeGetter;
+    typedef function<void(HWND)> conversionModeSetter;
 
     struct PerLanguageMethods {
         keyHandler onRaltDown;
@@ -67,7 +70,7 @@ namespace FruitLanguageSwitcher {
         },
     };
 
-    inline static PerLanguageMethods getPerLanguageMethods(LCID lcid) {
+    inline static PerLanguageMethods& getPerLanguageMethods(LCID lcid) {
         switch(lcid) {
         case zh_TW:
         case zh_CN:
