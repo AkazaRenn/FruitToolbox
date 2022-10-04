@@ -36,8 +36,6 @@ inline constexpr LCID hklToLcid(HKL hkl) {
     keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0); \
 }
 
-#define isKeyDown(nVirtKey) (GetKeyState(nVirtKey) & 0x8000)
-
 void LanguageSwitcher::buildLanguageList() {
     WCHAR buffer[REG_LANGUAGE_MULTI_SZ_MAX_LENGTH];
     DWORD dwLen = sizeof(buffer);
@@ -209,23 +207,27 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
             if(!data->scanCode) { // sent by software
                 return CallNextHookEx(NULL, nCode, wParam, lParam);
             }
-            if((!capslockDown)) {
-                capslockDown = true;
-                if(GET_CAPS_LOCK()) {
-                    SET_CAPS_LOCK(false);
-                } else {
-                    capsLockTimer.setTimeout(CAPSLOCK_WAIT_TIME_MS, [&] () { SET_CAPS_LOCK(true); });
+            thread t([&] () {
+                if((!capslockDown)) {
+                    capslockDown = true;
+                    if(GET_CAPS_LOCK()) {
+                        SET_CAPS_LOCK(false);
+                    } else {
+                        capsLockTimer.setTimeout(CAPSLOCK_WAIT_TIME_MS, [&] () { SET_CAPS_LOCK(true); });
+                    }
                 }
-            }
+                     });
+            t.detach();
             return 1;
         }
         case VK_SPACE:
         {
             if(winDown) {
-                thread t([&] () { isKeyDown(VK_LCONTROL) ? lastLanguage() : nextLanguage(); });
+                thread t([&] () {
+                    winAsModifier = true; 
+                    isKeyDown(VK_LCONTROL) ? lastLanguage() : nextLanguage(); });
                 t.detach();
                 SEND_MOCK_KEY(); // must have to be here or start menu will pop in some cases. I blame Microsoft
-                winAsModifier = true;
                 return 1;
             }
             return CallNextHookEx(NULL, nCode, wParam, lParam);
@@ -253,8 +255,11 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
             if(!data->scanCode) { // sent by software
                 return CallNextHookEx(NULL, nCode, wParam, lParam);
             }
-            capsLockTimer.stop([&] () { swapCategory(); });
             capslockDown = false;
+            thread t([&] () {
+                capsLockTimer.stop([&] () { swapCategory(); });
+                     });
+            t.detach();
             return 1;
         }
         case VK_RMENU:

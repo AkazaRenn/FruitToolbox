@@ -12,7 +12,7 @@ namespace FruitLanguageSwitcher {
     using namespace chrono;
 
     class Timer {
-        atomic<bool> active { false };
+        atomic<bool> active = false;
 
     public:
         template <class Fn> void setTimeout(int delay, Fn&& fn);
@@ -23,14 +23,14 @@ namespace FruitLanguageSwitcher {
     };
 
     template <class Fn> void Timer::setTimeout(int delay, Fn&& fn) {
-        if(active.load()) {
+        if(active) {
             return;
         }
         active = true;
         thread t([&] () {
-            if(!active.load()) return;
+            if(!active) return;
             this_thread::sleep_for(milliseconds(delay));
-            if(!active.load()) return;
+            if(!active) return;
             active = false;
             fn();
                  });
@@ -38,14 +38,14 @@ namespace FruitLanguageSwitcher {
     }
 
     template <class Fn> void Timer::setInterval(int interval, Fn&& fn) {
-        if(active.load()) {
+        if(active) {
             return;
         }
         active = true;
         thread t([&] () {
-            while(active.load()) {
+            while(active) {
                 this_thread::sleep_for(milliseconds(interval));
-                if(!active.load()) return;
+                if(!active) return;
                 fn();
             }
                  });
@@ -53,7 +53,7 @@ namespace FruitLanguageSwitcher {
     }
 
     template <class Fn> void Timer::stop(Fn&& fn) {
-        if(active.load()) {
+        if(active) {
             active = false;
             thread t(fn);
             t.detach();

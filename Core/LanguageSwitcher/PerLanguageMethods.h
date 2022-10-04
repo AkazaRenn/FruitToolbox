@@ -3,6 +3,8 @@
 #include "Language.h"
 #include <functional>
 
+#define isKeyDown(nVirtKey) (GetKeyState(nVirtKey) & 0x8000)
+
 namespace FruitLanguageSwitcher {
     using namespace std;
 
@@ -48,7 +50,13 @@ namespace FruitLanguageSwitcher {
         [] (HWND hwnd) -> bool {
             return false;
         },
+        //[TODO] ctrl + VK_CONVERT will wake the IME config menu which I have no idea why it's designed like that.
+        // Only solution would be hooking LCTRL as well but I don't want to do that.
+        // But... but! If I make further chagnes for GUI and let LWIN up being the only time to apply the language change,
+        // it might be fine by adding a loop waiting for ctrl release.
+        // So yes, [TODO] until switcher GUI implemented.
         [] (HWND hwnd) -> void {
+            // this is the [TODO]: while(isKeyDown(VK_LCONTROL));
             keybd_event(VK_CONVERT, 0, KEYEVENTF_KEYDOWN, 0);
             keybd_event(VK_CONVERT, 0, KEYEVENTF_KEYUP, 0);
         },

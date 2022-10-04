@@ -12,13 +12,13 @@ typedef void(__stdcall* OnLanguageChange)(bool inImeMode, unsigned int languageI
 namespace FruitLanguageSwitcher {
     struct LanguageCategory {
         vector<Language> langs;
-        unsigned int index = 0;
+        atomic<unsigned int> index = 0;
     };
 
     class LanguageSwitcher {
     private:
         LanguageCategory categories[2];
-        bool inImeMode;
+        atomic<bool> inImeMode;
 
         HWINEVENTHOOK windowChangeEvent;
         HHOOK keyboardEvent;
@@ -30,9 +30,9 @@ namespace FruitLanguageSwitcher {
         void fixImeConversionMode(HWND hWnd, LCID language);
 
         // keyboard status
-        bool winDown = false;
-        bool winAsModifier = false;
-        bool capslockDown = false;
+        atomic<bool> winDown = false;
+        atomic<bool> winAsModifier = false;
+        atomic<bool> capslockDown = false;
         Timer capsLockTimer;
 
         // Windows hook related
