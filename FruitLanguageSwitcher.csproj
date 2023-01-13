@@ -45,7 +45,7 @@
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+		<AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
 		<GenerateTestArtifacts>True</GenerateTestArtifacts>
 		<AppxBundle>Auto</AppxBundle>
 		<AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
@@ -58,7 +58,6 @@
 		<ApplicationIcon>Assets\durian.ico</ApplicationIcon>
 		<Nullable>disable</Nullable>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<AppxPackageDir>C:\Users\fraxu\Downloads\</AppxPackageDir>
 	</PropertyGroup>
 
 	<!--

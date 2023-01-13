@@ -208,7 +208,7 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
                 return CallNextHookEx(NULL, nCode, wParam, lParam);
             }
             thread t([&] () {
-                if((!capslockDown)) {
+                if(!capslockDown) {
                     capslockDown = true;
                     if(GET_CAPS_LOCK()) {
                         SET_CAPS_LOCK(false);
