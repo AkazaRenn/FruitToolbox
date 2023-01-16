@@ -23,14 +23,6 @@ extern "C" {
         return s->getCategory();
     }
 
-    DLLEXPORT unsigned int LanguageSwitcher_nextLanguage(LanguageSwitcher* s) {
-        return s->nextLanguage();
-    }
-
-    DLLEXPORT unsigned int LanguageSwitcher_lastLanguage(LanguageSwitcher* s) {
-        return s->lastLanguage();
-    }
-
     DLLEXPORT DWORD LanguageSwitcher_getCurrentLanguage(LanguageSwitcher* s) {
         return s->getCurrentLanguage();
     }

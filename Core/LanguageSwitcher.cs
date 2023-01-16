@@ -21,18 +21,13 @@ namespace FruitLanguageSwitcher.Core {
         [DllImport("LanguageSwitcher")]
         private static extern bool LanguageSwitcher_swapCategory(IntPtr obj);
         public bool swapCategory() => LanguageSwitcher_swapCategory(wrappedObject);
+        public void swapCategoryNoReturn() {
+            LanguageSwitcher_swapCategory(wrappedObject);
+        }
 
         [DllImport("LanguageSwitcher")]
         private static extern bool LanguageSwitcher_getCategory(IntPtr obj);
         public bool getCategory() => LanguageSwitcher_getCategory(wrappedObject);
-
-        [DllImport("LanguageSwitcher")]
-        private static extern uint LanguageSwitcher_nextLanguage(IntPtr obj);
-        public uint nextLanguage() => LanguageSwitcher_nextLanguage(wrappedObject);
-
-        [DllImport("LanguageSwitcher")]
-        private static extern uint LanguageSwitcher_lastLanguage(IntPtr obj);
-        public uint lastLanguage() => LanguageSwitcher_lastLanguage(wrappedObject);
 
         [DllImport("LanguageSwitcher")]
         private static extern uint LanguageSwitcher_getCurrentLanguage(IntPtr obj);

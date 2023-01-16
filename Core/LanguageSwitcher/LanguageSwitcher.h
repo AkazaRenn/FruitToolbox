@@ -51,8 +51,6 @@ namespace FruitLanguageSwitcher {
 
         bool swapCategory();
         bool getCategory();
-        unsigned int nextLanguage();
-        unsigned int lastLanguage();
         LCID getCurrentLanguage();
         bool setCurrentLanguage(LCID lcid); // returns true if lcid is in the list, false otherwise
         vector<LCID> getLanguageList(bool getImeLanguageList);

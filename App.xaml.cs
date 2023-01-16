@@ -26,6 +26,7 @@ namespace FruitLanguageSwitcher {
         public static TaskbarIcon? TrayIcon { get; private set; }
         public static Window? Window { get; set; }
         private static LanguageSwitcher? switcher { get; set; }
+        private static Hotkey? hotkey { get; set; }
 
         #endregion
 
@@ -67,6 +68,7 @@ namespace FruitLanguageSwitcher {
 
         private void InitializeFunction() {
             switcher = new LanguageSwitcher(false);
+            hotkey = new Hotkey(switcher.swapCategoryNoReturn, switcher.reload);
         }
 
         private void ShowHideWindowCommand_ExecuteRequested(object? _, ExecuteRequestedEventArgs args) {

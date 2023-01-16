@@ -67,34 +67,6 @@ bool LanguageSwitcher::swapCategory() {
     return inImeMode;
 }
 
-unsigned int LanguageSwitcher::nextLanguage() {
-    categories[inImeMode].index++;
-    if(categories[inImeMode].index >= categories[inImeMode].langs.size() || categories[inImeMode].index < 0) {
-        categories[inImeMode].index = 0;
-    }
-    updateInputLanguage();
-
-    if(onLanguageChange) {
-        onLanguageChange(inImeMode, categories[inImeMode].index);
-    }
-
-    return categories[inImeMode].index;
-}
-
-unsigned int LanguageSwitcher::lastLanguage() {
-    categories[inImeMode].index--;
-    if(categories[inImeMode].index >= categories[inImeMode].langs.size() || categories[inImeMode].index < 0) {
-        categories[inImeMode].index = categories[inImeMode].langs.size() - 1;
-    }
-    updateInputLanguage();
-
-    if(onLanguageChange) {
-        onLanguageChange(inImeMode, categories[inImeMode].index);
-    }
-
-    return categories[inImeMode].index;
-}
-
 bool LanguageSwitcher::getCategory() {
     return inImeMode;
 }
@@ -220,18 +192,6 @@ LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lPara
             t.detach();
             return 1;
         }
-        case VK_SPACE:
-        {
-            if(winDown) {
-                thread t([&] () {
-                    winAsModifier = true; 
-                    isKeyDown(VK_LCONTROL) ? lastLanguage() : nextLanguage(); });
-                t.detach();
-                SEND_MOCK_KEY(); // must have to be here or start menu will pop in some cases. I blame Microsoft
-                return 1;
-            }
-            return CallNextHookEx(NULL, nCode, wParam, lParam);
-        }
         default:
         {
             if(winDown) {
@@ -304,12 +264,12 @@ LanguageSwitcher::LanguageSwitcher(bool defaultImeMode) {
     updateInputLanguage();
 
     windowChangeEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, LanguageSwitcher::onActiveWindowChange, 0, 0, WINEVENT_OUTOFCONTEXT);
-    keyboardEvent = SetWindowsHookEx(WH_KEYBOARD_LL, onKeyPress, 0, 0);
+    //keyboardEvent = SetWindowsHookEx(WH_KEYBOARD_LL, onKeyPress, 0, 0);
 }
 
 LanguageSwitcher::~LanguageSwitcher() {
     UnhookWinEvent(windowChangeEvent);
-    UnhookWindowsHookEx(keyboardEvent);
+    //UnhookWindowsHookEx(keyboardEvent);
 }
 
 
