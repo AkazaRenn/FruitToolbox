@@ -68,7 +68,7 @@ namespace FruitLanguageSwitcher {
 
         private void InitializeFunction() {
             switcher = new LanguageSwitcher(false);
-            hotkey = new Hotkey(switcher.swapCategoryNoReturn, switcher.reload);
+            hotkey = new Hotkey(switcher.swapCategoryNoReturn, switcher.updateInputLanguage);
         }
 
         private void ShowHideWindowCommand_ExecuteRequested(object? _, ExecuteRequestedEventArgs args) {

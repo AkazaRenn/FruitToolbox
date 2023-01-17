@@ -20,22 +20,6 @@ inline constexpr LCID hklToLcid(HKL hkl) {
     return (long(hkl) & 0xffff);
 }
 
-#define SEND_MOCK_KEY() {                           \
-    keybd_event(0x9F, 0, 0, 0);                     \
-    keybd_event(0x9F, 0, KEYEVENTF_KEYUP, 0);       \
-}
-
-#define SEND_PT_RUN_HOTKEYS() {                     \
-    keybd_event(VK_CONTROL, 0, 0, 0);               \
-    keybd_event(VK_SHIFT, 0, 0, 0);                 \
-    keybd_event(VK_MENU, 0, 0, 0);                  \
-    keybd_event('S', 0, 0, 0);                      \
-    keybd_event('S', 0, KEYEVENTF_KEYUP, 0);        \
-    keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0);    \
-    keybd_event(VK_SHIFT, 0, KEYEVENTF_KEYUP, 0);   \
-    keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0); \
-}
-
 void LanguageSwitcher::buildLanguageList() {
     WCHAR buffer[REG_LANGUAGE_MULTI_SZ_MAX_LENGTH];
     DWORD dwLen = sizeof(buffer);
@@ -150,100 +134,6 @@ void LanguageSwitcher::activeWindowChangeHandler(HWND hwnd) {
     fixImeConversionMode(hwnd);
 }
 
-static inline bool GET_CAPS_LOCK() {
-    return ((GetKeyState(VK_CAPITAL) & 0x0001) != 0);
-}
-
-static inline void SET_CAPS_LOCK(bool on) {
-    if(GET_CAPS_LOCK() != on) {
-        keybd_event(VK_CAPITAL, 0, KEYEVENTF_EXTENDEDKEY, 0);
-        keybd_event(VK_CAPITAL, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
-    }
-}
-
-LRESULT LanguageSwitcher::keyPressHandler(int nCode, WPARAM wParam, LPARAM lParam) {
-    auto data = (PKBDLLHOOKSTRUCT)lParam;
-    switch(wParam) {
-    case WM_KEYDOWN:
-        switch(data->vkCode) {
-        case VK_LWIN:
-        {
-            if(!winDown) {
-                winAsModifier = false;
-                winDown = true;
-            }
-            return CallNextHookEx(NULL, nCode, wParam, lParam);
-        }
-        case VK_CAPITAL:
-        {
-            if(!data->scanCode) { // sent by software
-                return CallNextHookEx(NULL, nCode, wParam, lParam);
-            }
-            thread t([&] () {
-                if(!capslockDown) {
-                    capslockDown = true;
-                    if(GET_CAPS_LOCK()) {
-                        SET_CAPS_LOCK(false);
-                    } else {
-                        capsLockTimer.setTimeout(CAPSLOCK_WAIT_TIME_MS, [&] () { SET_CAPS_LOCK(true); });
-                    }
-                }
-                     });
-            t.detach();
-            return 1;
-        }
-        default:
-        {
-            if(winDown) {
-                winAsModifier = true;
-            }
-        }
-        }
-        return CallNextHookEx(NULL, nCode, wParam, lParam);
-    case WM_KEYUP:
-        switch(data->vkCode) {
-        case VK_LWIN:
-        {
-            winDown = false;
-            if(!winAsModifier) {
-                SEND_PT_RUN_HOTKEYS();
-            }
-            return CallNextHookEx(NULL, nCode, wParam, lParam);
-        }
-        case VK_CAPITAL:
-        {
-            if(!data->scanCode) { // sent by software
-                return CallNextHookEx(NULL, nCode, wParam, lParam);
-            }
-            thread t([&] () {
-                capslockDown = false;
-                capsLockTimer.stop([&] () { swapCategory(); });
-                     });
-            t.detach();
-            return 1;
-        }
-        case VK_RMENU:
-        {
-            if(!getPerLanguageMethods(getCurrentLanguage()).onRaltUp()) {
-                return 1;
-            }
-        }
-        }
-        return CallNextHookEx(NULL, nCode, wParam, lParam);
-    case WM_SYSKEYDOWN: // yes they use different events for Alt up and down
-    {
-        if(data->vkCode == VK_RMENU) {
-            if(!getPerLanguageMethods(getCurrentLanguage()).onRaltDown()) {
-                return 1;
-            }
-        }
-        return CallNextHookEx(NULL, nCode, wParam, lParam);
-    }
-    }
-    return CallNextHookEx(NULL, nCode, wParam, lParam);
-}
-
-
 LanguageSwitcher::LanguageSwitcher() : LanguageSwitcher(false) {}
 
 LanguageSwitcher::LanguageSwitcher(bool defaultImeMode) {
@@ -264,12 +154,10 @@ LanguageSwitcher::LanguageSwitcher(bool defaultImeMode) {
     updateInputLanguage();
 
     windowChangeEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, LanguageSwitcher::onActiveWindowChange, 0, 0, WINEVENT_OUTOFCONTEXT);
-    //keyboardEvent = SetWindowsHookEx(WH_KEYBOARD_LL, onKeyPress, 0, 0);
 }
 
 LanguageSwitcher::~LanguageSwitcher() {
     UnhookWinEvent(windowChangeEvent);
-    //UnhookWindowsHookEx(keyboardEvent);
 }
 
 
@@ -278,12 +166,4 @@ void CALLBACK LanguageSwitcher::onActiveWindowChange(HWINEVENTHOOK hWinEventHook
     if(instance) {
         instance->activeWindowChangeHandler(hwnd);
     }
-}
-
-LRESULT CALLBACK LanguageSwitcher::onKeyPress(int nCode, WPARAM wParam, LPARAM lParam) {
-    if(nCode == HC_ACTION && instance) {
-        return instance->keyPressHandler(nCode, wParam, lParam);
-    }
-
-    return CallNextHookEx(NULL, nCode, wParam, lParam);
 }

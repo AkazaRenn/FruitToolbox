@@ -21,19 +21,11 @@ namespace FruitLanguageSwitcher {
         atomic<bool> inImeMode;
 
         HWINEVENTHOOK windowChangeEvent;
-        HHOOK keyboardEvent;
         OnLanguageChange onLanguageChange = nullptr;
 
         void buildLanguageList();
-        void updateInputLanguage();
         void fixImeConversionMode(HWND hWnd);
         void fixImeConversionMode(HWND hWnd, LCID language);
-
-        // keyboard status
-        atomic<bool> winDown = false;
-        atomic<bool> winAsModifier = false;
-        atomic<bool> capslockDown = false;
-        Timer capsLockTimer;
 
         // Windows hook related
         static LanguageSwitcher* instance;
@@ -42,13 +34,13 @@ namespace FruitLanguageSwitcher {
         static LRESULT CALLBACK onKeyPress(int nCode, WPARAM wParam, LPARAM lParam);
 
         void activeWindowChangeHandler(HWND hwnd);
-        LRESULT keyPressHandler(int nCode, WPARAM wParam, LPARAM lParam);
 
     public:
         explicit LanguageSwitcher(bool defaultImeMode);
         explicit LanguageSwitcher();
         ~LanguageSwitcher();
 
+        void updateInputLanguage();
         bool swapCategory();
         bool getCategory();
         LCID getCurrentLanguage();
