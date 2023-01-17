@@ -92,6 +92,7 @@ namespace FruitLanguageSwitcher {
 
         private void ReloadApplicationCommand_ExecuteRequested(object? _, ExecuteRequestedEventArgs args) {
             switcher.reload();
+            hotkey.Reload();
         }
 
         #endregion

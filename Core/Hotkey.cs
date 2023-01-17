@@ -23,15 +23,25 @@ namespace FruitLanguageSwitcher.Core
             onCapsLock = _onCapsLock;
             onLanguageChange = _onLanguageChange;
 
+            SetUpAhk();
+        }
+
+        public void Reload() {
+            ahk.Reset();
+            SetUpAhk();
+        }
+
+        private void SetUpAhk()
+        {
             IntPtr ptr = Marshal.GetFunctionPointerForDelegate((AHKDelegate)ipcHandler);
             ahk.SetVar("ptr", ptr.ToInt64().ToString());
 
             ahk.SetVar("onCapsLock", onCapsLockMessage.ToString());
             ahk.SetVar("onLanguageChange", onLanguageChangeMessage.ToString());
 
-            ahk.ExecRaw(System.Text.Encoding.Default.GetString(FruitLanguageSwitcher.Properties.Resources.CapsLock));
-            ahk.ExecRaw(System.Text.Encoding.Default.GetString(FruitLanguageSwitcher.Properties.Resources.LanguageChangeMonitor));
-            ahk.ExecRaw(System.Text.Encoding.Default.GetString(FruitLanguageSwitcher.Properties.Resources.WinKeyToPTRun));
+            ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.CapsLock));
+            ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.LanguageChangeMonitor));
+            ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.WinKeyToPTRun));
         }
 
         static private void ipcHandler(int fromAhk) {
