@@ -3,7 +3,6 @@
 #include <vector>
 #include "Language.h"
 #include <map>
-#include "Timer.h"
 
 using namespace std;
 
@@ -24,6 +23,7 @@ namespace FruitLanguageSwitcher {
         OnLanguageChange onLanguageChange = nullptr;
 
         void buildLanguageList();
+        void applyInputLanguage();
         void fixImeConversionMode(HWND hWnd);
         void fixImeConversionMode(HWND hWnd, LCID language);
 

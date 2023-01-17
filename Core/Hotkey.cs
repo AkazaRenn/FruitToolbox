@@ -1,17 +1,16 @@
 ﻿using System;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
+using System.Threading;
 
 using AutoHotkey.Interop;
-
-using FruitLanguageSwitcher.Properties;
 
 namespace FruitLanguageSwitcher.Core
 {
     internal class Hotkey {
         public const int onCapsLockMessage = 1;
         public const int onLanguageChangeMessage = 2;
+                    
+        public const int windowActivateWaitMs = 100;
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void AHKDelegate(int s);
@@ -41,6 +40,8 @@ namespace FruitLanguageSwitcher.Core
                 onCapsLock();
                 break;
             case onLanguageChangeMessage:
+                // wait for the window to actually go back active
+                Thread.Sleep(windowActivateWaitMs);
                 onLanguageChange();
                 break;
             }

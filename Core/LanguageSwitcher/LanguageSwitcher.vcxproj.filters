@@ -27,13 +27,7 @@
     <ClInclude Include="LanguageSwitcher.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Locale.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PerLanguageMethods.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -48,9 +42,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LanguageSwitcher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

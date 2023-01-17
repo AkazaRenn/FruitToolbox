@@ -33,7 +33,7 @@ void LanguageSwitcher::buildLanguageList() {
     }
 }
 
-void LanguageSwitcher::updateInputLanguage() {
+void LanguageSwitcher::applyInputLanguage() {
     auto newLanguage = categories[inImeMode].langs[categories[inImeMode].index];
     auto hwnd = GetForegroundWindow();
     SendMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, newLanguage.getLocaleId());
@@ -41,9 +41,13 @@ void LanguageSwitcher::updateInputLanguage() {
     fixImeConversionMode(hwnd);
 }
 
+void LanguageSwitcher::updateInputLanguage() {
+    activeWindowChangeHandler(GetForegroundWindow());
+}
+
 bool LanguageSwitcher::swapCategory() {
     inImeMode = !inImeMode;
-    updateInputLanguage();
+    applyInputLanguage();
 
     if(onLanguageChange) {
         onLanguageChange(inImeMode, categories[inImeMode].index);
@@ -151,7 +155,7 @@ LanguageSwitcher::LanguageSwitcher(bool defaultImeMode) {
         }
     }
 
-    updateInputLanguage();
+    applyInputLanguage();
 
     windowChangeEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, LanguageSwitcher::onActiveWindowChange, 0, 0, WINEVENT_OUTOFCONTEXT);
 }

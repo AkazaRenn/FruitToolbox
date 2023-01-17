@@ -152,10 +152,8 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="Language.h" />
     <ClInclude Include="LanguageSwitcher.h" />
-    <ClInclude Include="Locale.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PerLanguageMethods.h" />
-    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -167,7 +165,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
