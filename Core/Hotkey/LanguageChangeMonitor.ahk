@@ -2,5 +2,5 @@
 ~<#+Space::
 ~<#Space::
     KeyWait, LWin, U
-    SendPipeMessage(OnLanguageChange)
+    DllCall(ptr, "Int", onLanguageChange)
 Return

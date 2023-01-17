@@ -7,7 +7,7 @@ CapsLock::
             SetCapsLockState On
             KeyWait, CapsLock, U
         } else {
-           SendPipeMessage(OnCapsLock)
+            DllCall(ptr, "Int", onCapsLock)
         }
     }
 Return
