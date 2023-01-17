@@ -7,8 +7,8 @@ using namespace FruitLanguageSwitcher;
 #define DLLEXPORT __declspec(dllexport)
 
 extern "C" {
-    DLLEXPORT void* LanguageSwitcher_new(bool defaultImeMode) {
-        return (void*)new LanguageSwitcher(defaultImeMode);
+    DLLEXPORT void* LanguageSwitcher_new() {
+        return (void*)new LanguageSwitcher();
     }
 
     DLLEXPORT void LanguageSwitcher_delete(LanguageSwitcher* s) {
@@ -34,25 +34,5 @@ extern "C" {
     DLLEXPORT bool LanguageSwitcher_setCurrentLanguage(LanguageSwitcher* s,
                                                        DWORD newLanguage) {
         return s->setCurrentLanguage(newLanguage);
-    }
-
-    DLLEXPORT unsigned int LanguageSwitcher_getLanguageList(LanguageSwitcher* s,
-                                                            bool isImeLanguageList,
-                                                            DWORD* list) {
-        auto langVec = s->getLanguageList(isImeLanguageList);
-        list = &(langVec[0]);
-        return langVec.size();
-    }
-
-    DLLEXPORT void LanguageSwitcher_orderLanguageList(LanguageSwitcher* s,
-                                                      bool isImeLanguageList,
-                                                      DWORD* list,
-                                                      unsigned int n) {
-        s->orderLanguageList(isImeLanguageList, vector<LCID>(list, list + n));
-    }
-
-    DLLEXPORT void LanguageSwitcher_setOnLanguageChange(LanguageSwitcher* s,
-                                                        OnLanguageChange handler) {
-        s->setOnLanguageChange(handler);
     }
 }

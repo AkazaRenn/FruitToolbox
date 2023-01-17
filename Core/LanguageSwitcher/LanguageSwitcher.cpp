@@ -20,23 +20,9 @@ inline constexpr LCID hklToLcid(HKL hkl) {
     return (long(hkl) & 0xffff);
 }
 
-void LanguageSwitcher::buildLanguageList() {
-    WCHAR buffer[REG_LANGUAGE_MULTI_SZ_MAX_LENGTH];
-    DWORD dwLen = sizeof(buffer);
-    RegGetValue(HKEY_CURRENT_USER, REG_LANGUAGES_DIR, REG_LANGUAGES_KEY, RRF_RT_REG_MULTI_SZ, NULL, buffer, &dwLen);
-
-    for(size_t i = 0; (buffer[i] != L'\0' && i < REG_LANGUAGE_MULTI_SZ_MAX_LENGTH); i++) {
-        auto newLang = Language(buffer + i);
-        newLang.isImeLanguage() ? categories[1].langs.push_back(newLang) : categories[0].langs.push_back(newLang);
-
-        i += wcslen(buffer + i);
-    }
-}
-
 void LanguageSwitcher::applyInputLanguage() {
-    auto newLanguage = categories[inImeMode].langs[categories[inImeMode].index];
     auto hwnd = GetForegroundWindow();
-    SendMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, newLanguage.getLocaleId());
+    SendMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, activeLanguages[inImeMode].getLocaleId());
 
     fixImeConversionMode(hwnd);
 }
@@ -48,10 +34,6 @@ void LanguageSwitcher::updateInputLanguage() {
 bool LanguageSwitcher::swapCategory() {
     inImeMode = !inImeMode;
     applyInputLanguage();
-
-    if(onLanguageChange) {
-        onLanguageChange(inImeMode, categories[inImeMode].index);
-    }
     return inImeMode;
 }
 
@@ -60,26 +42,19 @@ bool LanguageSwitcher::getCategory() {
 }
 
 LCID LanguageSwitcher::getCurrentLanguage() {
-    return categories[inImeMode].langs[categories[inImeMode].index].getLocaleId();
+    return activeLanguages[inImeMode].getLocaleId();
 }
 
 bool LanguageSwitcher::setCurrentLanguage(LCID lcid) {
-    if(getCurrentLanguage() != lcid) {
-        for(unsigned int i = 0; i < (sizeof(categories) / sizeof(categories[0])); i++) {
-            for(unsigned int j = 0; j < categories[i].langs.size(); j++) {
-                if(categories[i].langs[j].getLocaleId() == lcid) {
-                    inImeMode = i;
-                    categories[i].index = j;
-                    if(onLanguageChange) {
-                        onLanguageChange(inImeMode, categories[inImeMode].index);
-                    }
-                    return true;
-                }
-            }
-        }
+    if(languageList.find(lcid) == languageList.end()) {
+        return false;
+    }
+    else if(getCurrentLanguage() != lcid) {
+        inImeMode = languageList[lcid].isImeLanguage();
+        activeLanguages[inImeMode] = languageList[lcid];
     }
 
-    return false;
+    return true;
 }
 
 //[TODO] handle focused box change within the same app (like Edge webpages)
@@ -95,41 +70,8 @@ void LanguageSwitcher::fixImeConversionMode(HWND hWnd, LCID language) {
 }
 
 void LanguageSwitcher::fixImeConversionMode(HWND hWnd) {
-    if(categories[inImeMode].langs[categories[inImeMode].index].isImeLanguage()) {
-        fixImeConversionMode(hWnd, categories[inImeMode].langs[categories[inImeMode].index].getLocaleId());
-    }
-}
-
-
-vector<LCID> LanguageSwitcher::getLanguageList(bool getImeLanguageList) {
-    vector<LCID> languageList;
-
-    for(auto& lang : categories[getImeLanguageList].langs) {
-        languageList.push_back(lang.getLocaleId());
-    }
-
-    return languageList;
-}
-
-void LanguageSwitcher::setOnLanguageChange(OnLanguageChange handler) {
-    onLanguageChange = handler;
-}
-
-bool LanguageSwitcher::registerHotkeys() {
-    return false;
-}
-
-void LanguageSwitcher::orderLanguageList(bool isImeLanguageList,
-                                         vector<LCID> list) {
-    for(int i = list.size() - 1; i >= 0; i--) {
-        auto currentLanguageList = getLanguageList(true);
-        auto it = find(currentLanguageList.begin(), currentLanguageList.end(), list[i]);
-        if(it != currentLanguageList.end()) {
-            auto actualIterator = categories[true].langs.begin() + (it - currentLanguageList.begin());
-            auto temp = *actualIterator;
-            categories[true].langs.erase(actualIterator);
-            categories[true].langs.insert(categories[true].langs.begin(), temp);
-        }
+    if(activeLanguages[inImeMode].isImeLanguage()) {
+        fixImeConversionMode(hWnd, activeLanguages[inImeMode].getLocaleId());
     }
 }
 
@@ -138,22 +80,32 @@ void LanguageSwitcher::activeWindowChangeHandler(HWND hwnd) {
     fixImeConversionMode(hwnd);
 }
 
-LanguageSwitcher::LanguageSwitcher() : LanguageSwitcher(false) {}
-
-LanguageSwitcher::LanguageSwitcher(bool defaultImeMode) {
+LanguageSwitcher::LanguageSwitcher() {
     instance = this;
     if(instance != this) {
         return;
     }
 
-    inImeMode = defaultImeMode;
-    buildLanguageList();
+    WCHAR buffer[REG_LANGUAGE_MULTI_SZ_MAX_LENGTH];
+    DWORD dwLen = sizeof(buffer);
+    RegGetValue(HKEY_CURRENT_USER, REG_LANGUAGES_DIR, REG_LANGUAGES_KEY, RRF_RT_REG_MULTI_SZ, NULL, buffer, &dwLen);
 
-    for(auto& cate : categories) {
-        if(cate.langs.empty()) {
-            exit(0); // you don't need it
+    for(size_t i = 0; (buffer[i] != L'\0' && i < REG_LANGUAGE_MULTI_SZ_MAX_LENGTH); i++) {
+        auto newLang = Language(buffer + i);
+
+        if(activeLanguages.size() == 0) {
+            activeLanguages.push_back(newLang);
+            inImeMode = newLang.isImeLanguage();
         }
+        else if((activeLanguages.size() == 1)&&(inImeMode != newLang.isImeLanguage())) {
+            activeLanguages.push_back(newLang);
+        }
+
+        languageList[newLang.getLocaleId()] = newLang;
+
+        i += wcslen(buffer + i);
     }
+
 
     applyInputLanguage();
 

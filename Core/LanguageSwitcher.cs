@@ -6,8 +6,8 @@ namespace FruitLanguageSwitcher.Core {
         private IntPtr wrappedObject;
 
         [DllImport("LanguageSwitcher")]
-        private static extern IntPtr LanguageSwitcher_new(bool defaultImeMode);
-        public LanguageSwitcher(bool defaultImeMode) => wrappedObject = LanguageSwitcher_new(defaultImeMode);
+        private static extern IntPtr LanguageSwitcher_new();
+        public LanguageSwitcher() => wrappedObject = LanguageSwitcher_new();
 
         [DllImport("LanguageSwitcher")]
         private static extern void LanguageSwitcher_delete(IntPtr obj);
@@ -15,7 +15,7 @@ namespace FruitLanguageSwitcher.Core {
 
         public void reload() {
             LanguageSwitcher_delete(wrappedObject);
-            wrappedObject = LanguageSwitcher_new(false);
+            wrappedObject = LanguageSwitcher_new();
         }
 
         [DllImport("LanguageSwitcher")]
@@ -50,11 +50,5 @@ namespace FruitLanguageSwitcher.Core {
         [DllImport("LanguageSwitcher")]
         private static extern void LanguageSwitcher_orderLanguageList(IntPtr obj, bool isImeLanguageList, uint[] list, uint n);
         public void orderLanguageList(bool isImeLanguageList, uint[] list) => LanguageSwitcher_orderLanguageList(wrappedObject, isImeLanguageList, list, (uint)list.Length);
-
-        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        public delegate void OnLanguageChange(bool inImeMode, uint index);
-        [DllImport("LanguageSwitcher")]
-        private static extern void LanguageSwitcher_setOnLanguageChange(IntPtr obj, OnLanguageChange handler);
-        public void setOnLanguageChange(OnLanguageChange handler) => LanguageSwitcher_setOnLanguageChange(wrappedObject, handler);
     }
 }

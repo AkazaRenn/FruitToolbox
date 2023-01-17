@@ -37,6 +37,7 @@ namespace FruitLanguageSwitcher {
         wstring localeName;
 
     public:
+        explicit Language();
         explicit Language(LCID localeId);
         explicit Language(WCHAR* localeName);
         explicit Language(const WCHAR* localeName);
