@@ -12,7 +12,7 @@ namespace FruitLanguageSwitcher {
     constexpr UINT IMC_GETCONVERSIONMODE = 0x1;
     constexpr UINT IMC_SETCONVERSIONMODE = 0x2;
 
-    typedef function<bool(void)> keyHandler; // return true if the captured key should be passed through
+    typedef function<void(void)> keyHandler; // return true if the captured key should be passed through
     typedef function<bool(HWND)> conversionModeGetter;
     typedef function<void(HWND)> conversionModeSetter;
 
@@ -24,13 +24,13 @@ namespace FruitLanguageSwitcher {
     };
 
     static PerLanguageMethods NonImeLanguageMethods = {
-        []()-> bool {
-            keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYDOWN, 0); // RAlt to AltGr
-            return true;
+        []()-> void {
+            keybd_event(VK_RMENU, 0, KEYEVENTF_KEYDOWN, 0); // RAlt to AltGr
+            keybd_event(VK_RCONTROL, 0, KEYEVENTF_KEYDOWN, 0); // RAlt to AltGr
         },
-        [] ()-> bool {
+        [] ()-> void {
             keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
-            return true;
+            keybd_event(VK_RMENU, 0, KEYEVENTF_KEYUP, 0);
         },
         [] (HWND hwnd) -> bool {
             return true;
@@ -39,36 +39,26 @@ namespace FruitLanguageSwitcher {
     };
 
     static PerLanguageMethods JapaneseMethods = {
-        []() -> bool {
+        []() -> void {
             keybd_event(VK_NONCONVERT, 0, KEYEVENTF_KEYDOWN, 0);
-            return false;
         },
-        [] () -> bool {
+        [] () -> void {
             keybd_event(VK_NONCONVERT, 0, KEYEVENTF_KEYUP, 0);
-            return false;
         },
         [] (HWND hwnd) -> bool {
             return false;
         },
-        //[TODO] ctrl + VK_CONVERT will wake the IME config menu which I have no idea why it's designed like that.
-        // Only solution would be hooking LCTRL as well but I don't want to do that.
-        // But... but! If I make further chagnes for GUI and let LWIN up being the only time to apply the language change,
-        // it might be fine by adding a loop waiting for ctrl release.
-        // So yes, [TODO] until switcher GUI implemented.
         [] (HWND hwnd) -> void {
-            // this is the [TODO]: while(isKeyDown(VK_LCONTROL));
-            keybd_event(VK_CONVERT, 0, KEYEVENTF_KEYDOWN, 0);
-            keybd_event(VK_CONVERT, 0, KEYEVENTF_KEYUP, 0);
+            keybd_event(VK_IME_ON, 0, KEYEVENTF_KEYDOWN, 0);
+            keybd_event(VK_IME_ON, 0, KEYEVENTF_KEYUP, 0);
         },
     };
 
     constexpr UINT ChineseImeConversionModeCode = 1;
     static PerLanguageMethods ChineseMethods {
-        []() -> bool {
-            return true;
+        []() -> void {
         },
-        [] () -> bool {
-            return true;
+        [] () -> void {
         },
         [] (HWND hwnd) -> bool {
             return SendMessage(ImmGetDefaultIMEWnd(hwnd), WM_IME_CONTROL, IMC_GETCONVERSIONMODE, 0) == ChineseImeConversionModeCode;

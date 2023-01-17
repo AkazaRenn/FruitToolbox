@@ -9,7 +9,9 @@ namespace FruitLanguageSwitcher.Core
     internal class Hotkey {
         public const int onCapsLockMessage = 1;
         public const int onLanguageChangeMessage = 2;
-                    
+        public const int onRaltDownMessage = 3;
+        public const int onRaltUpMessage = 4;
+
         public const int windowActivateWaitMs = 500;
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -18,10 +20,14 @@ namespace FruitLanguageSwitcher.Core
         private readonly AutoHotkeyEngine ahk = AutoHotkeyEngine.Instance;
         private static Action onCapsLock;
         private static Action onLanguageChange;
+        private static Action onRaltDown;
+        private static Action onRaltUp;
 
-        public Hotkey(Action _onCapsLock, Action _onLanguageChange) {
+        public Hotkey(Action _onCapsLock, Action _onLanguageChange, Action _onRaltDown, Action _onRaltUp) {
             onCapsLock = _onCapsLock;
             onLanguageChange = _onLanguageChange;
+            onRaltDown = _onRaltDown;
+            onRaltUp = _onRaltUp;
 
             SetUpAhk();
         }
@@ -38,10 +44,13 @@ namespace FruitLanguageSwitcher.Core
 
             ahk.SetVar("onCapsLock", onCapsLockMessage.ToString());
             ahk.SetVar("onLanguageChange", onLanguageChangeMessage.ToString());
+            ahk.SetVar("onRaltDown", onRaltDownMessage.ToString());
+            ahk.SetVar("onRaltUp", onRaltUpMessage.ToString());
 
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.CapsLock));
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.LanguageChangeMonitor));
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.WinKeyToPTRun));
+            ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.RAltModifier));
         }
 
         static private void ipcHandler(int fromAhk) {
@@ -53,6 +62,12 @@ namespace FruitLanguageSwitcher.Core
                 // wait for the window to actually go back active
                 Thread.Sleep(windowActivateWaitMs);
                 onLanguageChange();
+                break;
+            case onRaltDownMessage:
+                onRaltDown();
+                break;
+            case onRaltUpMessage:
+                onRaltUp();
                 break;
             }
         }

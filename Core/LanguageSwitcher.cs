@@ -50,5 +50,17 @@ namespace FruitLanguageSwitcher.Core {
         [DllImport("LanguageSwitcher")]
         private static extern void LanguageSwitcher_orderLanguageList(IntPtr obj, bool isImeLanguageList, uint[] list, uint n);
         public void orderLanguageList(bool isImeLanguageList, uint[] list) => LanguageSwitcher_orderLanguageList(wrappedObject, isImeLanguageList, list, (uint)list.Length);
+
+        [DllImport("LanguageSwitcher")]
+        private static extern void LanguageSwitcher_onRaltDown(IntPtr obj);
+        public void onRaltDown() {
+            LanguageSwitcher_onRaltDown(wrappedObject);
+        }
+
+        [DllImport("LanguageSwitcher")]
+        private static extern void LanguageSwitcher_onRaltUp(IntPtr obj);
+        public void onRaltUp() {
+            LanguageSwitcher_onRaltUp(wrappedObject);
+        }
     }
 }

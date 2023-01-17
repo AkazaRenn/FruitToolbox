@@ -1,4 +1,4 @@
-CapsLock::
+$CapsLock::
     If (GetKeyState("CapsLock", "T")) {
         SetCapsLockState Off
     } else {

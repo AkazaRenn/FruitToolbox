@@ -35,4 +35,12 @@ extern "C" {
                                                        DWORD newLanguage) {
         return s->setCurrentLanguage(newLanguage);
     }
+
+    DLLEXPORT void LanguageSwitcher_onRaltDown(LanguageSwitcher* s) {
+        return s->onRaltDown();
+    }
+
+    DLLEXPORT void LanguageSwitcher_onRaltUp(LanguageSwitcher* s) {
+        return s->onRaltUp();
+    }
 }

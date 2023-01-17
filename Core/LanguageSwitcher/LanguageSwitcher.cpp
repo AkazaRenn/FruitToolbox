@@ -10,7 +10,8 @@ constexpr size_t             REG_LANGUAGE_MULTI_SZ_MAX_LENGTH = 1024;
 constexpr LPCWSTR            REG_LANGUAGES_DIR = L"Control Panel\\International\\User Profile";
 constexpr LPCWSTR            REG_LANGUAGES_KEY = L"Languages";
 
-constexpr UINT               MAX_RETRY_TIMES = 1;
+constexpr UINT               MAX_RETRY_TIMES = 2;
+constexpr UINT               RETRY_WAIT_MS = 50;
 
 inline constexpr LCID hklToLcid(HKL hkl) {
     return (UINT64(hkl) & 0xffff);
@@ -66,7 +67,7 @@ void LanguageSwitcher::fixImeConversionMode(HWND hWnd, LCID language) {
     auto perLangMethods = getPerLanguageMethods(language);
     while((!perLangMethods.inConversionMode(hWnd)) && (retryCount++ <= MAX_RETRY_TIMES)) {
         perLangMethods.fixConversionMode(hWnd);
-        Sleep(1000);
+        Sleep(RETRY_WAIT_MS);
     }
 }
 
@@ -74,6 +75,14 @@ void LanguageSwitcher::fixImeConversionMode(HWND hWnd) {
     if(languageList[activeLanguages[inImeMode]].isImeLanguage()) {
         fixImeConversionMode(hWnd, activeLanguages[inImeMode]);
     }
+}
+
+void LanguageSwitcher::onRaltDown() {
+    getPerLanguageMethods(activeLanguages[inImeMode]).onRaltDown();
+}
+
+void LanguageSwitcher::onRaltUp() {
+    getPerLanguageMethods(activeLanguages[inImeMode]).onRaltUp();
 }
 
 LanguageSwitcher::LanguageSwitcher() {
