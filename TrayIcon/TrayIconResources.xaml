@@ -36,21 +36,12 @@
     <tb:TaskbarIcon
         x:Key="TrayIcon"
         Visibility="Visible"
+        IconSource="/Assets/durian.ico"
         ContextMenuMode="PopupMenu"
         NoLeftClickDelay="True"
         MenuActivation="RightClick"
         ToolTipText="Fruit Language Switcher"
         >
-        <tb:TaskbarIcon.GeneratedIcon>
-            <tb:GeneratedIcon
-                Text="❤"
-                Foreground="Red"
-                FontFamily="Segoe UI Emoji"
-                Background="AliceBlue"
-                FontWeight="Bold"
-                FontSize="38"
-                />
-        </tb:TaskbarIcon.GeneratedIcon>
         <tb:TaskbarIcon.ContextFlyout>
             <MenuFlyout>
                 <MenuFlyoutItem Command="{StaticResource ReloadApplicationCommand}" />
