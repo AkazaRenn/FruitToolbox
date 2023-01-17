@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "LanguageSwitcher.h"
 #include "PerLanguageMethods.h"
-#include <vector>
-#include <thread>
 
 #pragma comment(lib, "imm32")
 
@@ -14,21 +12,24 @@ constexpr LPCWSTR            REG_LANGUAGES_KEY = L"Languages";
 
 constexpr UINT               MAX_RETRY_TIMES = 1;
 
-constexpr UINT               CAPSLOCK_WAIT_TIME_MS = 500;
-
 inline constexpr LCID hklToLcid(HKL hkl) {
-    return (long(hkl) & 0xffff);
+    return (UINT64(hkl) & 0xffff);
 }
 
 void LanguageSwitcher::applyInputLanguage() {
     auto hwnd = GetForegroundWindow();
-    SendMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, activeLanguages[inImeMode].getLocaleId());
+    SendMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, activeLanguages[inImeMode]);
 
     fixImeConversionMode(hwnd);
 }
 
 void LanguageSwitcher::updateInputLanguage() {
-    activeWindowChangeHandler(GetForegroundWindow());
+    updateInputLanguage(GetForegroundWindow());
+}
+
+void LanguageSwitcher::updateInputLanguage(HWND hwnd) {
+    setCurrentLanguage(hklToLcid(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))));
+    fixImeConversionMode(hwnd);
 }
 
 bool LanguageSwitcher::swapCategory() {
@@ -42,7 +43,7 @@ bool LanguageSwitcher::getCategory() {
 }
 
 LCID LanguageSwitcher::getCurrentLanguage() {
-    return activeLanguages[inImeMode].getLocaleId();
+    return activeLanguages[inImeMode];
 }
 
 bool LanguageSwitcher::setCurrentLanguage(LCID lcid) {
@@ -51,7 +52,7 @@ bool LanguageSwitcher::setCurrentLanguage(LCID lcid) {
     }
     else if(getCurrentLanguage() != lcid) {
         inImeMode = languageList[lcid].isImeLanguage();
-        activeLanguages[inImeMode] = languageList[lcid];
+        activeLanguages[inImeMode] = languageList[lcid].getLocaleId();
     }
 
     return true;
@@ -65,19 +66,14 @@ void LanguageSwitcher::fixImeConversionMode(HWND hWnd, LCID language) {
     auto perLangMethods = getPerLanguageMethods(language);
     while((!perLangMethods.inConversionMode(hWnd)) && (retryCount++ <= MAX_RETRY_TIMES)) {
         perLangMethods.fixConversionMode(hWnd);
-        Sleep(50);
+        Sleep(1000);
     }
 }
 
 void LanguageSwitcher::fixImeConversionMode(HWND hWnd) {
-    if(activeLanguages[inImeMode].isImeLanguage()) {
-        fixImeConversionMode(hWnd, activeLanguages[inImeMode].getLocaleId());
+    if(languageList[activeLanguages[inImeMode]].isImeLanguage()) {
+        fixImeConversionMode(hWnd, activeLanguages[inImeMode]);
     }
-}
-
-void LanguageSwitcher::activeWindowChangeHandler(HWND hwnd) {
-    setCurrentLanguage(hklToLcid(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))));
-    fixImeConversionMode(hwnd);
 }
 
 LanguageSwitcher::LanguageSwitcher() {
@@ -93,19 +89,18 @@ LanguageSwitcher::LanguageSwitcher() {
     for(size_t i = 0; (buffer[i] != L'\0' && i < REG_LANGUAGE_MULTI_SZ_MAX_LENGTH); i++) {
         auto newLang = Language(buffer + i);
 
-        if(activeLanguages.size() == 0) {
-            activeLanguages.push_back(newLang);
+        if((activeLanguages[false] == 0) && (activeLanguages[true] == 0)) {
             inImeMode = newLang.isImeLanguage();
+            activeLanguages[inImeMode] = newLang.getLocaleId();
         }
-        else if((activeLanguages.size() == 1)&&(inImeMode != newLang.isImeLanguage())) {
-            activeLanguages.push_back(newLang);
+        else if((activeLanguages[!inImeMode] == 0) && (inImeMode != newLang.isImeLanguage())) {
+            activeLanguages[!inImeMode] = newLang.getLocaleId();
         }
 
         languageList[newLang.getLocaleId()] = newLang;
 
         i += wcslen(buffer + i);
     }
-
 
     applyInputLanguage();
 
@@ -120,6 +115,6 @@ LanguageSwitcher::~LanguageSwitcher() {
 LanguageSwitcher* LanguageSwitcher::instance;
 void CALLBACK LanguageSwitcher::onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if(instance && hwnd == GetForegroundWindow()) {
-        instance->activeWindowChangeHandler(hwnd);
+        instance->updateInputLanguage(hwnd);
     }
 }

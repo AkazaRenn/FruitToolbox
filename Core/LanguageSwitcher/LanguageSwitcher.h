@@ -10,10 +10,8 @@ namespace FruitLanguageSwitcher {
     class LanguageSwitcher {
     private:
         map<LCID, Language> languageList;
-        vector<Language> activeLanguages;
+        atomic<LCID> activeLanguages[2];
         atomic<bool> inImeMode;
-
-        HWINEVENTHOOK windowChangeEvent;
 
         void applyInputLanguage();
         void fixImeConversionMode(HWND hWnd);
@@ -21,8 +19,10 @@ namespace FruitLanguageSwitcher {
 
         // Windows hook related
         static LanguageSwitcher* instance;
+
+        HWINEVENTHOOK windowChangeEvent;
         static void CALLBACK onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-        void activeWindowChangeHandler(HWND hwnd);
+        void updateInputLanguage(HWND hwnd);
 
     public:
         explicit LanguageSwitcher();
