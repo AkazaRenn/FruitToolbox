@@ -10,7 +10,7 @@ namespace FruitLanguageSwitcher.Core
         public const int onCapsLockMessage = 1;
         public const int onLanguageChangeMessage = 2;
                     
-        public const int windowActivateWaitMs = 100;
+        public const int windowActivateWaitMs = 200;
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void AHKDelegate(int s);

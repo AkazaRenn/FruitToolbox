@@ -167,7 +167,7 @@ LanguageSwitcher::~LanguageSwitcher() {
 
 LanguageSwitcher* LanguageSwitcher::instance;
 void CALLBACK LanguageSwitcher::onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    if(instance) {
+    if(instance && hwnd == GetForegroundWindow()) {
         instance->activeWindowChangeHandler(hwnd);
     }
 }
