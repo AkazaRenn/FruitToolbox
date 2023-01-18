@@ -24,7 +24,7 @@ namespace FruitLanguageSwitcher.Core {
 
         [DllImport("LanguageSwitcher")]
         private static extern void LanguageSwitcher_updateInputLanguage(IntPtr obj);
-        public void updateInputLanguage() {
+        public void UpdateInputLanguage() {
             LanguageSwitcher_updateInputLanguage(wrappedObject);
         }
 

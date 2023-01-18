@@ -13,7 +13,7 @@ constexpr LPCWSTR            REG_LANGUAGES_KEY = L"Languages";
 constexpr UINT               MAX_TRY_TIMES = 2;
 constexpr UINT               RETRY_WAIT_MS = 50;
 
-inline constexpr LCID hklToLcid(HKL hkl) {
+inline LCID hklToLcid(HKL hkl) {
     return (UINT64(hkl) & 0xffff);
 }
 
