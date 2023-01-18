@@ -52,7 +52,6 @@ namespace FruitLanguageSwitcher {
         protected override void OnLaunched(LaunchActivatedEventArgs args) {
             InitializeTrayIcon();
             InitializeFunction();
-            CheckStartup();
         }
 
         private void InitializeTrayIcon() {
@@ -70,10 +69,21 @@ namespace FruitLanguageSwitcher {
             switcher = new LanguageSwitcher();
             if(!switcher.Ready()) {
                 SwitcherNotReady();
+                return;
             }
 
             hotkey = new Hotkey(switcher.SwapCategoryNoReturn, switcher.updateInputLanguage,
                                 switcher.OnRaltDown, switcher.OnRaltUp);
+
+            RegisterStartup();
+        }
+
+        private static async void RegisterStartup() {
+            StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
+            if(startupTask.State == StartupTaskState.Disabled) {
+                // Task is disabled but can be enabled
+                await startupTask.RequestEnableAsync();
+            }
         }
 
         private void SwitcherNotReady() {
@@ -86,25 +96,11 @@ namespace FruitLanguageSwitcher {
             ExitApp();
         }
 
-        private void ShowHideWindowCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
-            if(Window == null) {
-                Window = new Window();
-                Window.Show();
-                return;
-            }
-
-            if(Window.Visible) {
-                Window.Hide();
-            } else {
-                Window.Show();
-            }
-        }
-
         private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
             ExitApp();
         }
 
-        private void ExitApp() {
+        private static void ExitApp() {
             TrayIcon?.Dispose();
             Window?.Close();
         }
@@ -112,32 +108,6 @@ namespace FruitLanguageSwitcher {
         private void ReloadApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
             switcher.Reload();
             hotkey.Reload();
-        }
-
-        #endregion
-
-        #region Startup Checker
-
-        private static async void CheckStartup() {
-            StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
-
-            ToastNotificationManagerCompat.OnActivated += async toastArgs => {
-                // Obtain the arguments from the notification
-                ToastArguments args = ToastArguments.Parse(toastArgs.Argument);
-                if(args.Contains("TOAST_REGISTER_STARTUP")) {
-                    StartupTaskState newState = await startupTask.RequestEnableAsync();
-                }
-            };
-
-            if(startupTask.State == StartupTaskState.Disabled) {
-                // Task is disabled but can be enabled
-                new ToastContentBuilder()
-                        .AddText("Would you like the app to start with Windows logging?")
-                        .AddText("You can disable this notification if you want, or turn off startup in settings.")
-                        .AddButton("Yes", ToastActivationType.Background, "TOAST_REGISTER_STARTUP")
-                        .AddButton("No", ToastActivationType.Background, "TOAST_DISABLE_STARTUP")
-                        .Show();
-            }
         }
 
         #endregion
