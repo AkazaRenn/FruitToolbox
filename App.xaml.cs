@@ -1,3 +1,5 @@
+using System;
+
 using FruitLanguageSwitcher.Core;
 
 using H.NotifyIcon;
@@ -6,12 +8,7 @@ using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
 
-using System;
-using System.Diagnostics;
-
 using Windows.ApplicationModel;
-using Windows.Foundation.Collections;
-using Windows.UI.Popups;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -72,7 +69,7 @@ namespace FruitLanguageSwitcher {
                 SwitcherNotReady();
             }
 
-            hotkey = new Hotkey(switcher.SwapCategoryNoReturn, switcher.updateInputLanguage,
+            hotkey = new Hotkey(switcher.SwapCategoryNoReturn, switcher.UpdateInputLanguage,
                                 switcher.OnRaltDown, switcher.OnRaltUp);
         }
 
