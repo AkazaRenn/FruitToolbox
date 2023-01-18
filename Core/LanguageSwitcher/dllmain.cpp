@@ -15,6 +15,10 @@ extern "C" {
         delete s;
     }
 
+    DLLEXPORT bool LanguageSwitcher_ready(LanguageSwitcher* s) {
+        return s->ready();
+    }
+
     DLLEXPORT void LanguageSwitcher_updateInputLanguage(LanguageSwitcher* s) {
         s->updateInputLanguage();
     }

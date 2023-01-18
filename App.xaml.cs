@@ -23,10 +23,10 @@ namespace FruitLanguageSwitcher {
     public partial class App: Application {
         #region Properties
 
-        public static TaskbarIcon? TrayIcon { get; private set; }
-        public static Window? Window { get; set; }
-        private static LanguageSwitcher? switcher { get; set; }
-        private static Hotkey? hotkey { get; set; }
+        public static TaskbarIcon TrayIcon { get; private set; }
+        public static Window Window { get; set; }
+        private static LanguageSwitcher switcher { get; set; }
+        private static Hotkey hotkey { get; set; }
 
         #endregion
 
@@ -68,11 +68,25 @@ namespace FruitLanguageSwitcher {
 
         private void InitializeFunction() {
             switcher = new LanguageSwitcher();
-            hotkey = new Hotkey(switcher.swapCategoryNoReturn, switcher.updateInputLanguage,
-                                switcher.onRaltDown, switcher.onRaltUp);
+            if(!switcher.Ready()) {
+                SwitcherNotReady();
+            }
+
+            hotkey = new Hotkey(switcher.SwapCategoryNoReturn, switcher.updateInputLanguage,
+                                switcher.OnRaltDown, switcher.OnRaltUp);
         }
 
-        private void ShowHideWindowCommand_ExecuteRequested(object? _, ExecuteRequestedEventArgs args) {
+        private void SwitcherNotReady() {
+            new ToastContentBuilder()
+                .AddText("Exiting, you don't really need the app")
+                .AddText("It is for those who have both keyboard languages and IME languages installed.")
+                .AddText("All your needs can be satisfied by native Windows functions.")
+                .Show();
+
+            ExitApp();
+        }
+
+        private void ShowHideWindowCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
             if(Window == null) {
                 Window = new Window();
                 Window.Show();
@@ -86,13 +100,17 @@ namespace FruitLanguageSwitcher {
             }
         }
 
-        private void ExitApplicationCommand_ExecuteRequested(object? _, ExecuteRequestedEventArgs args) {
+        private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
+            ExitApp();
+        }
+
+        private void ExitApp() {
             TrayIcon?.Dispose();
             Window?.Close();
         }
 
-        private void ReloadApplicationCommand_ExecuteRequested(object? _, ExecuteRequestedEventArgs args) {
-            switcher.reload();
+        private void ReloadApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
+            switcher.Reload();
             hotkey.Reload();
         }
 
@@ -100,7 +118,7 @@ namespace FruitLanguageSwitcher {
 
         #region Startup Checker
 
-        private async void CheckStartup() {
+        private static async void CheckStartup() {
             StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
 
             ToastNotificationManagerCompat.OnActivated += async toastArgs => {

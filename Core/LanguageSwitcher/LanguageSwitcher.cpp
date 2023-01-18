@@ -10,7 +10,7 @@ constexpr size_t             REG_LANGUAGE_MULTI_SZ_MAX_LENGTH = 1024;
 constexpr LPCWSTR            REG_LANGUAGES_DIR = L"Control Panel\\International\\User Profile";
 constexpr LPCWSTR            REG_LANGUAGES_KEY = L"Languages";
 
-constexpr UINT               MAX_RETRY_TIMES = 2;
+constexpr UINT               MAX_TRY_TIMES = 2;
 constexpr UINT               RETRY_WAIT_MS = 50;
 
 inline constexpr LCID hklToLcid(HKL hkl) {
@@ -18,10 +18,12 @@ inline constexpr LCID hklToLcid(HKL hkl) {
 }
 
 void LanguageSwitcher::applyInputLanguage() {
-    auto hwnd = GetForegroundWindow();
-    SendMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, activeLanguages[inImeMode]);
+    if(activeLanguages[inImeMode]) {
+        auto hwnd = GetForegroundWindow();
 
-    fixImeConversionMode(hwnd);
+        SendMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, activeLanguages[inImeMode]);
+        fixImeConversionMode(hwnd);
+    }
 }
 
 void LanguageSwitcher::updateInputLanguage() {
@@ -65,7 +67,7 @@ bool LanguageSwitcher::setCurrentLanguage(LCID lcid) {
 void LanguageSwitcher::fixImeConversionMode(HWND hWnd, LCID language) {
     auto retryCount = 0;
     auto perLangMethods = getPerLanguageMethods(language);
-    while((!perLangMethods.inConversionMode(hWnd)) && (retryCount++ <= MAX_RETRY_TIMES)) {
+    while((!perLangMethods.inConversionMode(hWnd)) && (retryCount++ <= MAX_TRY_TIMES)) {
         perLangMethods.fixConversionMode(hWnd);
         Sleep(RETRY_WAIT_MS);
     }
@@ -118,6 +120,10 @@ LanguageSwitcher::LanguageSwitcher() {
 
 LanguageSwitcher::~LanguageSwitcher() {
     UnhookWinEvent(windowChangeEvent);
+}
+
+bool LanguageSwitcher::ready() {
+    return (activeLanguages[false] != 0 && activeLanguages[true] != 0);
 }
 
 

@@ -27,6 +27,7 @@ namespace FruitLanguageSwitcher {
     public:
         explicit LanguageSwitcher();
         ~LanguageSwitcher();
+        bool ready();
 
         void updateInputLanguage();
         bool swapCategory();

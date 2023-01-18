@@ -32,6 +32,10 @@ namespace FruitLanguageSwitcher.Core
             SetUpAhk();
         }
 
+        ~Hotkey() {
+            ahk.Terminate();
+        }
+
         public void Reload() {
             ahk.Reset();
             SetUpAhk();
