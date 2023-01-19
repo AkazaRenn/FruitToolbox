@@ -17,13 +17,13 @@ namespace FruitLanguageSwitcher {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    public partial class App: Application {
+    public sealed partial class App: Application {
         #region Properties
 
         public static TaskbarIcon TrayIcon { get; private set; }
         public static Window Window { get; set; }
-        private static LanguageSwitcher switcher { get; set; }
-        private static Hotkey hotkey { get; set; }
+        private static LanguageSwitcher Switcher { get; set; }
+        private static Hotkey Hotkey { get; set; }
 
         #endregion
 
@@ -63,14 +63,14 @@ namespace FruitLanguageSwitcher {
         }
 
         private void InitializeFunction() {
-            switcher = new LanguageSwitcher();
-            if(!switcher.Ready()) {
+            Switcher = new LanguageSwitcher();
+            if(!Switcher.Ready()) {
                 SwitcherNotReady();
                 return;
             }
 
-            hotkey = new Hotkey(switcher.SwapCategoryNoReturn, switcher.UpdateInputLanguage,
-                                switcher.OnRaltDown, switcher.OnRaltUp);
+            Hotkey = new Hotkey(Switcher.SwapCategoryNoReturn, Switcher.UpdateInputLanguage,
+                                Switcher.OnRaltDown, Switcher.OnRaltUp);
 
             RegisterStartup();
         }
@@ -103,8 +103,8 @@ namespace FruitLanguageSwitcher {
         }
 
         private void ReloadApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
-            switcher.Reload();
-            hotkey.Reload();
+            Switcher.Reload();
+            Hotkey.Reload();
         }
 
         #endregion
