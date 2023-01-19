@@ -33,7 +33,7 @@ namespace FruitLanguageSwitcher {
         bool swapCategory();
         bool getCategory();
         LCID getCurrentLanguage();
-        bool setCurrentLanguage(LCID lcid); // returns true if lcid is in the list, false otherwise
+        void setCurrentLanguage(LCID lcid); // returns true if lcid is in the list, false otherwise
         void onRaltDown();
         void onRaltUp();
     };

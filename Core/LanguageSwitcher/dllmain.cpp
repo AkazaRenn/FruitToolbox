@@ -35,16 +35,16 @@ extern "C" {
         return s->getCurrentLanguage();
     }
 
-    DLLEXPORT bool LanguageSwitcher_setCurrentLanguage(LanguageSwitcher* s,
+    DLLEXPORT void LanguageSwitcher_setCurrentLanguage(LanguageSwitcher* s,
                                                        DWORD newLanguage) {
-        return s->setCurrentLanguage(newLanguage);
+        s->setCurrentLanguage(newLanguage);
     }
 
     DLLEXPORT void LanguageSwitcher_onRaltDown(LanguageSwitcher* s) {
-        return s->onRaltDown();
+        s->onRaltDown();
     }
 
     DLLEXPORT void LanguageSwitcher_onRaltUp(LanguageSwitcher* s) {
-        return s->onRaltUp();
+        s->onRaltUp();
     }
 }

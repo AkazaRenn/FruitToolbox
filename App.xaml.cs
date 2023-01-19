@@ -104,7 +104,8 @@ namespace FruitLanguageSwitcher {
 
         private void ReloadApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
             Switcher.Reload();
-            Hotkey.Reload();
+            // Not working, don't know why, comment out for now
+            //Hotkey.Reload();
         }
 
         #endregion

@@ -49,16 +49,14 @@ LCID LanguageSwitcher::getCurrentLanguage() {
     return activeLanguages[inImeMode];
 }
 
-bool LanguageSwitcher::setCurrentLanguage(LCID lcid) {
+void LanguageSwitcher::setCurrentLanguage(LCID lcid) {
     if(languageList.find(lcid) == languageList.end()) {
-        return false;
+        languageList[lcid] = Language(lcid);
     }
     else if(getCurrentLanguage() != lcid) {
         inImeMode = languageList[lcid].isImeLanguage();
         activeLanguages[inImeMode] = languageList[lcid].getLocaleId();
     }
-
-    return true;
 }
 
 //[TODO] handle focused box change within the same app (like Edge webpages)
