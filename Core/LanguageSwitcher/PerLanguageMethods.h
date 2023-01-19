@@ -25,12 +25,12 @@ namespace FruitLanguageSwitcher {
 
     static PerLanguageMethods NonImeLanguageMethods = {
         []()-> void {
-            keybd_event(VK_RMENU, 0, KEYEVENTF_KEYDOWN, 0); // RAlt to AltGr
-            keybd_event(VK_RCONTROL, 0, KEYEVENTF_KEYDOWN, 0); // RAlt to AltGr
+            keybd_event(VK_MENU, 0, KEYEVENTF_KEYDOWN, 0); // RAlt to AltGr
+            keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYDOWN, 0); // RAlt to AltGr
         },
         [] ()-> void {
             keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
-            keybd_event(VK_RMENU, 0, KEYEVENTF_KEYUP, 0);
+            keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0);
         },
         [] (HWND hwnd) -> bool {
             return true;
