@@ -20,6 +20,8 @@ namespace FruitLanguageSwitcher {
     /// </summary>
     public sealed partial class App: Application {
         #region Properties
+        public const char ICON_CHECKBOX_GLYPH = (char)0xF16B;
+        public const char ICON_CHECKBOX_COMPOSITE_GLYPH = (char)0xF16C;
 
         public static TaskbarIcon TrayIcon { get; private set; }
         public static Window Window { get; set; }
@@ -63,8 +65,8 @@ namespace FruitLanguageSwitcher {
             enableRWinRemap.ExecuteRequested += EnableRWinRemap_ExecuteRequested;
             ((FontIconSource)enableRWinRemap.IconSource).Glyph = 
                 Settings.LWinRemapEnabled 
-                ? ((char)0xF16C).ToString()
-                : ((char)0XF16B).ToString();
+                ? ICON_CHECKBOX_COMPOSITE_GLYPH.ToString()
+                : ICON_CHECKBOX_GLYPH.ToString();
 
             TrayIcon = (TaskbarIcon)Resources["TrayIcon"];
             TrayIcon.ForceCreate();
