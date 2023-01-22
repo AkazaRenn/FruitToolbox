@@ -40,10 +40,6 @@ extern "C" {
         s->setCurrentLanguage(newLanguage);
     }
 
-    DLLEXPORT void LanguageSwitcher_onRaltDown(LanguageSwitcher* s) {
-        s->onRaltDown();
-    }
-
     DLLEXPORT void LanguageSwitcher_onRaltUp(LanguageSwitcher* s) {
         s->onRaltUp();
     }

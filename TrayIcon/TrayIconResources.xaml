@@ -4,19 +4,13 @@
     xmlns:tb="using:H.NotifyIcon"
     >
     <XamlUICommand
-        x:Key="ReloadApplicationCommand"
-        Label="Reload"
-        Description="Reload"
+        x:Key="EnableRWinRemap"
+        Label="Enable RWin Remap"
+        Description="Enable/disable remapping RWin to Shift + Ctrl + Alt + Win + S"
         >
         <XamlUICommand.IconSource>
-            <SymbolIconSource Symbol="Refresh" />
+            <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xF16B;"/>
         </XamlUICommand.IconSource>
-        <XamlUICommand.KeyboardAccelerators>
-            <KeyboardAccelerator
-                Key="R"
-                Modifiers="Control"
-                />
-        </XamlUICommand.KeyboardAccelerators>
     </XamlUICommand>
     <XamlUICommand
         x:Key="ExitApplicationCommand"
@@ -24,7 +18,7 @@
         Description="Exit"
         >
         <XamlUICommand.IconSource>
-            <SymbolIconSource Symbol="Cancel" />
+            <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xE711;"/>
         </XamlUICommand.IconSource>
         <XamlUICommand.KeyboardAccelerators>
             <KeyboardAccelerator
@@ -43,8 +37,9 @@
         ToolTipText="Fruit Language Switcher"
         >
         <tb:TaskbarIcon.ContextFlyout>
-            <MenuFlyout>
-                <MenuFlyoutItem Command="{StaticResource ReloadApplicationCommand}" />
+            <MenuFlyout AreOpenCloseAnimationsEnabled="False">
+                <MenuFlyoutItem Command="{StaticResource EnableRWinRemap}" />
+                <MenuFlyoutSeparator />
                 <MenuFlyoutItem Command="{StaticResource ExitApplicationCommand}" />
             </MenuFlyout>
         </tb:TaskbarIcon.ContextFlyout>

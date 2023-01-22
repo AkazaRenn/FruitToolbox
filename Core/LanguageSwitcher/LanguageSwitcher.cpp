@@ -77,10 +77,6 @@ void LanguageSwitcher::fixImeConversionMode(HWND hWnd) {
     }
 }
 
-void LanguageSwitcher::onRaltDown() {
-    getPerLanguageMethods(activeLanguages[inImeMode]).onRaltDown();
-}
-
 void LanguageSwitcher::onRaltUp() {
     getPerLanguageMethods(activeLanguages[inImeMode]).onRaltUp();
 }

@@ -1,7 +1,5 @@
-﻿$RAlt::
-    DllCall(ptr, "Int", onRaltDown)
-Return
-
-$RAlt Up::
-    DllCall(ptr, "Int", onRaltUp)
-Return
+﻿#if (ERAltModifiernabled)
+    $RAlt Up::
+        DllCall(onRaltUpPtr)
+    Return
+#if

@@ -1,6 +1,8 @@
-$~<#^Space::
-$~<#+Space::
-$~<#Space::
-    KeyWait, LWin, U
-    DllCall(ptr, "Int", onLanguageChange)
-Return
+#if (LanguageSwitcherEnabled)
+    $~<#^Space::
+    $~<#+Space::
+    $~<#Space::
+        KeyWait, LWin, U
+        DllCall(onLanguageChangePtr)
+    Return
+#if

@@ -1,73 +1,42 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Threading;
 
 using AutoHotkey.Interop;
 
 namespace FruitLanguageSwitcher.Core {
     internal class Hotkey {
-        public const int onCapsLockMessage = 1;
-        public const int onLanguageChangeMessage = 2;
-        public const int onRaltDownMessage = 3;
-        public const int onRaltUpMessage = 4;
-
-        public const int windowActivateWaitMs = 500;
-
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        private delegate void AHKDelegate(int s);
-
+        private delegate void AHKDelegate();
         private readonly AutoHotkeyEngine ahk = AutoHotkeyEngine.Instance;
-        private static Action onCapsLock;
-        private static Action onLanguageChange;
-        private static Action onRaltDown;
-        private static Action onRaltUp;
 
-        public Hotkey(Action _onCapsLock, Action _onLanguageChange, Action _onRaltDown, Action _onRaltUp) {
-            onCapsLock = _onCapsLock;
-            onLanguageChange = _onLanguageChange;
-            onRaltDown = _onRaltDown;
-            onRaltUp = _onRaltUp;
+        public Hotkey(Action onCapsLock, Action onLanguageChange, Action onRaltUp) {
+            SetVarOnSettings();
 
-            SetUpAhk();
-        }
-
-        public void Reload() {
-            ahk.Reset();
-            SetUpAhk();
-        }
-
-        private void SetUpAhk() {
-            IntPtr ptr = Marshal.GetFunctionPointerForDelegate((AHKDelegate)ipcHandler);
-            ahk.SetVar("ptr", ptr.ToInt64().ToString());
-
-            ahk.SetVar("onCapsLock", onCapsLockMessage.ToString());
-            ahk.SetVar("onLanguageChange", onLanguageChangeMessage.ToString());
-            ahk.SetVar("onRaltDown", onRaltDownMessage.ToString());
-            ahk.SetVar("onRaltUp", onRaltUpMessage.ToString());
-
+            ahk.SetVar("onCapsLockPtr", GetActionDelegateStr(onCapsLock));
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.CapsLock));
+
+            ahk.SetVar("onLanguageChangePtr", GetActionDelegateStr(onLanguageChange));
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.LanguageChangeMonitor));
-            ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.WinKeyToPTRun));
+
+            ahk.SetVar("onRaltUpPtr", GetActionDelegateStr(onRaltUp));
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.RAltModifier));
+
+            ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.WinKeyToPTRun));
         }
 
-        static private void ipcHandler(int fromAhk) {
-            switch(fromAhk) {
-                case onCapsLockMessage:
-                    onCapsLock();
-                    break;
-                case onLanguageChangeMessage:
-                    // wait for the window to actually go back active
-                    Thread.Sleep(windowActivateWaitMs);
-                    onLanguageChange();
-                    break;
-                case onRaltDownMessage:
-                    onRaltDown();
-                    break;
-                case onRaltUpMessage:
-                    onRaltUp();
-                    break;
-            }
+        public void SettingsUpdateHandler(object sender, EventArgs e) {
+            SetVarOnSettings();
         }
+
+        public void SetVarOnSettings() {
+            ahk.SetVar("LanguageSwitcherEnabled", GetBoolStr(App.Settings.LanguageSwitcherEnabled));
+            ahk.SetVar("RAltModifierEnabled", GetBoolStr(App.Settings.RAltModifierEnabled));
+            ahk.SetVar("LWinRemapEnabled", GetBoolStr(App.Settings.LWinRemapEnabled));
+        }
+
+        static private string GetActionDelegateStr(Action act)
+            => Marshal.GetFunctionPointerForDelegate((AHKDelegate)act.Invoke).ToInt64().ToString();
+        static private string GetBoolStr(bool input)
+            => Convert.ToUInt16(input).ToString();
     }
 }

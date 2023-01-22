@@ -1,8 +1,11 @@
-﻿using System.Runtime.InteropServices;
-using System;
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace FruitLanguageSwitcher.Core {
     internal class LanguageSwitcher {
+        public const int windowActivateWaitMs = 500;
+
         private IntPtr wrappedObject;
 
         [DllImport("LanguageSwitcher")]
@@ -25,6 +28,10 @@ namespace FruitLanguageSwitcher.Core {
         [DllImport("LanguageSwitcher")]
         private static extern void LanguageSwitcher_updateInputLanguage(IntPtr obj);
         public void UpdateInputLanguage() {
+            LanguageSwitcher_updateInputLanguage(wrappedObject);
+        }
+        public void UpdateInputLanguageByKeyboard() {
+            Thread.Sleep(windowActivateWaitMs);
             LanguageSwitcher_updateInputLanguage(wrappedObject);
         }
 
@@ -54,10 +61,6 @@ namespace FruitLanguageSwitcher.Core {
         [DllImport("LanguageSwitcher")]
         private static extern void LanguageSwitcher_orderLanguageList(IntPtr obj, bool isImeLanguageList, uint[] list, uint n);
         public void OrderLanguageList(bool isImeLanguageList, uint[] list) => LanguageSwitcher_orderLanguageList(wrappedObject, isImeLanguageList, list, (uint)list.Length);
-
-        [DllImport("LanguageSwitcher")]
-        private static extern void LanguageSwitcher_onRaltDown(IntPtr obj);
-        public void OnRaltDown() => LanguageSwitcher_onRaltDown(wrappedObject);
 
         [DllImport("LanguageSwitcher")]
         private static extern void LanguageSwitcher_onRaltUp(IntPtr obj);

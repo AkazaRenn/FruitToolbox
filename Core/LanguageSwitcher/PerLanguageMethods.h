@@ -17,21 +17,13 @@ namespace FruitLanguageSwitcher {
     typedef function<void(HWND)> conversionModeSetter;
 
     struct PerLanguageMethods {
-        keyHandler onRaltDown;
         keyHandler onRaltUp;
         conversionModeGetter inConversionMode;
         conversionModeSetter fixConversionMode;
     };
 
     static PerLanguageMethods NonImeLanguageMethods = {
-        []()-> void {
-            keybd_event(VK_MENU, 0, KEYEVENTF_KEYDOWN, 0); // RAlt to AltGr
-            keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYDOWN, 0); // RAlt to AltGr
-        },
-        [] ()-> void {
-            keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, 0);
-            keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0);
-        },
+        [] ()-> void {},
         [] (HWND hwnd) -> bool {
             return true;
         },
@@ -39,10 +31,8 @@ namespace FruitLanguageSwitcher {
     };
 
     static PerLanguageMethods JapaneseMethods = {
-        []() -> void {
-            keybd_event(VK_NONCONVERT, 0, KEYEVENTF_KEYDOWN, 0);
-        },
         [] () -> void {
+            keybd_event(VK_NONCONVERT, 0, KEYEVENTF_KEYDOWN, 0);
             keybd_event(VK_NONCONVERT, 0, KEYEVENTF_KEYUP, 0);
         },
         [] (HWND hwnd) -> bool {
@@ -56,10 +46,7 @@ namespace FruitLanguageSwitcher {
 
     constexpr UINT ChineseImeConversionModeCode = 1;
     static PerLanguageMethods ChineseMethods {
-        []() -> void {
-        },
-        [] () -> void {
-        },
+        [] () -> void {},
         [] (HWND hwnd) -> bool {
             return SendMessage(ImmGetDefaultIMEWnd(hwnd), WM_IME_CONTROL, IMC_GETCONVERSIONMODE, 0) == ChineseImeConversionModeCode;
         },

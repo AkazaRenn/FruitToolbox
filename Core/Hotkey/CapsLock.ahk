@@ -1,13 +1,15 @@
-$CapsLock::
-    If (GetKeyState("CapsLock", "T")) {
-        SetCapsLockState Off
-    } else {
-        KeyWait, CapsLock, U T0.5
-        If (ErrorLevel) {
-            SetCapsLockState On
-            KeyWait, CapsLock, U
+#if (LanguageSwitcherEnabled)
+    $CapsLock::
+        If (GetKeyState("CapsLock", "T")) {
+            SetCapsLockState Off
         } else {
-            DllCall(ptr, "Int", onCapsLock)
+            KeyWait, CapsLock, T0.5
+            If (ErrorLevel) {
+                SetCapsLockState On
+                KeyWait, CapsLock
+            } else {
+                DllCall(onCapsLockPtr)
+            }
         }
-    }
-Return
+    Return
+#if

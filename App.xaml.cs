@@ -22,6 +22,8 @@ namespace FruitLanguageSwitcher {
 
         public static TaskbarIcon TrayIcon { get; private set; }
         public static Window Window { get; set; }
+        public static Settings Settings { get; private set; }
+
         private static LanguageSwitcher Switcher { get; set; }
         private static Hotkey Hotkey { get; set; }
 
@@ -47,6 +49,7 @@ namespace FruitLanguageSwitcher {
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args) {
+            LoadSettings();
             InitializeTrayIcon();
             InitializeFunction();
         }
@@ -55,8 +58,8 @@ namespace FruitLanguageSwitcher {
             var exitApplicationCommand = (XamlUICommand)Resources["ExitApplicationCommand"];
             exitApplicationCommand.ExecuteRequested += ExitApplicationCommand_ExecuteRequested;
 
-            var reloadApplicationCommand = (XamlUICommand)Resources["ReloadApplicationCommand"];
-            reloadApplicationCommand.ExecuteRequested += ReloadApplicationCommand_ExecuteRequested;
+            var enableRWinRemap = (XamlUICommand)Resources["EnableRWinRemap"];
+            enableRWinRemap.ExecuteRequested += EnableRWinRemap_ExecuteRequested;
 
             TrayIcon = (TaskbarIcon)Resources["TrayIcon"];
             TrayIcon.ForceCreate();
@@ -69,16 +72,31 @@ namespace FruitLanguageSwitcher {
                 return;
             }
 
-            Hotkey = new Hotkey(Switcher.SwapCategoryNoReturn, Switcher.UpdateInputLanguage,
-                                Switcher.OnRaltDown, Switcher.OnRaltUp);
+            Hotkey = new Hotkey(Switcher.SwapCategoryNoReturn,
+                                Switcher.UpdateInputLanguage,
+                                Switcher.OnRaltUp);
 
             RegisterStartup();
+        }
+
+        private static void LoadSettings() {
+            Settings = Settings.Load();
+            //Settings.SettingsChangedEventHandler += Hotkey.SettingsUpdateHandler;
+        }
+
+        private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
+            ExitApp();
+        }
+
+        private void EnableRWinRemap_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
+            Settings.LWinRemapEnabled = !Settings.LWinRemapEnabled;
+            Hotkey.SetVarOnSettings();
+            Settings.Save();
         }
 
         private static async void RegisterStartup() {
             StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
             if(startupTask.State == StartupTaskState.Disabled) {
-                // Task is disabled but can be enabled
                 await startupTask.RequestEnableAsync();
             }
         }
@@ -93,19 +111,9 @@ namespace FruitLanguageSwitcher {
             ExitApp();
         }
 
-        private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
-            ExitApp();
-        }
-
         private static void ExitApp() {
             TrayIcon?.Dispose();
             Window?.Close();
-        }
-
-        private void ReloadApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
-            Switcher.Reload();
-            // Not working, don't know why, comment out for now
-            //Hotkey.Reload();
         }
 
         #endregion
