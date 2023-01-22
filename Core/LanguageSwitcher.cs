@@ -59,10 +59,6 @@ namespace FruitLanguageSwitcher.Core {
         public uint GetLanguageList(bool isImeLanguageList, uint[] list) => LanguageSwitcher_getLanguageList(wrappedObject, isImeLanguageList, list);
 
         [DllImport("LanguageSwitcher")]
-        private static extern void LanguageSwitcher_orderLanguageList(IntPtr obj, bool isImeLanguageList, uint[] list, uint n);
-        public void OrderLanguageList(bool isImeLanguageList, uint[] list) => LanguageSwitcher_orderLanguageList(wrappedObject, isImeLanguageList, list, (uint)list.Length);
-
-        [DllImport("LanguageSwitcher")]
         private static extern void LanguageSwitcher_onRaltUp(IntPtr obj);
         public void OnRaltUp() => LanguageSwitcher_onRaltUp(wrappedObject);
     }

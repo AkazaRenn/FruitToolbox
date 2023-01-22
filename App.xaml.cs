@@ -73,7 +73,7 @@ namespace FruitLanguageSwitcher {
             }
 
             Hotkey = new Hotkey(Switcher.SwapCategoryNoReturn,
-                                Switcher.UpdateInputLanguage,
+                                Switcher.UpdateInputLanguageByKeyboard,
                                 Switcher.OnRaltUp);
 
             RegisterStartup();

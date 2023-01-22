@@ -4,13 +4,13 @@ using System.IO;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace FruitLanguageSwitcher {
+namespace FruitLanguageSwitcher.Core {
     [Serializable]
     public class Settings {
-        public static string SaveFileDir = Path.Combine(
+        private static readonly string SaveFileDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "FruitLanguageSwitcher");
-        public static string SaveFilePath = Path.Combine(SaveFileDir, "settings.yaml");
+        private static readonly string SaveFilePath = Path.Combine(SaveFileDir, "settings.yaml");
 
         public bool LanguageSwitcherEnabled = true;
         public bool RAltModifierEnabled = true;
