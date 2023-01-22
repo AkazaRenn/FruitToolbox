@@ -8,16 +8,22 @@ namespace FruitLanguageSwitcher.Core {
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void AHKDelegate();
         private readonly AutoHotkeyEngine ahk = AutoHotkeyEngine.Instance;
+        private readonly Action onCapsLock;
+        private readonly Action onLanguageChange;
+        private readonly Action onRaltUp;
 
-        public Hotkey(Action onCapsLock, Action onLanguageChange, Action onRaltUp) {
+        public Hotkey(Action _onCapsLock, Action _onLanguageChange, Action _onRaltUp) {
             SetVarOnSettings();
 
+            onCapsLock = _onCapsLock;
             ahk.SetVar("onCapsLockPtr", GetActionDelegateStr(onCapsLock));
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.CapsLock));
 
+            onLanguageChange = _onLanguageChange;
             ahk.SetVar("onLanguageChangePtr", GetActionDelegateStr(onLanguageChange));
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.LanguageChangeMonitor));
 
+            onRaltUp = _onRaltUp;
             ahk.SetVar("onRaltUpPtr", GetActionDelegateStr(onRaltUp));
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.RAltModifier));
 

@@ -27,9 +27,9 @@ namespace FruitLanguageSwitcher.Core {
         public static Settings Load() {
             try {
                 var deserializer = new DeserializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)  // see height_in_inches in sample yml 
+                .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
-                string yaml = System.IO.File.ReadAllText(SaveFilePath);
+                string yaml = File.ReadAllText(SaveFilePath);
                 return deserializer.Deserialize<Settings>(yaml);
             } catch {
                 return new Settings();
@@ -41,7 +41,7 @@ namespace FruitLanguageSwitcher.Core {
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
             var yaml = serializer.Serialize(this);
-            System.IO.Directory.CreateDirectory(SaveFileDir);
+            Directory.CreateDirectory(SaveFileDir);
             await File.WriteAllTextAsync(SaveFilePath, yaml);
         }
     }

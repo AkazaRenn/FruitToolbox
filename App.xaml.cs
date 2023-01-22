@@ -6,6 +6,7 @@ using H.NotifyIcon;
 
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 
 using Windows.ApplicationModel;
@@ -60,6 +61,10 @@ namespace FruitLanguageSwitcher {
 
             var enableRWinRemap = (XamlUICommand)Resources["EnableRWinRemap"];
             enableRWinRemap.ExecuteRequested += EnableRWinRemap_ExecuteRequested;
+            ((FontIconSource)enableRWinRemap.IconSource).Glyph = 
+                Settings.LWinRemapEnabled 
+                ? ((char)0xF16C).ToString()
+                : ((char)0XF16B).ToString();
 
             TrayIcon = (TaskbarIcon)Resources["TrayIcon"];
             TrayIcon.ForceCreate();
