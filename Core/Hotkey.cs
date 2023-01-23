@@ -6,13 +6,13 @@ using AutoHotkey.Interop;
 namespace FruitLanguageSwitcher.Core {
     internal class Hotkey {
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        private delegate void AHKDelegate();
+        public delegate void AHKDelegate();
         private readonly AutoHotkeyEngine ahk = AutoHotkeyEngine.Instance;
-        private readonly Action onCapsLock;
-        private readonly Action onLanguageChange;
-        private readonly Action onRaltUp;
+        private readonly AHKDelegate onCapsLock;
+        private readonly AHKDelegate onLanguageChange;
+        private readonly AHKDelegate onRaltUp;
 
-        public Hotkey(Action _onCapsLock, Action _onLanguageChange, Action _onRaltUp) {
+        public Hotkey(AHKDelegate _onCapsLock, AHKDelegate _onLanguageChange, AHKDelegate _onRaltUp) {
             SetVarOnSettings();
 
             onCapsLock = _onCapsLock;
@@ -40,8 +40,8 @@ namespace FruitLanguageSwitcher.Core {
             ahk.SetVar("LWinRemapEnabled", GetBoolStr(App.Settings.LWinRemapEnabled));
         }
 
-        static private string GetActionDelegateStr(Action act)
-            => Marshal.GetFunctionPointerForDelegate((AHKDelegate)act.Invoke).ToInt64().ToString();
+        static private string GetActionDelegateStr(AHKDelegate act)
+            => Marshal.GetFunctionPointerForDelegate(act).ToInt64().ToString();
         static private string GetBoolStr(bool input)
             => Convert.ToUInt16(input).ToString();
     }
