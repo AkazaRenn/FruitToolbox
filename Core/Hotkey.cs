@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 using AutoHotkey.Interop;
@@ -8,26 +9,31 @@ namespace FruitLanguageSwitcher.Core {
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate void AHKDelegate();
         private readonly AutoHotkeyEngine ahk = AutoHotkeyEngine.Instance;
-        private readonly AHKDelegate onCapsLock;
-        private readonly AHKDelegate onLanguageChange;
-        private readonly AHKDelegate onRaltUp;
+        private readonly List<GCHandle> handles;
 
         public Hotkey(AHKDelegate _onCapsLock, AHKDelegate _onLanguageChange, AHKDelegate _onRaltUp) {
             SetVarOnSettings();
 
-            onCapsLock = _onCapsLock;
-            ahk.SetVar("onCapsLockPtr", GetActionDelegateStr(onCapsLock));
+            handles.Add(GCHandle.Alloc(_onCapsLock));
+            ahk.SetVar("onCapsLockPtr", GetActionDelegateStr(_onCapsLock));
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.CapsLock));
 
-            onLanguageChange = _onLanguageChange;
-            ahk.SetVar("onLanguageChangePtr", GetActionDelegateStr(onLanguageChange));
+            handles.Add(GCHandle.Alloc(_onLanguageChange));
+            ahk.SetVar("onLanguageChangePtr", GetActionDelegateStr(_onLanguageChange));
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.LanguageChangeMonitor));
 
-            onRaltUp = _onRaltUp;
-            ahk.SetVar("onRaltUpPtr", GetActionDelegateStr(onRaltUp));
+            handles.Add(GCHandle.Alloc(_onRaltUp));
+            ahk.SetVar("onRaltUpPtr", GetActionDelegateStr(_onRaltUp));
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.RAltModifier));
 
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.WinKeyToPTRun));
+        }
+
+        ~Hotkey() {
+            foreach(var handle in handles) {
+                handle.Free();
+            }
+
         }
 
         public void SettingsUpdateHandler(object sender, EventArgs e) {
