@@ -8,7 +8,7 @@
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
-  IgnorableNamespaces="uap rescap mp com desktop">
+  IgnorableNamespaces="uap uap5 rescap mp com desktop">
 
 	<Identity
 	  Name="AkazaRenn.82975CBC0BB1"
