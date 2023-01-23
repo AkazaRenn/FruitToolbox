@@ -4,30 +4,43 @@ using System.Runtime.InteropServices;
 using AutoHotkey.Interop;
 
 namespace FruitLanguageSwitcher.Core {
+
     internal class Hotkey {
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        private delegate void AHKDelegate();
-        private readonly AutoHotkeyEngine ahk = AutoHotkeyEngine.Instance;
-        private readonly Action onCapsLock;
-        private readonly Action onLanguageChange;
-        private readonly Action onRaltUp;
+        delegate void AHKDelegate();
+        enum AHKEvent: ushort {
+            onCapsLock = 0,
+            onLanguageChange,
+            onRaltUp,
+        }
 
-        public Hotkey(Action _onCapsLock, Action _onLanguageChange, Action _onRaltUp) {
+        private readonly AutoHotkeyEngine ahk = AutoHotkeyEngine.Instance;
+        private readonly Action onCapsLockHandler;
+        private readonly Action onLanguageChangeHandler;
+        private readonly Action onRaltUpHandler;
+
+        public Hotkey(
+            Action _onCapsLockHandler, 
+            Action _onLanguageChangeHandler, 
+            Action _onRaltUpHandler) {
             SetVarOnSettings();
 
-            onCapsLock = _onCapsLock;
-            ahk.SetVar("onCapsLockPtr", GetActionDelegateStr(onCapsLock));
+            onCapsLockHandler = _onCapsLockHandler;
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.CapsLock));
 
-            onLanguageChange = _onLanguageChange;
-            ahk.SetVar("onLanguageChangePtr", GetActionDelegateStr(onLanguageChange));
+            onLanguageChangeHandler = _onLanguageChangeHandler;
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.LanguageChangeMonitor));
 
-            onRaltUp = _onRaltUp;
-            ahk.SetVar("onRaltUpPtr", GetActionDelegateStr(onRaltUp));
+            onRaltUpHandler = _onRaltUpHandler;
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.RAltModifier));
 
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.WinKeyToPTRun));
+
+            ahk.SetVar("AHKEventHandler", GetActionDelegateStr(AHKEventHandler));
+        }
+
+        private void AHKEventHandler() {
+            switch()
         }
 
         public void SettingsUpdateHandler(object sender, EventArgs e) {
