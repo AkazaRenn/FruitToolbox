@@ -9,7 +9,7 @@ namespace FruitLanguageSwitcher.Core {
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate void AHKDelegate();
         private readonly AutoHotkeyEngine ahk = AutoHotkeyEngine.Instance;
-        private readonly List<GCHandle> handles;
+        private readonly List<GCHandle> handles = new();
 
         public Hotkey(AHKDelegate _onCapsLock, AHKDelegate _onLanguageChange, AHKDelegate _onRaltUp) {
             SetVarOnSettings();
