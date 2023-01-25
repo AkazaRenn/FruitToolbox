@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 
+using Microsoft.UI.Xaml.Input;
+
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -12,24 +14,41 @@ namespace FruitLanguageSwitcher.Core {
             "FruitLanguageSwitcher");
         private static readonly string SaveFilePath = Path.Combine(SaveFileDir, "settings.yaml");
 
-        public bool LanguageSwitcherEnabled = true;
-        public bool RAltModifierEnabled = true;
-        public bool LWinRemapEnabled = false;
+        public bool LanguageSwitcherEnabled  { get; private set; }
+        public bool RAltModifierEnabled      { get; private set; }
+        public bool LWinRemapEnabled         { get; private set; }
+        public bool ReverseMouseWheelEnabled { get; private set; }
 
-        //public event EventHandler SettingsChangedEventHandler;
+        public event EventHandler SettingsChangedEventHandler;
 
-        public Settings() { }
+        public Settings() {
+            LanguageSwitcherEnabled = true;
+            RAltModifierEnabled = true;
+            LWinRemapEnabled = false;
+            ReverseMouseWheelEnabled = false;
+        }
 
-        //public void NotifySettingsUpdate() {
-        //    SettingsChangedEventHandler.Invoke(this, EventArgs.Empty);
-        //}
+        public void ToggleLWinRemapEnabled(object _, ExecuteRequestedEventArgs args) {
+            LWinRemapEnabled = !LWinRemapEnabled;
+            OnSettingsUpdate();
+        }
+
+        public void ToggleReverseMouseWheelEnabled(object _, ExecuteRequestedEventArgs args) {
+            ReverseMouseWheelEnabled = !ReverseMouseWheelEnabled;
+            OnSettingsUpdate();
+        }
+
+        public void OnSettingsUpdate() {
+            SettingsChangedEventHandler.Invoke(this, EventArgs.Empty);
+            this.Save();
+        }
 
         public static Settings Load() {
             try {
+                var yaml = File.ReadAllText(SaveFilePath);
                 var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
-                string yaml = File.ReadAllText(SaveFilePath);
                 return deserializer.Deserialize<Settings>(yaml);
             } catch {
                 return new Settings();

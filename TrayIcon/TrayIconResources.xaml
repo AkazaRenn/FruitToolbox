@@ -4,9 +4,18 @@
     xmlns:tb="using:H.NotifyIcon"
     >
     <XamlUICommand
-        x:Key="EnableRWinRemap"
+        x:Key="EnableLWinRemapCommand"
         Label="Enable RWin Remap"
         Description="Enable/disable remapping RWin to Shift + Ctrl + Alt + Win + S"
+        >
+        <XamlUICommand.IconSource>
+            <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xF16B;"/>
+        </XamlUICommand.IconSource>
+    </XamlUICommand>
+    <XamlUICommand
+        x:Key="EnableReverseMouseWheelCommand"
+        Label="Enable Reverse Mouse Wheel"
+        Description="Enable/disable reversing mouse wheel to achieve natural scrolling"
         >
         <XamlUICommand.IconSource>
             <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xF16B;"/>
@@ -38,7 +47,8 @@
         >
         <tb:TaskbarIcon.ContextFlyout>
             <MenuFlyout AreOpenCloseAnimationsEnabled="False">
-                <MenuFlyoutItem Command="{StaticResource EnableRWinRemap}" />
+                <MenuFlyoutItem Command="{StaticResource EnableLWinRemapCommand}" />
+                <MenuFlyoutItem Command="{StaticResource EnableReverseMouseWheelCommand}" />
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem Command="{StaticResource ExitApplicationCommand}" />
             </MenuFlyout>

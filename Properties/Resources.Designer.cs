@@ -93,6 +93,16 @@ namespace FruitLanguageSwitcher.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] ReverseMouseWheel {
+            get {
+                object obj = ResourceManager.GetObject("ReverseMouseWheel", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] WinKeyToPTRun {
             get {
                 object obj = ResourceManager.GetObject("WinKeyToPTRun", resourceCulture);

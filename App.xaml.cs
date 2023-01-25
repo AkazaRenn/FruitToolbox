@@ -52,7 +52,7 @@ namespace FruitLanguageSwitcher {
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args) {
-            LoadSettings();
+            Settings = Settings.Load();
             InitializeTrayIcon();
             InitializeFunction();
         }
@@ -61,18 +61,26 @@ namespace FruitLanguageSwitcher {
             var exitApplicationCommand = (XamlUICommand)Resources["ExitApplicationCommand"];
             exitApplicationCommand.ExecuteRequested += ExitApplicationCommand_ExecuteRequested;
 
-            var enableRWinRemap = (XamlUICommand)Resources["EnableRWinRemap"];
-            enableRWinRemap.ExecuteRequested += EnableRWinRemap_ExecuteRequested;
-            ((FontIconSource)enableRWinRemap.IconSource).Glyph = 
-                Settings.LWinRemapEnabled 
-                ? ICON_CHECKBOX_COMPOSITE_GLYPH.ToString()
-                : ICON_CHECKBOX_GLYPH.ToString();
+            var enableLWinRemapCommand = (XamlUICommand)Resources["EnableLWinRemapCommand"];
+            enableLWinRemapCommand.ExecuteRequested += Settings.ToggleLWinRemapEnabled;
+            SetOptionCommandGlyph(enableLWinRemapCommand, Settings.LWinRemapEnabled);
+
+            var enableReverseMouseWheelCommand = (XamlUICommand)Resources["EnableReverseMouseWheelCommand"];
+            enableReverseMouseWheelCommand.ExecuteRequested += Settings.ToggleReverseMouseWheelEnabled;
+            SetOptionCommandGlyph(enableReverseMouseWheelCommand, Settings.ReverseMouseWheelEnabled);
 
             TrayIcon = (TaskbarIcon)Resources["TrayIcon"];
             TrayIcon.ForceCreate();
         }
 
-        private void InitializeFunction() {
+        private static void SetOptionCommandGlyph(XamlUICommand command, bool enabled) {
+            ((FontIconSource)command.IconSource).Glyph =
+                enabled
+                ? ICON_CHECKBOX_COMPOSITE_GLYPH.ToString()
+                : ICON_CHECKBOX_GLYPH.ToString();
+        }
+
+        private static void InitializeFunction() {
             Switcher = new LanguageSwitcher();
             if(!Switcher.Ready()) {
                 SwitcherNotReady();
@@ -82,24 +90,13 @@ namespace FruitLanguageSwitcher {
             Hotkey = new Hotkey(Switcher.SwapCategoryNoReturn,
                                 Switcher.UpdateInputLanguageByKeyboard,
                                 Switcher.OnRaltUp);
+            Settings.SettingsChangedEventHandler += Hotkey.SettingsUpdateHandler;
 
             RegisterStartup();
         }
 
-        private static void LoadSettings() {
-            Settings = Settings.Load();
-            //Settings.SettingsChangedEventHandler += Hotkey.SettingsUpdateHandler;
-        }
-
-        private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
-            ExitApp();
-        }
-
-        private void EnableRWinRemap_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
-            Settings.LWinRemapEnabled = !Settings.LWinRemapEnabled;
-            Hotkey.SetVarOnSettings();
-            Settings.Save();
-        }
+        private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
+            => ExitApp();
 
         private static async void RegisterStartup() {
             StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
@@ -108,7 +105,7 @@ namespace FruitLanguageSwitcher {
             }
         }
 
-        private void SwitcherNotReady() {
+        private static void SwitcherNotReady() {
             new ToastContentBuilder()
                 .AddText("Exiting, you don't really need the app")
                 .AddText("It is for those who have both keyboard languages and IME languages installed.")
