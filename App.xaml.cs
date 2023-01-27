@@ -52,22 +52,21 @@ namespace FruitLanguageSwitcher {
         /// </summary>
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args) {
-            Settings = Settings.Load();
-            InitializeTrayIcon();
             InitializeFunction();
+            InitializeTrayIcon();
         }
 
         private void InitializeTrayIcon() {
             var exitApplicationCommand = (XamlUICommand)Resources["ExitApplicationCommand"];
             exitApplicationCommand.ExecuteRequested += ExitApplicationCommand_ExecuteRequested;
 
-            var enableLWinRemapCommand = (XamlUICommand)Resources["EnableLWinRemapCommand"];
-            enableLWinRemapCommand.ExecuteRequested += Settings.ToggleLWinRemapEnabled;
-            SetOptionCommandGlyph(enableLWinRemapCommand, Settings.LWinRemapEnabled);
+            var lwinRemapCommand = (XamlUICommand)Resources["LWinRemapCommand"];
+            lwinRemapCommand.ExecuteRequested += Settings.ToggleLWinRemapEnabled;
+            SetOptionCommandGlyph(lwinRemapCommand, Settings.LWinRemapEnabled);
 
-            var enableReverseMouseWheelCommand = (XamlUICommand)Resources["EnableReverseMouseWheelCommand"];
-            enableReverseMouseWheelCommand.ExecuteRequested += Settings.ToggleReverseMouseWheelEnabled;
-            SetOptionCommandGlyph(enableReverseMouseWheelCommand, Settings.ReverseMouseWheelEnabled);
+            var reverseMouseWheelCommand = (XamlUICommand)Resources["ReverseMouseWheelCommand"];
+            reverseMouseWheelCommand.ExecuteRequested += Settings.ToggleReverseMouseWheelEnabled;
+            SetOptionCommandGlyph(reverseMouseWheelCommand, Settings.ReverseMouseWheelEnabled);
 
             TrayIcon = (TaskbarIcon)Resources["TrayIcon"];
             TrayIcon.ForceCreate();
@@ -81,43 +80,35 @@ namespace FruitLanguageSwitcher {
         }
 
         private static void InitializeFunction() {
+            Settings = Settings.Load();
             Switcher = new LanguageSwitcher();
-            if(!Switcher.Ready()) {
-                SwitcherNotReady();
-                return;
-            }
-
             Hotkey = new Hotkey(Switcher.SwapCategoryNoReturn,
                                 Switcher.UpdateInputLanguageByKeyboard,
                                 Switcher.OnRaltUp);
             Settings.SettingsChangedEventHandler += Hotkey.SettingsUpdateHandler;
 
-            RegisterStartup();
+            if(!Switcher.Ready()) {
+                Settings.DisableLanguageSwitcher();
+                new ToastContentBuilder()
+                    .AddText("Unable to enable language switcher")
+                    .AddText("Please make sure you have both keyboard languages and IME languages installed")
+                    .Show();
+            } else {
+                RegisterStartup();
+            }
+
         }
 
-        private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
-            => ExitApp();
+        private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
+            TrayIcon?.Dispose();
+            Window?.Close();
+        }
 
         private static async void RegisterStartup() {
             StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
             if(startupTask.State == StartupTaskState.Disabled) {
                 await startupTask.RequestEnableAsync();
             }
-        }
-
-        private static void SwitcherNotReady() {
-            new ToastContentBuilder()
-                .AddText("Exiting, you don't really need the app")
-                .AddText("It is for those who have both keyboard languages and IME languages installed.")
-                .AddText("All your needs can be satisfied by native Windows functions.")
-                .Show();
-
-            ExitApp();
-        }
-
-        private static void ExitApp() {
-            TrayIcon?.Dispose();
-            Window?.Close();
         }
 
         #endregion

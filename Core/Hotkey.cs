@@ -9,7 +9,6 @@ namespace FruitLanguageSwitcher.Core {
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate void AHKDelegate();
         private readonly AutoHotkeyEngine ahk = AutoHotkeyEngine.Instance;
-        //private readonly List<GCHandle> handles = new();
         private static readonly List<AHKDelegate> handlers = new();
 
         public Hotkey(AHKDelegate _onCapsLock, AHKDelegate _onLanguageChange, AHKDelegate _onRaltUp) {
@@ -30,13 +29,6 @@ namespace FruitLanguageSwitcher.Core {
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.WinKeyToPTRun));
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.ReverseMouseWheel));
         }
-
-        //~Hotkey() {
-        //    foreach(var handle in handles) {
-        //        handle.Free();
-        //    }
-
-        //}
 
         public void SettingsUpdateHandler(object sender, EventArgs e) {
             SetVarOnSettings();

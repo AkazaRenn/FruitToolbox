@@ -14,6 +14,7 @@ namespace FruitLanguageSwitcher.Core {
             "FruitLanguageSwitcher");
         private static readonly string SaveFilePath = Path.Combine(SaveFileDir, "settings.yaml");
 
+        [YamlIgnore]
         public bool LanguageSwitcherEnabled  { get; private set; }
         public bool RAltModifierEnabled      { get; private set; }
         public bool LWinRemapEnabled         { get; private set; }
@@ -26,6 +27,11 @@ namespace FruitLanguageSwitcher.Core {
             RAltModifierEnabled = true;
             LWinRemapEnabled = false;
             ReverseMouseWheelEnabled = false;
+        }
+
+        public void DisableLanguageSwitcher() {
+            LanguageSwitcherEnabled = false;
+            OnSettingsUpdate();
         }
 
         public void ToggleLWinRemapEnabled(object _, ExecuteRequestedEventArgs args) {
