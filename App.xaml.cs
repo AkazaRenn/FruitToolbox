@@ -25,7 +25,7 @@ namespace FruitLanguageSwitcher {
 
         public static TaskbarIcon TrayIcon { get; private set; }
         public static Window Window { get; set; }
-        public static Settings Settings { get; private set; }
+        public static SettingsManager Settings { get; private set; }
 
         private static LanguageSwitcher Switcher { get; set; }
         private static Hotkey Hotkey { get; set; }
@@ -80,7 +80,7 @@ namespace FruitLanguageSwitcher {
         }
 
         private static void InitializeFunction() {
-            Settings = Settings.Load();
+            Settings = SettingsManager.Load();
             Switcher = new LanguageSwitcher();
             Hotkey = new Hotkey(Switcher.SwapCategoryNoReturn,
                                 Switcher.UpdateInputLanguageByKeyboard,
