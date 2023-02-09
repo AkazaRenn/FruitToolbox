@@ -81,6 +81,7 @@ void LanguageSwitcher::onRaltUp() {
     getPerLanguageMethods(activeLanguages[inImeMode]).onRaltUp();
 }
 
+#pragma managed(push, off)
 LanguageSwitcher::LanguageSwitcher() {
     instance = this;
     if(instance != this) {
@@ -111,6 +112,7 @@ LanguageSwitcher::LanguageSwitcher() {
 
     windowChangeEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, LanguageSwitcher::onActiveWindowChange, 0, 0, WINEVENT_OUTOFCONTEXT);
 }
+#pragma managed(pop)
 
 LanguageSwitcher::~LanguageSwitcher() {
     UnhookWinEvent(windowChangeEvent);

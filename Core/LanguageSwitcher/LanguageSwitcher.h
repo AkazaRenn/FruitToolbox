@@ -1,5 +1,4 @@
 #pragma once
-#pragma unmanaged
 #include <vector>
 #include "Language.h"
 #include <map>
