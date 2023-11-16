@@ -18,20 +18,20 @@ inline LCID hklToLcid(HKL hkl) {
 }
 
 void LanguageSwitcher::applyInputLanguage() {
-    if(activeLanguages[inImeMode]) {
+    if(getCurrentLanguage()) {
         auto hwnd = GetForegroundWindow();
 
-        SendMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, activeLanguages[inImeMode]);
+        SendMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, getCurrentLanguage());
         fixImeConversionMode(hwnd);
     }
 }
 
-void LanguageSwitcher::updateInputLanguage() {
-    updateInputLanguage(GetForegroundWindow());
+void LanguageSwitcher::updateInputLanguage(bool doCallback) {
+    updateInputLanguage(GetForegroundWindow(), doCallback);
 }
 
-void LanguageSwitcher::updateInputLanguage(HWND hwnd) {
-    setCurrentLanguage(hklToLcid(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))));
+void LanguageSwitcher::updateInputLanguage(HWND hwnd, bool doCallback) {
+    setCurrentLanguage(hklToLcid(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))), doCallback);
     fixImeConversionMode(hwnd);
 }
 
@@ -39,7 +39,7 @@ bool LanguageSwitcher::swapCategory() {
     inImeMode = !inImeMode;
     applyInputLanguage();
 
-    languageChangeHandler(0x040c);
+    languageChangeHandler(getCurrentLanguage());
     return inImeMode;
 }
 
@@ -47,11 +47,7 @@ bool LanguageSwitcher::getCategory() {
     return inImeMode;
 }
 
-LCID LanguageSwitcher::getCurrentLanguage() {
-    return activeLanguages[inImeMode];
-}
-
-void LanguageSwitcher::setCurrentLanguage(LCID lcid) {
+void LanguageSwitcher::setCurrentLanguage(LCID lcid, bool doCallback) {
     if(languageList.find(lcid) == languageList.end()) {
         languageList[lcid] = Language(lcid);
     }
@@ -64,7 +60,9 @@ void LanguageSwitcher::setCurrentLanguage(LCID lcid) {
     }
 
     // if we didn't return then it's an updated condition, call handler
-    languageChangeHandler(0x0409);
+    if (doCallback) {
+        languageChangeHandler(lcid);
+    }
 }
 
 //[TODO] handle focused box change within the same app (like Edge webpages)
@@ -80,13 +78,13 @@ void LanguageSwitcher::fixImeConversionMode(HWND hWnd, LCID language) {
 }
 
 void LanguageSwitcher::fixImeConversionMode(HWND hWnd) {
-    if(languageList[activeLanguages[inImeMode]].isImeLanguage()) {
-        fixImeConversionMode(hWnd, activeLanguages[inImeMode]);
+    if(languageList[getCurrentLanguage()].isImeLanguage()) {
+        fixImeConversionMode(hWnd, getCurrentLanguage());
     }
 }
 
 void LanguageSwitcher::onRaltUp() {
-    getPerLanguageMethods(activeLanguages[inImeMode]).onRaltUp();
+    getPerLanguageMethods(getCurrentLanguage()).onRaltUp();
 }
 
 #pragma managed(push, off)

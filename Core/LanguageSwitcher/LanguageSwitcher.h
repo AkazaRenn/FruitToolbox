@@ -24,19 +24,22 @@ namespace FruitLanguageSwitcher {
         static LanguageSwitcher* instance;
         HWINEVENTHOOK windowChangeEvent;
         static void CALLBACK onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-        void updateInputLanguage(HWND hwnd);
+        void updateInputLanguage(HWND hwnd, bool doCallback = true);
 
     public:
         explicit LanguageSwitcher(onLanguageChangeCallback handler);
         ~LanguageSwitcher();
         bool ready();
 
-        void updateInputLanguage();
+        void updateInputLanguage(bool doCallback = true);
         bool swapCategory();
         bool getCategory();
-        LCID getCurrentLanguage();
-        void setCurrentLanguage(LCID lcid); // returns true if lcid is in the list, false otherwise
+        void setCurrentLanguage(LCID lcid, bool doCallback = true); // returns true if lcid is in the list, false otherwise
         void onRaltUp();
+
+        inline LCID getCurrentLanguage() {
+            return activeLanguages[inImeMode];
+        }
     };
 }
 

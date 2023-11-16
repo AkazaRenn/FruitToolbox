@@ -19,8 +19,8 @@ extern "C" {
         return s->ready();
     }
 
-    DLLEXPORT void LanguageSwitcher_updateInputLanguage(LanguageSwitcher* s) {
-        s->updateInputLanguage();
+    DLLEXPORT void LanguageSwitcher_updateInputLanguage(LanguageSwitcher* s, bool doCallback) {
+        s->updateInputLanguage(doCallback);
     }
 
     DLLEXPORT bool LanguageSwitcher_swapCategory(LanguageSwitcher* s) {

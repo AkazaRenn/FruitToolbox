@@ -36,9 +36,9 @@ using System.Text;
 using Microsoft.Win32;
 using System.Reflection.Metadata;
 using System.Text.Json.Serialization;
-using LocaleNames;
 using WindowsDisplayAPI.Native.Structures;
 using System.Globalization;
+using FruitLanguageSwitcher.Views.Win32Helper;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -76,7 +76,7 @@ namespace FruitLanguageSwitcher.Views
             IsAlwaysOnTop = true;
 
             VirtualDesktop.PinApp(Constants.AppID);
-            Interop.DisableRoundCorners(this.GetWindowHandle());
+            DesktopWindowManager.DisableRoundCorners(this.GetWindowHandle());
         }
 
        void HideFlyout(DispatcherQueueTimer t, object s)
@@ -87,12 +87,15 @@ namespace FruitLanguageSwitcher.Views
 
         public void UpdateText(int lcid)
         {
-            FlyoutText.Text = new CultureInfo(lcid).NativeName; 
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                FlyoutText.Text = new CultureInfo(lcid).NativeName;
 
-            Width = 500;
-            MoveToDestination();
-            FlyoutBase.ShowAttachedFlyout(FlyoutAnchor);
-            HideFlyoutTimer.Start();
+                Width = 500;
+                MoveToDestination();
+                FlyoutBase.ShowAttachedFlyout(FlyoutAnchor);
+                HideFlyoutTimer.Start();
+            });
         }
 
         private void MoveToDestination()
