@@ -38,6 +38,8 @@ void LanguageSwitcher::updateInputLanguage(HWND hwnd) {
 bool LanguageSwitcher::swapCategory() {
     inImeMode = !inImeMode;
     applyInputLanguage();
+
+    languageChangeHandler(0x040c);
     return inImeMode;
 }
 
@@ -57,6 +59,12 @@ void LanguageSwitcher::setCurrentLanguage(LCID lcid) {
         inImeMode = languageList[lcid].isImeLanguage();
         activeLanguages[inImeMode] = languageList[lcid].getLocaleId();
     }
+    else {
+        return;
+    }
+
+    // if we didn't return then it's an updated condition, call handler
+    languageChangeHandler(0x0409);
 }
 
 //[TODO] handle focused box change within the same app (like Edge webpages)
@@ -82,11 +90,13 @@ void LanguageSwitcher::onRaltUp() {
 }
 
 #pragma managed(push, off)
-LanguageSwitcher::LanguageSwitcher() {
+LanguageSwitcher::LanguageSwitcher(onLanguageChangeCallback handler) {
     instance = this;
     if(instance != this) {
         return;
     }
+
+    languageChangeHandler = handler;
 
     WCHAR buffer[REG_LANGUAGE_MULTI_SZ_MAX_LENGTH];
     DWORD dwLen = sizeof(buffer);
@@ -121,7 +131,6 @@ LanguageSwitcher::~LanguageSwitcher() {
 bool LanguageSwitcher::ready() {
     return (activeLanguages[false] != 0 && activeLanguages[true] != 0);
 }
-
 
 LanguageSwitcher* LanguageSwitcher::instance;
 void CALLBACK LanguageSwitcher::onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {

@@ -7,8 +7,8 @@ using namespace FruitLanguageSwitcher;
 #define DLLEXPORT __declspec(dllexport)
 
 extern "C" {
-    DLLEXPORT void* LanguageSwitcher_new() {
-        return (void*)new LanguageSwitcher();
+    DLLEXPORT void* LanguageSwitcher_new(onLanguageChangeCallback handler) {
+        return (void*)new LanguageSwitcher(handler);
     }
 
     DLLEXPORT void LanguageSwitcher_delete(LanguageSwitcher* s) {

@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 using FruitLanguageSwitcher.Core;
 using FruitLanguageSwitcher.Views;
@@ -30,7 +32,7 @@ namespace FruitLanguageSwitcher {
         private static LanguageSwitcher Switcher { get; set; }
         private static Hotkey Hotkey { get; set; }
 
-        private static Tooltip aaa = new();
+        private static Views.Flyout NewLanguageFlyout = new();
 
         #endregion
 
@@ -41,7 +43,7 @@ namespace FruitLanguageSwitcher {
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App() {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         #endregion
@@ -55,32 +57,38 @@ namespace FruitLanguageSwitcher {
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args) {
             InitializeFunction();
-            aaa.Activate();
+            NewLanguageFlyout.Activate();
         }
 
-        private static void InitializeFunction() {
+        private static void InitializeFunction()
+        {
             Settings = Settings.Load();
             Switcher = new LanguageSwitcher();
+            LanguageSwitcher.NewLanguageEvent += (_, e) => NewLanguageFlyout.UpdateText(e.LCID);
             Hotkey = new Hotkey(Switcher.SwapCategoryNoReturn,
                                 Switcher.UpdateInputLanguageByKeyboard,
                                 Switcher.OnRaltUp);
             Settings.SettingsChangedEventHandler += Hotkey.SettingsUpdateHandler;
 
-            if(!Switcher.Ready()) {
+            if(!Switcher.Ready())
+            {
                 Settings.DisableLanguageSwitcher();
                 new ToastContentBuilder()
                     .AddText("Unable to enable language switcher")
                     .AddText("Please make sure you have both keyboard languages and IME languages installed")
                     .Show();
-            } else {
+            } else
+            {
                 RegisterStartup();
             }
 
         }
 
-        private static async void RegisterStartup() {
+        private static async void RegisterStartup()
+        {
             StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
-            if(startupTask.State == StartupTaskState.Disabled) {
+            if(startupTask.State == StartupTaskState.Disabled)
+            {
                 await startupTask.RequestEnableAsync();
             }
         }

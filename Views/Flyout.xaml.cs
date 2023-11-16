@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -25,16 +24,21 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.ViewManagement;
+using System.Timers;
 
 using WindowsDisplayAPI;
 using WinRT.Interop;
 
 using WinUIEx;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Windowing;
 using System.Text;
 using Microsoft.Win32;
 using System.Reflection.Metadata;
 using System.Text.Json.Serialization;
+using LocaleNames;
+using WindowsDisplayAPI.Native.Structures;
+using System.Globalization;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -44,24 +48,27 @@ namespace FruitLanguageSwitcher.Views
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class Tooltip: WindowEx
+    public sealed partial class Flyout: WindowEx
     {
-
-
         private const int WindowMarginFromBottom = 61;
 
         private double ScaleFactor = 1;
         private Point MainDisplay = new(0, 0);
         private Point MainDisplayOffset = new(0, 0);
+        private readonly DispatcherQueueTimer HideFlyoutTimer;
 
-        public Tooltip()
+        public Flyout()
         {
             InitializeComponent();
             UpdateScaleFactor();
             UpdateMainDisplayOffset();
 
+            HideFlyoutTimer = DispatcherQueue.CreateTimer();
+            HideFlyoutTimer.Interval = TimeSpan.FromSeconds(2);
+            HideFlyoutTimer.Tick += HideFlyout;
+
             //Hide();
-            //IsShownInSwitchers = false;
+            IsShownInSwitchers = false;
             IsMinimizable = false;
             IsMaximizable = false;
             IsResizable = false;
@@ -69,8 +76,23 @@ namespace FruitLanguageSwitcher.Views
             IsAlwaysOnTop = true;
 
             VirtualDesktop.PinApp(Constants.AppID);
-            MoveToDestination();
             Interop.DisableRoundCorners(this.GetWindowHandle());
+        }
+
+       void HideFlyout(DispatcherQueueTimer t, object s)
+        {
+            FlyoutControl.Hide();
+            t.Stop();
+        }
+
+        public void UpdateText(int lcid)
+        {
+            FlyoutText.Text = new CultureInfo(lcid).NativeName; 
+
+            Width = 500;
+            MoveToDestination();
+            FlyoutBase.ShowAttachedFlyout(FlyoutAnchor);
+            HideFlyoutTimer.Start();
         }
 
         private void MoveToDestination()
