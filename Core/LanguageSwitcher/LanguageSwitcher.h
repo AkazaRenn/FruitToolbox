@@ -9,8 +9,8 @@ namespace FruitLanguageSwitcher {
     class LanguageSwitcher {
     private:
         map<LCID, Language> languageList;
-        atomic<LCID> activeLanguages[2];
-        atomic<bool> inImeMode;
+        LCID activeLanguages[2];
+        bool inImeMode;
 
         void applyInputLanguage();
         void fixImeConversionMode(HWND hWnd);

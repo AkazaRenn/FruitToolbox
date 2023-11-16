@@ -1,8 +1,10 @@
 using System;
 
 using FruitLanguageSwitcher.Core;
+using FruitLanguageSwitcher.Views;
 
 using H.NotifyIcon;
+using H.NotifyIcon.Core;
 
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Xaml;
@@ -10,6 +12,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 
 using Windows.ApplicationModel;
+
+using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -20,15 +24,13 @@ namespace FruitLanguageSwitcher {
     /// </summary>
     public sealed partial class App: Application {
         #region Properties
-        public const char ICON_CHECKBOX_GLYPH = (char)0xF16B;
-        public const char ICON_CHECKBOX_COMPOSITE_GLYPH = (char)0xF16C;
-
-        public static TaskbarIcon TrayIcon { get; private set; }
         public static Window Window { get; set; }
         public static Settings Settings { get; private set; }
 
         private static LanguageSwitcher Switcher { get; set; }
         private static Hotkey Hotkey { get; set; }
+
+        private static Tooltip aaa = new();
 
         #endregion
 
@@ -53,30 +55,7 @@ namespace FruitLanguageSwitcher {
         /// <param name="args">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs args) {
             InitializeFunction();
-            InitializeTrayIcon();
-        }
-
-        private void InitializeTrayIcon() {
-            var exitApplicationCommand = (XamlUICommand)Resources["ExitApplicationCommand"];
-            exitApplicationCommand.ExecuteRequested += ExitApplicationCommand_ExecuteRequested;
-
-            var lwinRemapCommand = (XamlUICommand)Resources["LWinRemapCommand"];
-            lwinRemapCommand.ExecuteRequested += Settings.ToggleLWinRemapEnabled;
-            SetOptionCommandGlyph(lwinRemapCommand, Settings.LWinRemapEnabled);
-
-            var reverseMouseWheelCommand = (XamlUICommand)Resources["ReverseMouseWheelCommand"];
-            reverseMouseWheelCommand.ExecuteRequested += Settings.ToggleReverseMouseWheelEnabled;
-            SetOptionCommandGlyph(reverseMouseWheelCommand, Settings.ReverseMouseWheelEnabled);
-
-            TrayIcon = (TaskbarIcon)Resources["TrayIcon"];
-            TrayIcon.ForceCreate();
-        }
-
-        private static void SetOptionCommandGlyph(XamlUICommand command, bool enabled) {
-            ((FontIconSource)command.IconSource).Glyph =
-                enabled
-                ? ICON_CHECKBOX_COMPOSITE_GLYPH.ToString()
-                : ICON_CHECKBOX_GLYPH.ToString();
+            aaa.Activate();
         }
 
         private static void InitializeFunction() {
@@ -97,11 +76,6 @@ namespace FruitLanguageSwitcher {
                 RegisterStartup();
             }
 
-        }
-
-        private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
-            TrayIcon?.Dispose();
-            Window?.Close();
         }
 
         private static async void RegisterStartup() {
