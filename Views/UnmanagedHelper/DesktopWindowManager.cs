@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FruitLanguageSwitcher.Views.Win32Helper
+namespace FruitLanguageSwitcher.Views.UnmanagedHelper
 {
     // From https://github.com/microsoft/PowerToys/pull/16542/files
     internal static partial class DesktopWindowManager

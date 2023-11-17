@@ -15,7 +15,7 @@ using System.Reflection;
 
 // From https://github.com/MScholtes/VirtualDesktop/blob/master/VirtualDesktop.cs
 
-namespace FruitLanguageSwitcher.Views.Win32Helper
+namespace FruitLanguageSwitcher.Views.UnmanagedHelper
 {
     internal static class Guids
     {

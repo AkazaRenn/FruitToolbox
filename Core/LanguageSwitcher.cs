@@ -6,24 +6,13 @@ namespace FruitLanguageSwitcher.Core {
     internal partial class LanguageSwitcher {
         public const int WindowActivateWaitMs = 500;
 
-        private IntPtr WrappedObject;
+        private static IntPtr WrappedObject;
         private delegate void LanguageChangedCallbackDelegate(int lcid);
 
-        public delegate void EventHandler(object sender, LanguageEvent e);
-        public static event EventHandler<LanguageEvent> NewLanguageEvent;
-
-        public class LanguageEvent: EventArgs
-        {
-            public LanguageEvent(int lcid)
-            {
-                LCID = lcid;
-            }
-
-            public int LCID { get; }
-        }
+        public static event EventHandler<Constants.LanguageEvent> NewLanguageEvent;
         private static void InvokeNewLanguageEvent(int lcid)
         {
-            NewLanguageEvent(null, new LanguageEvent(lcid));
+            NewLanguageEvent?.Invoke(null, new Constants.LanguageEvent(lcid));
         }
 
         [LibraryImport("LanguageSwitcher")]

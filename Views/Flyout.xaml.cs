@@ -38,8 +38,9 @@ using System.Reflection.Metadata;
 using System.Text.Json.Serialization;
 using WindowsDisplayAPI.Native.Structures;
 using System.Globalization;
-using FruitLanguageSwitcher.Views.Win32Helper;
+using FruitLanguageSwitcher.Views.UnmanagedHelper;
 using System.Threading;
+using static FruitLanguageSwitcher.Core.LanguageSwitcher;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -49,7 +50,7 @@ namespace FruitLanguageSwitcher.Views
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class Flyout: WindowEx
+    internal sealed partial class Flyout: WindowEx
     {
 
         private const double WindowMarginFromBottom = 38;
@@ -97,11 +98,11 @@ namespace FruitLanguageSwitcher.Views
             HideFlyoutTimer.Stop();
         }
 
-        public void UpdateText(int lcid)
+        public void UpdateText(object sender, Constants.LanguageEvent e)
         {
             DispatcherQueue.TryEnqueue(() =>
             {
-                FlyoutText.Text = new CultureInfo(lcid).NativeName;
+                FlyoutText.Text = new CultureInfo(e.LCID).NativeName;
 
                 this.Show();
                 FlyoutBase.ShowAttachedFlyout(FlyoutAnchor);
