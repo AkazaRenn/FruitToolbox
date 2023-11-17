@@ -57,8 +57,8 @@
 	  <None Remove="Assets\Wide310x150Logo.scale-400.png" />
 	  <None Remove="Flyout\Flyout.xaml" />
 	  <None Remove="Flyout\Tooltip.xaml" />
+	  <None Remove="Views\TrayIcon.xaml" />
 	  <None Remove="Views\TrayIconControl.xaml" />
-	  <None Remove="Views\TrayIconResources.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -148,7 +148,7 @@
 	  <None Update="TrayIcon\TrayIconView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </None>
-	  <Page Update="Views\TrayIconResources.xaml">
+	  <Page Update="Views\TrayIcon.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>

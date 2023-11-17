@@ -28,6 +28,6 @@
         </FlyoutBase.AttachedFlyout>
     </TextBlock>
     <Window.SystemBackdrop>
-        <winex:TransparentTintBackdrop TintColor="#00000000"/>
+        <winex:TransparentTintBackdrop TintColor="#00ffffff"/>
     </Window.SystemBackdrop>
 </winex:WindowEx>

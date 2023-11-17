@@ -6,62 +6,73 @@ using Microsoft.UI.Xaml.Input;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-namespace FruitLanguageSwitcher.Core {
+namespace FruitLanguageSwitcher.Core
+{
     [Serializable]
-    public class Settings {
+    public class Settings
+    {
         private static readonly string SaveFileDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "FruitLanguageSwitcher");
         private static readonly string SaveFilePath = Path.Combine(SaveFileDir, "settings.yaml");
 
         [YamlIgnore]
-        public bool LanguageSwitcherEnabled  { get; private set; }
-        public bool RAltModifierEnabled      { get; private set; }
-        public bool LWinRemapEnabled         { get; private set; }
+        public bool LanguageSwitcherEnabled { get; private set; }
+        public bool RAltModifierEnabled { get; private set; }
+        public bool LWinRemapEnabled { get; private set; }
         public bool ReverseMouseWheelEnabled { get; private set; }
 
         public event EventHandler SettingsChangedEventHandler;
 
-        public Settings() {
+        public Settings()
+        {
             LanguageSwitcherEnabled = true;
             RAltModifierEnabled = true;
             LWinRemapEnabled = false;
             ReverseMouseWheelEnabled = false;
         }
 
-        public void DisableLanguageSwitcher() {
+        public void DisableLanguageSwitcher()
+        {
             LanguageSwitcherEnabled = false;
             OnSettingsUpdate();
         }
 
-        public void ToggleLWinRemapEnabled(object _, ExecuteRequestedEventArgs args) {
+        public void ToggleLWinRemapEnabled(object _, ExecuteRequestedEventArgs args)
+        {
             LWinRemapEnabled = !LWinRemapEnabled;
             OnSettingsUpdate();
         }
 
-        public void ToggleReverseMouseWheelEnabled(object _, ExecuteRequestedEventArgs args) {
+        public void ToggleReverseMouseWheelEnabled(object _, ExecuteRequestedEventArgs args)
+        {
             ReverseMouseWheelEnabled = !ReverseMouseWheelEnabled;
             OnSettingsUpdate();
         }
 
-        public void OnSettingsUpdate() {
+        public void OnSettingsUpdate()
+        {
             SettingsChangedEventHandler.Invoke(this, EventArgs.Empty);
             this.Save();
         }
 
-        public static Settings Load() {
-            try {
+        public static Settings Load()
+        {
+            try
+            {
                 var yaml = File.ReadAllText(SaveFilePath);
                 var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
                 return deserializer.Deserialize<Settings>(yaml);
-            } catch {
+            } catch
+            {
                 return new Settings();
             }
         }
 
-        public async void Save() {
+        public async void Save()
+        {
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
