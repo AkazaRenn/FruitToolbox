@@ -10,8 +10,7 @@
 		<UseWinUI>true</UseWinUI>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
 	  <Compile Remove="H.NotifyIcon.Apps.WinUI\**" />

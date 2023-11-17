@@ -58,11 +58,6 @@ void LanguageSwitcher::setCurrentLanguage(LCID lcid, bool doCallback) {
     else {
         return;
     }
-
-    // if we didn't return then it's an updated condition, call handler
-    if (doCallback) {
-        languageChangeHandler(lcid);
-    }
 }
 
 //[TODO] handle focused box change within the same app (like Edge webpages)

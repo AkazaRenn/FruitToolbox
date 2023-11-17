@@ -39,6 +39,7 @@ using System.Text.Json.Serialization;
 using WindowsDisplayAPI.Native.Structures;
 using System.Globalization;
 using FruitLanguageSwitcher.Views.Win32Helper;
+using System.Threading;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -50,22 +51,30 @@ namespace FruitLanguageSwitcher.Views
     /// </summary>
     public sealed partial class Flyout: WindowEx
     {
-        private const int WindowMarginFromBottom = 61;
 
+        private const double WindowMarginFromBottom = 38;
         private double ScaleFactor = 1;
         private Point MainDisplay = new(0, 0);
         private Point MainDisplayOffset = new(0, 0);
         private readonly DispatcherQueueTimer HideFlyoutTimer;
+        private readonly UISettings UISettings = new();
+
 
         public Flyout()
         {
             InitializeComponent();
-            UpdateScaleFactor();
             UpdateMainDisplayOffset();
+            UpdateScaleFactor();
+            UpdateTheme();
 
             HideFlyoutTimer = DispatcherQueue.CreateTimer();
             HideFlyoutTimer.Interval = TimeSpan.FromSeconds(2);
             HideFlyoutTimer.Tick += HideFlyout;
+            FlyoutControl.Closed += (_, e) => {
+                Thread.Sleep(100);
+                this.Hide();
+            };
+            UISettings.ColorValuesChanged += (_, _) => UpdateTheme();
 
             //Hide();
             IsShownInSwitchers = false;
@@ -76,13 +85,16 @@ namespace FruitLanguageSwitcher.Views
             IsAlwaysOnTop = true;
 
             VirtualDesktop.PinApp(Constants.AppID);
+            HwndExtensions.SetExtendedWindowStyle(this.GetWindowHandle(), 
+                ExtendedWindowStyle.Transparent | ExtendedWindowStyle.NoActivate | ExtendedWindowStyle.ToolWindow);
             DesktopWindowManager.DisableRoundCorners(this.GetWindowHandle());
+            MoveToDestination();
         }
 
-       void HideFlyout(DispatcherQueueTimer t, object s)
+        void HideFlyout(object t, object s)
         {
             FlyoutControl.Hide();
-            t.Stop();
+            HideFlyoutTimer.Stop();
         }
 
         public void UpdateText(int lcid)
@@ -91,8 +103,7 @@ namespace FruitLanguageSwitcher.Views
             {
                 FlyoutText.Text = new CultureInfo(lcid).NativeName;
 
-                Width = 500;
-                MoveToDestination();
+                this.Show();
                 FlyoutBase.ShowAttachedFlyout(FlyoutAnchor);
                 HideFlyoutTimer.Start();
             });
@@ -106,8 +117,10 @@ namespace FruitLanguageSwitcher.Views
 
         private void UpdateScaleFactor()
         {
+            var currentWidth = Width;
             Width = 1000;
             ScaleFactor = AppWindow.Size.Width / Width;
+            Width = currentWidth;
         }
 
         private void UpdateMainDisplayOffset()
@@ -119,6 +132,22 @@ namespace FruitLanguageSwitcher.Views
                     MainDisplayOffset = new(display.CurrentSetting.Position.X, display.CurrentSetting.Position.Y);
                     MainDisplay = new(display.CurrentSetting.Resolution.Width, display.CurrentSetting.Resolution.Height);
                     return;
+                }
+            }
+        }
+
+        private void UpdateTheme()
+        {
+            var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
+            if(key != null)
+            {
+                bool useLightTheme = (int)key.GetValue("SystemUsesLightTheme") != 0;
+                if(useLightTheme)
+                {
+                    DispatcherQueue.TryEnqueue(() => ((FrameworkElement)Content).RequestedTheme = ElementTheme.Light);
+                } else
+                {
+                    DispatcherQueue.TryEnqueue(() => ((FrameworkElement)Content).RequestedTheme = ElementTheme.Dark);
                 }
             }
         }

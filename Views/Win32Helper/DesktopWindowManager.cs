@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace FruitLanguageSwitcher.Views.Win32Helper
 {
+    // From https://github.com/microsoft/PowerToys/pull/16542/files
     internal static partial class DesktopWindowManager
     {
         const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;

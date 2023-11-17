@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace FruitLanguageSwitcher.Core {
-    internal class LanguageSwitcher {
+    internal partial class LanguageSwitcher {
         public const int WindowActivateWaitMs = 500;
 
         private IntPtr WrappedObject;
@@ -26,12 +26,12 @@ namespace FruitLanguageSwitcher.Core {
             NewLanguageEvent(null, new LanguageEvent(lcid));
         }
 
-        [DllImport("LanguageSwitcher")]
-        private static extern IntPtr LanguageSwitcher_new(LanguageChangedCallbackDelegate fn);
+        [LibraryImport("LanguageSwitcher")]
+        private static partial IntPtr LanguageSwitcher_new(LanguageChangedCallbackDelegate fn);
         public LanguageSwitcher() => WrappedObject = LanguageSwitcher_new(InvokeNewLanguageEvent);
 
-        [DllImport("LanguageSwitcher")]
-        private static extern void LanguageSwitcher_delete(IntPtr obj);
+        [LibraryImport("LanguageSwitcher")]
+        private static partial void LanguageSwitcher_delete(IntPtr obj);
         ~LanguageSwitcher() => LanguageSwitcher_delete(WrappedObject);
 
         public void Reload() {
@@ -39,12 +39,13 @@ namespace FruitLanguageSwitcher.Core {
             WrappedObject = LanguageSwitcher_new(InvokeNewLanguageEvent);
         }
 
-        [DllImport("LanguageSwitcher")]
-        private static extern bool LanguageSwitcher_ready(IntPtr obj);
+        [LibraryImport("LanguageSwitcher")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool LanguageSwitcher_ready(IntPtr obj);
         public bool Ready() => LanguageSwitcher_ready(WrappedObject);
 
-        [DllImport("LanguageSwitcher")]
-        private static extern void LanguageSwitcher_updateInputLanguage(IntPtr obj, bool doCallback);
+        [LibraryImport("LanguageSwitcher")]
+        private static partial void LanguageSwitcher_updateInputLanguage(IntPtr obj, [MarshalAs(UnmanagedType.Bool)] bool doCallback);
         public void UpdateInputLanguage() {
             LanguageSwitcher_updateInputLanguage(WrappedObject, true);
         }
@@ -53,31 +54,33 @@ namespace FruitLanguageSwitcher.Core {
             LanguageSwitcher_updateInputLanguage(WrappedObject, false);
         }
 
-        [DllImport("LanguageSwitcher")]
-        private static extern bool LanguageSwitcher_swapCategory(IntPtr obj);
+        [LibraryImport("LanguageSwitcher")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool LanguageSwitcher_swapCategory(IntPtr obj);
         public bool SwapCategory() => LanguageSwitcher_swapCategory(WrappedObject);
         public void SwapCategoryNoReturn() {
             LanguageSwitcher_swapCategory(WrappedObject);
         }
 
-        [DllImport("LanguageSwitcher")]
-        private static extern bool LanguageSwitcher_getCategory(IntPtr obj);
+        [LibraryImport("LanguageSwitcher")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static partial bool LanguageSwitcher_getCategory(IntPtr obj);
         public bool GetCategory() => LanguageSwitcher_getCategory(WrappedObject);
 
-        [DllImport("LanguageSwitcher")]
-        private static extern uint LanguageSwitcher_getCurrentLanguage(IntPtr obj);
+        [LibraryImport("LanguageSwitcher")]
+        private static partial uint LanguageSwitcher_getCurrentLanguage(IntPtr obj);
         public uint GetCurrentLanguage() => LanguageSwitcher_getCurrentLanguage(WrappedObject);
 
-        [DllImport("LanguageSwitcher")]
-        private static extern void LanguageSwitcher_setCurrentLanguage(IntPtr obj, uint newLanguage);
+        [LibraryImport("LanguageSwitcher")]
+        private static partial void LanguageSwitcher_setCurrentLanguage(IntPtr obj, uint newLanguage);
         public void SetCurrentLanguage(uint newLanguage) => LanguageSwitcher_setCurrentLanguage(WrappedObject, newLanguage);
 
-        [DllImport("LanguageSwitcher")]
-        private static extern uint LanguageSwitcher_getLanguageList(IntPtr obj, bool isImeLanguageList, uint[] list);
+        [LibraryImport("LanguageSwitcher")]
+        private static partial uint LanguageSwitcher_getLanguageList(IntPtr obj, [MarshalAs(UnmanagedType.Bool)] bool isImeLanguageList, uint[] list);
         public uint GetLanguageList(bool isImeLanguageList, uint[] list) => LanguageSwitcher_getLanguageList(WrappedObject, isImeLanguageList, list);
 
-        [DllImport("LanguageSwitcher")]
-        private static extern void LanguageSwitcher_onRaltUp(IntPtr obj);
+        [LibraryImport("LanguageSwitcher")]
+        private static partial void LanguageSwitcher_onRaltUp(IntPtr obj);
         public void OnRaltUp() => LanguageSwitcher_onRaltUp(WrappedObject);
     }
 }
