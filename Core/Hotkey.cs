@@ -40,10 +40,10 @@ namespace FruitLanguageSwitcher.Core
 
         public void SetVarOnSettings()
         {
-            ahk.SetVar("LanguageSwitcherEnabled", GetBoolStr(App.Settings.LanguageSwitcherEnabled));
-            ahk.SetVar("RAltModifierEnabled", GetBoolStr(App.Settings.RAltModifierEnabled));
-            ahk.SetVar("LWinRemapEnabled", GetBoolStr(App.Settings.LWinRemapEnabled));
-            ahk.SetVar("ReverseMouseWheelEnabled", GetBoolStr(App.Settings.ReverseMouseWheelEnabled));
+            ahk.SetVar("LanguageSwitcherEnabled", GetBoolStr(Settings.LanguageSwitcherEnabled));
+            ahk.SetVar("RAltModifierEnabled", GetBoolStr(Settings.RAltModifierEnabled));
+            ahk.SetVar("LWinRemapEnabled", GetBoolStr(Settings.LGuiRemapEnabled));
+            ahk.SetVar("ReverseMouseWheelEnabled", GetBoolStr(Settings.ReverseMouseWheelEnabled));
         }
 
         static private string GetActionDelegateStr(AHKDelegate act)

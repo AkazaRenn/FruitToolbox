@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 
 using FruitLanguageSwitcher.Core;
 
@@ -25,12 +26,11 @@ namespace FruitLanguageSwitcher
 
         public static TaskbarIcon TrayIcon { get; private set; }
         public static Window Window { get; set; }
-        public static Settings Settings { get; private set; }
 
         private static LanguageSwitcher Switcher;
         private static Hotkey Hotkey;
         private static Views.Settings SettingsWindow = null;
-        private static readonly Views.Flyout NewLangFlyout;
+        private static Views.Flyout NewLangFlyout;
 
         #endregion
 
@@ -86,34 +86,22 @@ namespace FruitLanguageSwitcher
 
         private static void InitializeFunction()
         {
-            Settings = Settings.Load();
             Switcher = new LanguageSwitcher();
             Hotkey = new Hotkey(Switcher.SwapCategoryNoReturn,
                                 Switcher.UpdateInputLanguageByKeyboard,
                                 Switcher.OnRaltUp);
             Settings.SettingsChangedEventHandler += Hotkey.SettingsUpdateHandler;
+            Settings.SettingsChangedEventHandler += Views.Flyout.SettingsUpdateHandler;
 
             if(!Switcher.Ready())
             {
-                Settings.DisableLanguageSwitcher();
+                Settings.LanguageSwitcherEnabled = false;
                 new ToastContentBuilder()
                     .AddText("Unable to enable language switcher")
                     .AddText("Please make sure you have both keyboard languages and IME languages installed")
                     .Show();
-            } else
-            {
-                RegisterStartup();
             }
 
-        }
-
-        private static async void RegisterStartup()
-        {
-            StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
-            if(startupTask.State == StartupTaskState.Disabled)
-            {
-                await startupTask.RequestEnableAsync();
-            }
         }
 
         private void OpenSettingsCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
@@ -128,6 +116,11 @@ namespace FruitLanguageSwitcher
         }
 
         private void ReloadCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
+        {
+            ReloadComponents();
+        }
+
+        public static void ReloadComponents()
         {
             Switcher.Reload();
             NewLangFlyout.Reload();

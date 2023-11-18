@@ -3,60 +3,151 @@ using System.IO;
 
 using Microsoft.UI.Xaml.Input;
 
+using Windows.ApplicationModel;
+
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace FruitLanguageSwitcher.Core
 {
     [Serializable]
-    public class Settings
+    internal class SettingsProperties
+    {
+        [YamlIgnore]
+        public bool StartUp { get; set; } = true;
+        public bool LanguageSwitcherEnabled { get; set; } = true;
+        public bool FlyoutEnabled { get; set; } = true;
+        public bool RAltModifierEnabled { get; set; } = true;
+        public bool LGuiRemapEnabled { get; set; } = false;
+        public bool ReverseMouseWheelEnabled { get; set; } = false;
+    }
+
+    public static class Settings
     {
         private static readonly string SaveFileDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "FruitLanguageSwitcher");
         private static readonly string SaveFilePath = Path.Combine(SaveFileDir, "settings.yaml");
 
-        [YamlIgnore]
-        public bool LanguageSwitcherEnabled { get; private set; }
-        public bool RAltModifierEnabled { get; private set; }
-        public bool LWinRemapEnabled { get; private set; }
-        public bool ReverseMouseWheelEnabled { get; private set; }
+        public static event EventHandler SettingsChangedEventHandler;
+        private static SettingsProperties SettingsProperties = new();
+        private static bool Loaded = false;
 
-        public event EventHandler SettingsChangedEventHandler;
-
-        public Settings()
+        public static bool StartUp
         {
-            LanguageSwitcherEnabled = true;
-            RAltModifierEnabled = true;
-            LWinRemapEnabled = false;
-            ReverseMouseWheelEnabled = false;
+            get
+            {
+                if(!Loaded)
+                    Load();
+
+                StartupTask startupTask = StartupTask.GetAsync("MyStartupId").GetAwaiter().GetResult();
+                return (startupTask.State == StartupTaskState.Enabled) || (startupTask.State == StartupTaskState.EnabledByPolicy);
+            }
+            set
+            {
+                if(!Loaded)
+                    Load();
+
+                StartupTask startupTask = StartupTask.GetAsync("MyStartupId").GetAwaiter().GetResult();
+                if(value == true && (startupTask.State == StartupTaskState.Disabled || startupTask.State== StartupTaskState.DisabledByUser))
+                {
+                    startupTask.RequestEnableAsync().GetAwaiter().GetResult();
+                } else if(value == false && startupTask.State == StartupTaskState.Enabled)
+                {
+                    startupTask.Disable();
+                }
+            }
         }
 
-        public void DisableLanguageSwitcher()
+        public static bool LanguageSwitcherEnabled
         {
-            LanguageSwitcherEnabled = false;
-            OnSettingsUpdate();
+            get
+            {
+                if(!Loaded)
+                    Load();
+                return SettingsProperties.LanguageSwitcherEnabled;
+            }
+            set
+            {
+                if(!Loaded)
+                    Load();
+                SettingsProperties.LanguageSwitcherEnabled = value;
+                OnSettingsUpdate();
+            }
         }
 
-        public void ToggleLWinRemapEnabled(object _, ExecuteRequestedEventArgs args)
+        public static bool FlyoutEnabled
         {
-            LWinRemapEnabled = !LWinRemapEnabled;
-            OnSettingsUpdate();
+            get
+            {
+                if(!Loaded)
+                    Load();
+                return SettingsProperties.FlyoutEnabled;
+            }
+            set
+            {
+                if(!Loaded)
+                    Load();
+                SettingsProperties.FlyoutEnabled = value;
+                OnSettingsUpdate();
+            }
+        }
+        public static bool RAltModifierEnabled
+        {
+            get
+            {
+                if(!Loaded)
+                    Load();
+                return SettingsProperties.RAltModifierEnabled;
+            }
+            set
+            {
+                if(!Loaded)
+                    Load();
+                SettingsProperties.RAltModifierEnabled = value;
+                OnSettingsUpdate();
+            }
+        }
+        public static bool LGuiRemapEnabled
+        {
+            get
+            {
+                if(!Loaded)
+                    Load();
+                return SettingsProperties.LGuiRemapEnabled;
+            }
+            set
+            {
+                if(!Loaded)
+                    Load();
+                SettingsProperties.LGuiRemapEnabled = value;
+                OnSettingsUpdate();
+            }
+        }
+        public static bool ReverseMouseWheelEnabled
+        {
+            get
+            {
+                if(!Loaded)
+                    Load();
+                return SettingsProperties.ReverseMouseWheelEnabled;
+            }
+            set
+            {
+                if(!Loaded)
+                    Load();
+                SettingsProperties.ReverseMouseWheelEnabled = value;
+                OnSettingsUpdate();
+            }
         }
 
-        public void ToggleReverseMouseWheelEnabled(object _, ExecuteRequestedEventArgs args)
+        public static void OnSettingsUpdate()
         {
-            ReverseMouseWheelEnabled = !ReverseMouseWheelEnabled;
-            OnSettingsUpdate();
+            SettingsChangedEventHandler.Invoke(null, EventArgs.Empty);
+            Save();
         }
 
-        public void OnSettingsUpdate()
-        {
-            SettingsChangedEventHandler.Invoke(this, EventArgs.Empty);
-            this.Save();
-        }
-
-        public static Settings Load()
+        private static void Load()
         {
             try
             {
@@ -64,19 +155,21 @@ namespace FruitLanguageSwitcher.Core
                 var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
-                return deserializer.Deserialize<Settings>(yaml);
+                SettingsProperties = deserializer.Deserialize<SettingsProperties>(yaml);
             } catch
             {
-                return new Settings();
+                SettingsProperties = new();
             }
+
+            Loaded = true;
         }
 
-        public async void Save()
+        private static async void Save()
         {
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
-            var yaml = serializer.Serialize(this);
+            var yaml = serializer.Serialize(SettingsProperties);
             Directory.CreateDirectory(SaveFileDir);
             await File.WriteAllTextAsync(SaveFilePath, yaml);
         }

@@ -28,13 +28,15 @@ namespace FruitLanguageSwitcher.Views
     /// </summary>
     internal sealed partial class Flyout: WindowEx
     {
+        private static bool Enabled = true;
 
         private const double WindowMarginFromBottom = 38;
-        private double ScaleFactor = 1;
-        private Point MainDisplay = new(0, 0);
-        private Point MainDisplayOffset = new(0, 0);
+        private static double ScaleFactor = 1;
+        private static Point MainDisplay = new(0, 0);
+        private static Point MainDisplayOffset = new(0, 0);
+
         private readonly DispatcherQueueTimer HideFlyoutTimer;
-        private readonly UISettings UISettings = new();
+        private static readonly UISettings UISettings = new();
 
 
         public Flyout()
@@ -68,6 +70,10 @@ namespace FruitLanguageSwitcher.Views
             MoveToDestination();
         }
 
+        public static void SettingsUpdateHandler(object sender, EventArgs e)
+        {
+            Enabled = Core.Settings.FlyoutEnabled;
+        }
 
         void HideFlyout(object t, object s)
         {
@@ -77,14 +83,17 @@ namespace FruitLanguageSwitcher.Views
 
         public void UpdateText(object sender, Constants.LanguageEvent e)
         {
-            DispatcherQueue.TryEnqueue(() =>
+            if(Enabled)
             {
-                FlyoutText.Text = new CultureInfo(e.LCID).NativeName;
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    FlyoutText.Text = new CultureInfo(e.LCID).NativeName;
 
-                this.Show();
-                FlyoutBase.ShowAttachedFlyout(FlyoutAnchor);
-                HideFlyoutTimer.Start();
-            });
+                    this.Show();
+                    FlyoutBase.ShowAttachedFlyout(FlyoutAnchor);
+                    HideFlyoutTimer.Start();
+                });
+            }
         }
 
         public void Reload()
