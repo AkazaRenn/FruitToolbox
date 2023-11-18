@@ -1,6 +1,8 @@
-﻿<ResourceDictionary
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FruitLanguageSwitcher.Views"
     xmlns:tb="using:H.NotifyIcon"
     >
     <XamlUICommand
@@ -8,18 +10,12 @@
         Label="Remap LWin"
         Description="Enable/disable remapping LWin to Shift + Ctrl + Alt + Win + S"
         >
-        <XamlUICommand.IconSource>
-            <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xF16B;"/>
-        </XamlUICommand.IconSource>
     </XamlUICommand>
     <XamlUICommand
         x:Key="ReverseMouseWheelCommand"
         Label="Reverse Mouse Wheel"
         Description="Enable/disable reversing mouse wheel to achieve natural scrolling"
         >
-        <XamlUICommand.IconSource>
-            <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xF16B;"/>
-        </XamlUICommand.IconSource>
     </XamlUICommand>
     <XamlUICommand
         x:Key="ExitApplicationCommand"
@@ -40,7 +36,7 @@
         x:Key="TrayIcon"
         Visibility="Visible"
         IconSource="/Assets/durian.ico"
-        ContextMenuMode="SecondWindow"
+        ContextMenuMode="PopupMenu"
         NoLeftClickDelay="True"
         MenuActivation="RightClick"
         ToolTipText="Fruit Language Switcher"
