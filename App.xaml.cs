@@ -29,7 +29,8 @@ namespace FruitLanguageSwitcher
 
         private static LanguageSwitcher Switcher;
         private static Hotkey Hotkey;
-        private static Views.Flyout NewLangFlyout = new();
+        private static Views.Settings SettingsWindow = null;
+        private static readonly Views.Flyout NewLangFlyout = new();
 
         #endregion
 
@@ -41,7 +42,7 @@ namespace FruitLanguageSwitcher
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         #endregion
@@ -60,7 +61,7 @@ namespace FruitLanguageSwitcher
             InitializeFlyout();
         }
 
-        private void InitializeFlyout()
+        private static void InitializeFlyout()
         {
             LanguageSwitcher.NewLanguageEvent += NewLangFlyout.UpdateText;
             NewLangFlyout.Activate();
@@ -68,14 +69,14 @@ namespace FruitLanguageSwitcher
 
         private void InitializeTrayIcon()
         {
-            var exitApplicationCommand = (XamlUICommand)Resources["ExitApplicationCommand"];
-            exitApplicationCommand.ExecuteRequested += ExitApplicationCommand_ExecuteRequested;
+            var OpenSettingsCommand = (XamlUICommand)Resources["OpenSettingsCommand"];
+            OpenSettingsCommand.ExecuteRequested += OpenSettingsCommand_ExecuteRequested;
 
-            var lwinRemapCommand = (XamlUICommand)Resources["LWinRemapCommand"];
-            lwinRemapCommand.ExecuteRequested += Settings.ToggleLWinRemapEnabled;
+            var ReloadCommand = (XamlUICommand)Resources["ReloadCommand"];
+            ReloadCommand.ExecuteRequested += ReloadCommand_ExecuteRequested;
 
-            var reverseMouseWheelCommand = (XamlUICommand)Resources["ReverseMouseWheelCommand"];
-            reverseMouseWheelCommand.ExecuteRequested += Settings.ToggleReverseMouseWheelEnabled;
+            var ExitApplicationCommand = (XamlUICommand)Resources["ExitApplicationCommand"];
+            ExitApplicationCommand.ExecuteRequested += ExitApplicationCommand_ExecuteRequested;
 
             TrayIcon = (TaskbarIcon)Resources["TrayIcon"];
             TrayIcon.ForceCreate();
@@ -104,12 +105,6 @@ namespace FruitLanguageSwitcher
 
         }
 
-        private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
-        {
-            TrayIcon?.Dispose();
-            Window?.Close();
-        }
-
         private static async void RegisterStartup()
         {
             StartupTask startupTask = await StartupTask.GetAsync("MyStartupId");
@@ -117,6 +112,28 @@ namespace FruitLanguageSwitcher
             {
                 await startupTask.RequestEnableAsync();
             }
+        }
+
+        private void OpenSettingsCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
+        {
+            if(SettingsWindow == null)
+            {
+                SettingsWindow = new();
+            }
+
+            SettingsWindow.Activate();
+        }
+
+        private void ReloadCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
+        {
+            // TrayIcon?.Dispose();
+            // Window?.Close();
+        }
+
+        private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
+        {
+            TrayIcon?.Dispose();
+            Window?.Close();
         }
 
         #endregion
