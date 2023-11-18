@@ -30,7 +30,7 @@ namespace FruitLanguageSwitcher
         private static LanguageSwitcher Switcher;
         private static Hotkey Hotkey;
         private static Views.Settings SettingsWindow = null;
-        private static readonly Views.Flyout NewLangFlyout = new();
+        private static readonly Views.Flyout NewLangFlyout;
 
         #endregion
 
@@ -63,6 +63,8 @@ namespace FruitLanguageSwitcher
 
         private static void InitializeFlyout()
         {
+            NewLangFlyout = new();
+
             LanguageSwitcher.NewLanguageEvent += NewLangFlyout.UpdateText;
             NewLangFlyout.Activate();
         }
@@ -119,6 +121,7 @@ namespace FruitLanguageSwitcher
             if(SettingsWindow == null)
             {
                 SettingsWindow = new();
+                SettingsWindow.Closed += (e, s) => SettingsWindow = null;
             }
 
             SettingsWindow.Activate();
@@ -126,8 +129,8 @@ namespace FruitLanguageSwitcher
 
         private void ReloadCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
         {
-            // TrayIcon?.Dispose();
-            // Window?.Close();
+            Switcher.Reload();
+            NewLangFlyout.Reload();
         }
 
         private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)

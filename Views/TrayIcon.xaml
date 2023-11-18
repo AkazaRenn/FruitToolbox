@@ -7,24 +7,33 @@
     >
     <XamlUICommand
         x:Key="OpenSettingsCommand"
-        Label="Remap LWin"
-        Description="Enable/disable remapping LWin to Shift + Ctrl + Alt + Win + S"
+        Label="Settings"
+        Description="Open Settings window"
         >
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator
+                Key="S"
+                Modifiers="Control"
+                />
+        </XamlUICommand.KeyboardAccelerators>
     </XamlUICommand>
     <XamlUICommand
         x:Key="ReloadCommand"
-        Label="Reverse Mouse Wheel"
-        Description="Enable/disable reversing mouse wheel to achieve natural scrolling"
+        Label="Reload"
+        Description="Reload app"
         >
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator
+                Key="R"
+                Modifiers="Control"
+                />
+        </XamlUICommand.KeyboardAccelerators>
     </XamlUICommand>
     <XamlUICommand
         x:Key="ExitApplicationCommand"
         Label="Exit"
         Description="Exit"
         >
-        <XamlUICommand.IconSource>
-            <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xE711;"/>
-        </XamlUICommand.IconSource>
         <XamlUICommand.KeyboardAccelerators>
             <KeyboardAccelerator
                 Key="E"

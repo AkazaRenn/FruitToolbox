@@ -87,6 +87,11 @@ namespace FruitLanguageSwitcher.Views
             });
         }
 
+        public void Reload()
+        {
+            MoveToDestination();
+        }
+
         private void MoveToDestination()
         {
             foreach(var display in Display.GetDisplays())
