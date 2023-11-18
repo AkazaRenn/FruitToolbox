@@ -14,7 +14,25 @@ namespace FruitLanguageSwitcher.Core
     internal class SettingsProperties
     {
         [YamlIgnore]
-        public bool StartUp { get; set; } = true;
+        public static bool StartUp
+        {
+            get
+            {
+                StartupTask startupTask = StartupTask.GetAsync("MyStartupId").GetAwaiter().GetResult();
+                return (startupTask.State == StartupTaskState.Enabled) || (startupTask.State == StartupTaskState.EnabledByPolicy);
+            }
+            set
+            {
+                StartupTask startupTask = StartupTask.GetAsync("MyStartupId").GetAwaiter().GetResult();
+                if(value == true && startupTask.State == StartupTaskState.Disabled)
+                {
+                    startupTask.RequestEnableAsync().GetAwaiter().GetResult();
+                } else if(value == false && startupTask.State == StartupTaskState.Enabled)
+                {
+                    startupTask.Disable();
+                }
+            }
+        }
         public bool LanguageSwitcherEnabled { get; set; } = true;
         public bool FlyoutEnabled { get; set; } = true;
         public bool RAltModifierEnabled { get; set; } = true;
@@ -33,29 +51,22 @@ namespace FruitLanguageSwitcher.Core
         private static SettingsProperties SettingsProperties = new();
         private static bool Loaded = false;
 
+        private static void EnsureLoaded() {
+            if(!Loaded)
+                Load();
+        }
+
         public static bool StartUp
         {
             get
             {
-                if(!Loaded)
-                    Load();
-
-                StartupTask startupTask = StartupTask.GetAsync("MyStartupId").GetAwaiter().GetResult();
-                return (startupTask.State == StartupTaskState.Enabled) || (startupTask.State == StartupTaskState.EnabledByPolicy);
+                EnsureLoaded();
+                return SettingsProperties.StartUp;
             }
             set
             {
-                if(!Loaded)
-                    Load();
-
-                StartupTask startupTask = StartupTask.GetAsync("MyStartupId").GetAwaiter().GetResult();
-                if(value == true && (startupTask.State == StartupTaskState.Disabled || startupTask.State== StartupTaskState.DisabledByUser))
-                {
-                    startupTask.RequestEnableAsync().GetAwaiter().GetResult();
-                } else if(value == false && startupTask.State == StartupTaskState.Enabled)
-                {
-                    startupTask.Disable();
-                }
+                EnsureLoaded();
+                SettingsProperties.StartUp = value;
             }
         }
 
@@ -63,14 +74,12 @@ namespace FruitLanguageSwitcher.Core
         {
             get
             {
-                if(!Loaded)
-                    Load();
+                EnsureLoaded();
                 return SettingsProperties.LanguageSwitcherEnabled;
             }
             set
             {
-                if(!Loaded)
-                    Load();
+                EnsureLoaded();
                 SettingsProperties.LanguageSwitcherEnabled = value;
                 OnSettingsUpdate();
             }
@@ -80,14 +89,12 @@ namespace FruitLanguageSwitcher.Core
         {
             get
             {
-                if(!Loaded)
-                    Load();
+                EnsureLoaded();
                 return SettingsProperties.FlyoutEnabled;
             }
             set
             {
-                if(!Loaded)
-                    Load();
+                EnsureLoaded();
                 SettingsProperties.FlyoutEnabled = value;
                 OnSettingsUpdate();
             }
@@ -96,14 +103,12 @@ namespace FruitLanguageSwitcher.Core
         {
             get
             {
-                if(!Loaded)
-                    Load();
+                EnsureLoaded();
                 return SettingsProperties.RAltModifierEnabled;
             }
             set
             {
-                if(!Loaded)
-                    Load();
+                EnsureLoaded();
                 SettingsProperties.RAltModifierEnabled = value;
                 OnSettingsUpdate();
             }
@@ -112,14 +117,12 @@ namespace FruitLanguageSwitcher.Core
         {
             get
             {
-                if(!Loaded)
-                    Load();
+                EnsureLoaded();
                 return SettingsProperties.LGuiRemapEnabled;
             }
             set
             {
-                if(!Loaded)
-                    Load();
+                EnsureLoaded();
                 SettingsProperties.LGuiRemapEnabled = value;
                 OnSettingsUpdate();
             }
@@ -128,14 +131,12 @@ namespace FruitLanguageSwitcher.Core
         {
             get
             {
-                if(!Loaded)
-                    Load();
+                EnsureLoaded();
                 return SettingsProperties.ReverseMouseWheelEnabled;
             }
             set
             {
-                if(!Loaded)
-                    Load();
+                EnsureLoaded();
                 SettingsProperties.ReverseMouseWheelEnabled = value;
                 OnSettingsUpdate();
             }
