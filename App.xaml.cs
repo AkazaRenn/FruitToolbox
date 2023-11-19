@@ -25,7 +25,6 @@ namespace FruitLanguageSwitcher
         #region Properties
 
         public static TaskbarIcon TrayIcon { get; private set; }
-        public static Window Window { get; set; }
 
         private static LanguageSwitcher Switcher;
         private static Hotkey Hotkey;
@@ -129,7 +128,7 @@ namespace FruitLanguageSwitcher
         private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
         {
             TrayIcon?.Dispose();
-            Window?.Close();
+            Environment.Exit(0);
         }
 
         #endregion
