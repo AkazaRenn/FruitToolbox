@@ -7,6 +7,13 @@
     "FruitLanguageSwitcher (Unpackaged)": {
       "commandName": "Project",
       "nativeDebugging": true
+    },
+    "Remote (Packaged)": {
+      "commandName": "MsixPackage",
+      "nativeDebugging": true,
+      "remoteDebugEnabled": true,
+      "remoteDebugMachine": "WinDev2311Eval",
+      "authenticationMode": "Windows"
     }
   }
 }
