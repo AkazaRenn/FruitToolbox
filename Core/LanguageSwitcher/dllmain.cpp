@@ -6,6 +6,12 @@ using namespace FruitLanguageSwitcher;
 
 #define DLLEXPORT __declspec(dllexport)
 
+BOOL APIENTRY DllMain(HMODULE hModule,
+    DWORD  ul_reason_for_call,
+    LPVOID lpReserved) {
+    return TRUE;
+}
+
 extern "C" {
     DLLEXPORT void* LanguageSwitcher_new(onLanguageChangeCallback handler) {
         return (void*)new LanguageSwitcher(handler);
@@ -36,7 +42,7 @@ extern "C" {
     }
 
     DLLEXPORT void LanguageSwitcher_setCurrentLanguage(LanguageSwitcher* s,
-                                                       DWORD newLanguage) {
+        DWORD newLanguage) {
         s->setCurrentLanguage(newLanguage);
     }
 
