@@ -24,8 +24,8 @@
     <ProjectGuid>{8eabf3ad-23d8-49fd-88a8-13c7a0cacbd0}</ProjectGuid>
     <RootNamespace>LanguageSwitcher</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <TargetFramework>net8.0-windows10.0.22000.0</TargetFramework>
-    <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+    <WindowsTargetPlatformMinVersion>10.0.18362.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
