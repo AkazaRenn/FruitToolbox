@@ -1,34 +1,39 @@
-﻿<ResourceDictionary
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FruitLanguageSwitcher.Views"
     xmlns:tb="using:H.NotifyIcon"
     >
     <XamlUICommand
-        x:Key="LWinRemapCommand"
-        Label="Remap LWin"
-        Description="Enable/disable remapping LWin to Shift + Ctrl + Alt + Win + S"
+        x:Key="OpenSettingsCommand"
+        Label="Settings"
+        Description="Open Settings window"
         >
-        <XamlUICommand.IconSource>
-            <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xF16B;"/>
-        </XamlUICommand.IconSource>
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator
+                Key="S"
+                Modifiers="Control"
+                />
+        </XamlUICommand.KeyboardAccelerators>
     </XamlUICommand>
     <XamlUICommand
-        x:Key="ReverseMouseWheelCommand"
-        Label="Reverse Mouse Wheel"
-        Description="Enable/disable reversing mouse wheel to achieve natural scrolling"
+        x:Key="ReloadCommand"
+        Label="Reload"
+        Description="Reload app"
         >
-        <XamlUICommand.IconSource>
-            <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xF16B;"/>
-        </XamlUICommand.IconSource>
+        <XamlUICommand.KeyboardAccelerators>
+            <KeyboardAccelerator
+                Key="R"
+                Modifiers="Control"
+                />
+        </XamlUICommand.KeyboardAccelerators>
     </XamlUICommand>
     <XamlUICommand
         x:Key="ExitApplicationCommand"
         Label="Exit"
         Description="Exit"
         >
-        <XamlUICommand.IconSource>
-            <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xE711;"/>
-        </XamlUICommand.IconSource>
         <XamlUICommand.KeyboardAccelerators>
             <KeyboardAccelerator
                 Key="E"
@@ -40,15 +45,15 @@
         x:Key="TrayIcon"
         Visibility="Visible"
         IconSource="/Assets/durian.ico"
-        ContextMenuMode="SecondWindow"
+        ContextMenuMode="PopupMenu"
         NoLeftClickDelay="True"
         MenuActivation="RightClick"
         ToolTipText="Fruit Language Switcher"
         >
         <tb:TaskbarIcon.ContextFlyout>
             <MenuFlyout AreOpenCloseAnimationsEnabled="False">
-                <MenuFlyoutItem Command="{StaticResource LWinRemapCommand}" />
-                <MenuFlyoutItem Command="{StaticResource ReverseMouseWheelCommand}" />
+                <MenuFlyoutItem Command="{StaticResource OpenSettingsCommand}" />
+                <MenuFlyoutItem Command="{StaticResource ReloadCommand}" />
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem Command="{StaticResource ExitApplicationCommand}" />
             </MenuFlyout>

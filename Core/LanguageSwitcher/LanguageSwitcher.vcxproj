@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{8eabf3ad-23d8-49fd-88a8-13c7a0cacbd0}</ProjectGuid>
     <RootNamespace>LanguageSwitcher</RootNamespace>

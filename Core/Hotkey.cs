@@ -4,14 +4,17 @@ using System.Runtime.InteropServices;
 
 using AutoHotkey.Interop;
 
-namespace FruitLanguageSwitcher.Core {
-    internal class Hotkey {
+namespace FruitLanguageSwitcher.Core
+{
+    internal class Hotkey
+    {
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate void AHKDelegate();
         private readonly AutoHotkeyEngine ahk = AutoHotkeyEngine.Instance;
         private static readonly List<AHKDelegate> handlers = new();
 
-        public Hotkey(AHKDelegate _onCapsLock, AHKDelegate _onLanguageChange, AHKDelegate _onRaltUp) {
+        public Hotkey(AHKDelegate _onCapsLock, AHKDelegate _onLanguageChange, AHKDelegate _onRaltUp)
+        {
             SetVarOnSettings();
 
             handlers.Add(_onCapsLock);
@@ -30,15 +33,17 @@ namespace FruitLanguageSwitcher.Core {
             ahk.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.ReverseMouseWheel));
         }
 
-        public void SettingsUpdateHandler(object sender, EventArgs e) {
+        public void SettingsUpdateHandler(object sender, EventArgs e)
+        {
             SetVarOnSettings();
         }
 
-        public void SetVarOnSettings() {
-            ahk.SetVar("LanguageSwitcherEnabled", GetBoolStr(App.Settings.LanguageSwitcherEnabled));
-            ahk.SetVar("RAltModifierEnabled", GetBoolStr(App.Settings.RAltModifierEnabled));
-            ahk.SetVar("LWinRemapEnabled", GetBoolStr(App.Settings.LWinRemapEnabled));
-            ahk.SetVar("ReverseMouseWheelEnabled", GetBoolStr(App.Settings.ReverseMouseWheelEnabled));
+        public void SetVarOnSettings()
+        {
+            ahk.SetVar("LanguageSwitcherEnabled", GetBoolStr(Settings.LanguageSwitcherEnabled));
+            ahk.SetVar("RAltModifierEnabled", GetBoolStr(Settings.RAltModifierEnabled));
+            ahk.SetVar("LWinRemapEnabled", GetBoolStr(Settings.LGuiRemapEnabled));
+            ahk.SetVar("ReverseMouseWheelEnabled", GetBoolStr(Settings.ReverseMouseWheelEnabled));
         }
 
         static private string GetActionDelegateStr(AHKDelegate act)

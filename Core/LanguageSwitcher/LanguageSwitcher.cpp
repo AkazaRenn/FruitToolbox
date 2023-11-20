@@ -18,26 +18,28 @@ inline LCID hklToLcid(HKL hkl) {
 }
 
 void LanguageSwitcher::applyInputLanguage() {
-    if(activeLanguages[inImeMode]) {
+    if(getCurrentLanguage()) {
         auto hwnd = GetForegroundWindow();
 
-        SendMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, activeLanguages[inImeMode]);
+        SendMessage(hwnd, WM_INPUTLANGCHANGEREQUEST, 0, getCurrentLanguage());
         fixImeConversionMode(hwnd);
     }
 }
 
-void LanguageSwitcher::updateInputLanguage() {
-    updateInputLanguage(GetForegroundWindow());
+void LanguageSwitcher::updateInputLanguage(bool doCallback) {
+    updateInputLanguage(GetForegroundWindow(), doCallback);
 }
 
-void LanguageSwitcher::updateInputLanguage(HWND hwnd) {
-    setCurrentLanguage(hklToLcid(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))));
+void LanguageSwitcher::updateInputLanguage(HWND hwnd, bool doCallback) {
+    setCurrentLanguage(hklToLcid(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))), doCallback);
     fixImeConversionMode(hwnd);
 }
 
 bool LanguageSwitcher::swapCategory() {
     inImeMode = !inImeMode;
     applyInputLanguage();
+
+    languageChangeHandler(getCurrentLanguage());
     return inImeMode;
 }
 
@@ -45,17 +47,16 @@ bool LanguageSwitcher::getCategory() {
     return inImeMode;
 }
 
-LCID LanguageSwitcher::getCurrentLanguage() {
-    return activeLanguages[inImeMode];
-}
-
-void LanguageSwitcher::setCurrentLanguage(LCID lcid) {
+void LanguageSwitcher::setCurrentLanguage(LCID lcid, bool doCallback) {
     if(languageList.find(lcid) == languageList.end()) {
         languageList[lcid] = Language(lcid);
     }
     else if(getCurrentLanguage() != lcid) {
         inImeMode = languageList[lcid].isImeLanguage();
         activeLanguages[inImeMode] = languageList[lcid].getLocaleId();
+    }
+    else {
+        return;
     }
 }
 
@@ -72,21 +73,22 @@ void LanguageSwitcher::fixImeConversionMode(HWND hWnd, LCID language) {
 }
 
 void LanguageSwitcher::fixImeConversionMode(HWND hWnd) {
-    if(languageList[activeLanguages[inImeMode]].isImeLanguage()) {
-        fixImeConversionMode(hWnd, activeLanguages[inImeMode]);
+    if(languageList[getCurrentLanguage()].isImeLanguage()) {
+        fixImeConversionMode(hWnd, getCurrentLanguage());
     }
 }
 
 void LanguageSwitcher::onRaltUp() {
-    getPerLanguageMethods(activeLanguages[inImeMode]).onRaltUp();
+    getPerLanguageMethods(getCurrentLanguage()).onRaltUp();
 }
 
-#pragma managed(push, off)
-LanguageSwitcher::LanguageSwitcher() {
+LanguageSwitcher::LanguageSwitcher(onLanguageChangeCallback handler) {
     instance = this;
     if(instance != this) {
         return;
     }
+
+    languageChangeHandler = handler;
 
     WCHAR buffer[REG_LANGUAGE_MULTI_SZ_MAX_LENGTH];
     DWORD dwLen = sizeof(buffer);
@@ -112,7 +114,6 @@ LanguageSwitcher::LanguageSwitcher() {
 
     windowChangeEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, LanguageSwitcher::onActiveWindowChange, 0, 0, WINEVENT_OUTOFCONTEXT);
 }
-#pragma managed(pop)
 
 LanguageSwitcher::~LanguageSwitcher() {
     UnhookWinEvent(windowChangeEvent);
@@ -121,7 +122,6 @@ LanguageSwitcher::~LanguageSwitcher() {
 bool LanguageSwitcher::ready() {
     return (activeLanguages[false] != 0 && activeLanguages[true] != 0);
 }
-
 
 LanguageSwitcher* LanguageSwitcher::instance;
 void CALLBACK LanguageSwitcher::onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
