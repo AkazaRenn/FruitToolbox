@@ -6,9 +6,7 @@
 		<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
 		<Platforms>x64;arm64</Platforms>
-		<RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
 		<SelfContained>true</SelfContained>
-		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<UseWinUI>true</UseWinUI>
 		<EnableMsixTooling>true</EnableMsixTooling>
@@ -17,6 +15,14 @@
 		<PublishReadyToRun>true</PublishReadyToRun>
 		<Nullable>disable</Nullable>
 	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Platform)'=='x64'">
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	  </PropertyGroup>
+
+	  <PropertyGroup Condition="'$(Platform)'=='arm64'">
+		<RuntimeIdentifier>win-arm64</RuntimeIdentifier>
+	  </PropertyGroup>
 
 	<ItemGroup>
 	  <Content Remove="Assets\durian.png" />
@@ -48,13 +54,13 @@
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+		<AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
 		<GenerateTestArtifacts>False</GenerateTestArtifacts>
 		<AppxBundle>Always</AppxBundle>
 		<AppxBundlePlatforms>x64</AppxBundlePlatforms>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-		<PackageCertificateThumbprint>A4033C3B4F345A042F1D980927710330A30416B0</PackageCertificateThumbprint>
+		<PackageCertificateThumbprint>FB69A2BAF37F01275BC888753500C0C0C576F2A8</PackageCertificateThumbprint>
 		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
 		<ApplicationIcon>Assets\durian.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>

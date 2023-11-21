@@ -18,6 +18,7 @@ internal sealed partial class Settings: WindowEx
     private void StartUp_Toggle(object sender, RoutedEventArgs e)
     {
         Core.Settings.StartUp = (sender as ToggleSwitch).IsOn;
+        (sender as ToggleSwitch).IsOn = Core.Settings.StartUp;
     }
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)

@@ -3,7 +3,7 @@
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"  
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
@@ -24,6 +24,7 @@
 	<Dependencies>
 		<TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
 		<PackageDependency Name="Microsoft.VCLibs.140.00.UWPDesktop" MinVersion="14.0.30704.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
+		<PackageDependency Name="Microsoft.WindowsAppRuntime.1.4" MinVersion="1.4.0.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
 	</Dependencies>
 
 	<Resources>
@@ -68,14 +69,14 @@
 						</com:ExeServer>
 					</com:ComServer>
 				</com:Extension>
-				<uap5:Extension   
-				    Category="windows.appExecutionAlias"   
-				    Executable="FruitLanguageSwitcher.exe"   
-				    EntryPoint="Windows.FullTrustApplication">  
-				    <uap5:AppExecutionAlias>  
-						<uap5:ExecutionAlias Alias="fls.exe" />  
-				    </uap5:AppExecutionAlias>  
-				</uap5:Extension>  
+				<uap5:Extension
+				    Category="windows.appExecutionAlias"
+				    Executable="FruitLanguageSwitcher.exe"
+				    EntryPoint="Windows.FullTrustApplication">
+				    <uap5:AppExecutionAlias>
+						<uap5:ExecutionAlias Alias="fls.exe" />
+				    </uap5:AppExecutionAlias>
+				</uap5:Extension>
 			</Extensions>
 		</Application>
 	</Applications>

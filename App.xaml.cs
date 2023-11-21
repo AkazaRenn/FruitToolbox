@@ -1,16 +1,10 @@
-using System;
-using System.ComponentModel;
-
 using FruitLanguageSwitcher.Core;
 
 using H.NotifyIcon;
 
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-
-using Windows.ApplicationModel;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -94,11 +88,11 @@ namespace FruitLanguageSwitcher
 
             if(!Switcher.Ready())
             {
-                Settings.LanguageSwitcherEnabled = false;
-                new ToastContentBuilder()
-                    .AddText("Unable to enable language switcher")
-                    .AddText("Please make sure you have both keyboard languages and IME languages installed")
-                    .Show();
+               Settings.LanguageSwitcherEnabled = false;
+               new ToastContentBuilder()
+                   .AddText("Unable to enable language switcher")
+                   .AddText("Please make sure you have both keyboard languages and IME languages installed")
+                   .Show();
             }
 
         }
