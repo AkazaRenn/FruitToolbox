@@ -5,44 +5,43 @@
 using namespace std;
 
 namespace FruitToolbox {
-    namespace LanguageSwitcher {
-        namespace Core {
-            typedef void(__stdcall* onLanguageChangeCallback)(int lcid);
+    typedef void(__stdcall* onLanguageChangeCallback)(int lcid);
 
-            class LanguageSwitcher {
-            private:
-                map<LCID, Language> languageList;
-                LCID activeLanguages[2];
-                bool inImeMode;
-                onLanguageChangeCallback languageChangeHandler = nullptr;
-
-                void applyInputLanguage();
-                void fixImeConversionMode(HWND hWnd);
-                void fixImeConversionMode(HWND hWnd, LCID language);
-
-
-                // Windows hook related
-                static LanguageSwitcher* instance;
-                HWINEVENTHOOK windowChangeEvent;
-                static void CALLBACK onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-                void updateInputLanguage(HWND hwnd, bool doCallback = true);
-
-            public:
-                explicit LanguageSwitcher(onLanguageChangeCallback handler);
-                ~LanguageSwitcher();
-                bool ready();
-
-                void updateInputLanguage(bool doCallback = true);
-                bool swapCategory();
-                bool getCategory();
-                void setCurrentLanguage(LCID lcid, bool doCallback = true); // returns true if lcid is in the list, false otherwise
-                void onRaltUp();
-
-                inline LCID getCurrentLanguage() {
-                    return activeLanguages[inImeMode];
-                }
-            };
+    class LanguageSwitcher {
+    private:
+        inline static LCID hklToLcid(HKL hkl) {
+            return (UINT64(hkl) & 0xffff);
         }
-    }
+
+        static map<LCID, Language> languageList;
+        static LCID activeLanguages[2];
+        static bool inImeMode;
+        static onLanguageChangeCallback languageChangeHandler;
+
+        static void applyInputLanguage();
+        static void fixImeConversionMode(HWND hWnd);
+        static void fixImeConversionMode(HWND hWnd, LCID language);
+
+
+        // Windows hook related
+        static HWINEVENTHOOK windowChangeEvent;
+        static void CALLBACK onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+        static void updateInputLanguage(HWND hwnd, bool doCallback = true);
+
+    public:
+        static bool start(onLanguageChangeCallback handler);
+        static void stop();
+        static bool ready();
+
+        static void updateInputLanguage(bool doCallback = true);
+        static bool swapCategory();
+        static bool getCategory();
+        static void setCurrentLanguage(LCID lcid, bool doCallback = true); // returns true if lcid is in the list, false otherwise
+        static void onRaltUp();
+
+        static inline LCID getCurrentLanguage() {
+            return activeLanguages[inImeMode];
+        }
+    };
 }
 

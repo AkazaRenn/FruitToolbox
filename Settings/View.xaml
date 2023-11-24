@@ -16,19 +16,16 @@
         <wuc:SettingsPageControl.ModuleContent>
             <StackPanel ChildrenTransitions="{StaticResource SettingsCardsAnimations}"
                         Orientation="Vertical" Margin="0, -100, 0, 0">
-                <wuc:SimpleSettingsGroup Header="Language Switcher"
-                                         Visibility="Visible">
+                <wuc:SimpleSettingsGroup Header="General"
+                                            Visibility="Visible">
                     <wuc:SettingsCard Margin="0,-6,0,0"
-                                      Description="Start with system launch"
-                                      Header="StartUp">
+                                        Description="Start with system launch"
+                                        Header="StartUp">
                             <ToggleSwitch Toggled="StartUp_Toggle" IsOn="{x:Bind settings:Core.StartUp}"/>
                     </wuc:SettingsCard>
-                    <wuc:SettingsCard Margin="0,-6,0,0"
-                                      Description="In case it is not functioning as expected"
-                                      Header="Reload language switcher core">
-                        <Button Content="Reload"
-                                Click="ReloadButton_Click"/>
-                    </wuc:SettingsCard>
+                </wuc:SimpleSettingsGroup >
+                <wuc:SimpleSettingsGroup Header="Language Switcher"
+                                         Visibility="Visible">
                     <wuc:SettingsCard Margin="0,-6,0,0"
                                       Description="A flyout will be shown to indicate the new language"
                                       Header="Show flyout">
@@ -38,12 +35,12 @@
                 <wuc:SimpleSettingsGroup Header="Additional Tools"
                                          Visibility="Visible">
                     <wuc:SettingsCard Margin="0,-6,0,0"
-                                      Description="It will send super + alt + ctrl + shift + S instead, hotkeys will not be affected"
+                                      Description="It will send super + alt + ctrl + shift + S instead, key combinations will not be affected"
                                       Header="Remap left Super/GUI/Win key">
                             <ToggleSwitch Toggled="RemapLGui_Toggle" IsOn="{x:Bind settings:Core.LGuiRemapEnabled}"/>
                     </wuc:SettingsCard>
                     <wuc:SettingsCard Margin="0,-6,0,0"
-                                      Description="Not that it may make the trackpad hard to scroll, disable it in that case"
+                                      Description="Note that it may make the trackpad hard to scroll, disable it in that case"
                                       Header="Reverse scrolling direction">
                             <ToggleSwitch Toggled="ReverseScroll_Toggle" IsOn="{x:Bind settings:Core.ReverseMouseWheelEnabled}"/>
                     </wuc:SettingsCard>

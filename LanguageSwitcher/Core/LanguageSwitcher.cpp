@@ -4,7 +4,7 @@
 
 #pragma comment(lib, "imm32")
 
-using namespace FruitToolbox::LanguageSwitcher::Core;
+using namespace FruitToolbox;
 
 constexpr size_t             REG_LANGUAGE_MULTI_SZ_MAX_LENGTH = 1024;
 constexpr LPCWSTR            REG_LANGUAGES_DIR = L"Control Panel\\International\\User Profile";
@@ -12,10 +12,6 @@ constexpr LPCWSTR            REG_LANGUAGES_KEY = L"Languages";
 
 constexpr UINT               MAX_TRY_TIMES = 2;
 constexpr UINT               RETRY_WAIT_MS = 50;
-
-inline LCID hklToLcid(HKL hkl) {
-    return (UINT64(hkl) & 0xffff);
-}
 
 void LanguageSwitcher::applyInputLanguage() {
     if(getCurrentLanguage()) {
@@ -82,15 +78,31 @@ void LanguageSwitcher::onRaltUp() {
     getPerLanguageMethods(getCurrentLanguage()).onRaltUp();
 }
 
-LanguageSwitcher::LanguageSwitcher(onLanguageChangeCallback handler) {
-    instance = this;
-    if(instance != this) {
-        return;
+map<LCID, Language> LanguageSwitcher::languageList = {};
+LCID LanguageSwitcher::activeLanguages[2] = {};
+bool LanguageSwitcher::inImeMode = false;
+
+HWINEVENTHOOK LanguageSwitcher::windowChangeEvent = nullptr;
+onLanguageChangeCallback LanguageSwitcher::languageChangeHandler = nullptr;
+void LanguageSwitcher::stop() {
+    UnhookWinEvent(windowChangeEvent);
+
+    LanguageSwitcher::languageList = {};
+    LanguageSwitcher::activeLanguages[2] = {};
+    LanguageSwitcher::inImeMode = false;
+
+    LanguageSwitcher::windowChangeEvent = nullptr;
+    LanguageSwitcher::languageChangeHandler = nullptr;
+}
+
+bool LanguageSwitcher::start(onLanguageChangeCallback handler) {
+    if(windowChangeEvent != nullptr) {
+        return false;
     }
 
     languageChangeHandler = handler;
 
-    WCHAR buffer[REG_LANGUAGE_MULTI_SZ_MAX_LENGTH];
+    WCHAR buffer[REG_LANGUAGE_MULTI_SZ_MAX_LENGTH] = {};
     DWORD dwLen = sizeof(buffer);
     RegGetValue(HKEY_CURRENT_USER, REG_LANGUAGES_DIR, REG_LANGUAGES_KEY, RRF_RT_REG_MULTI_SZ, NULL, buffer, &dwLen);
 
@@ -113,19 +125,15 @@ LanguageSwitcher::LanguageSwitcher(onLanguageChangeCallback handler) {
     applyInputLanguage();
 
     windowChangeEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, LanguageSwitcher::onActiveWindowChange, 0, 0, WINEVENT_OUTOFCONTEXT);
-}
-
-LanguageSwitcher::~LanguageSwitcher() {
-    UnhookWinEvent(windowChangeEvent);
+    return (windowChangeEvent != nullptr);
 }
 
 bool LanguageSwitcher::ready() {
     return (activeLanguages[false] != 0 && activeLanguages[true] != 0);
 }
 
-LanguageSwitcher* LanguageSwitcher::instance;
 void CALLBACK LanguageSwitcher::onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    if(instance && hwnd == GetForegroundWindow()) {
-        instance->updateInputLanguage(hwnd);
+    if(hwnd == GetForegroundWindow()) {
+        updateInputLanguage(hwnd);
     }
 }

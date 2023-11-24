@@ -2,45 +2,44 @@
 #include "pch.h"
 #include "LanguageSwitcher.h"
 
-using namespace FruitToolbox::LanguageSwitcher::Core;
+using namespace FruitToolbox;
 
 #define DLLEXPORT __declspec(dllexport)
 
 extern "C" {
-    DLLEXPORT void* LanguageSwitcher_new(onLanguageChangeCallback handler) {
-        return (void*)new LanguageSwitcher(handler);
+    DLLEXPORT bool LanguageSwitcher_start(onLanguageChangeCallback handler) {
+        return LanguageSwitcher::start(handler);
     }
 
-    DLLEXPORT void LanguageSwitcher_delete(LanguageSwitcher* s) {
-        delete s;
+    DLLEXPORT void LanguageSwitcher_stop() {
+        LanguageSwitcher::stop();
     }
 
-    DLLEXPORT bool LanguageSwitcher_ready(LanguageSwitcher* s) {
-        return s->ready();
+    DLLEXPORT bool LanguageSwitcher_ready() {
+        return LanguageSwitcher::ready();
     }
 
-    DLLEXPORT void LanguageSwitcher_updateInputLanguage(LanguageSwitcher* s, bool doCallback) {
-        s->updateInputLanguage(doCallback);
+    DLLEXPORT void LanguageSwitcher_updateInputLanguage(bool doCallback) {
+        LanguageSwitcher::updateInputLanguage(doCallback);
     }
 
-    DLLEXPORT bool LanguageSwitcher_swapCategory(LanguageSwitcher* s) {
-        return s->swapCategory();
+    DLLEXPORT bool LanguageSwitcher_swapCategory() {
+        return LanguageSwitcher::swapCategory();
     }
 
-    DLLEXPORT bool LanguageSwitcher_getCategory(LanguageSwitcher* s) {
-        return s->getCategory();
+    DLLEXPORT bool LanguageSwitcher_getCategory() {
+        return LanguageSwitcher::getCategory();
     }
 
-    DLLEXPORT DWORD LanguageSwitcher_getCurrentLanguage(LanguageSwitcher* s) {
-        return s->getCurrentLanguage();
+    DLLEXPORT DWORD LanguageSwitcher_getCurrentLanguage() {
+        return LanguageSwitcher::getCurrentLanguage();
     }
 
-    DLLEXPORT void LanguageSwitcher_setCurrentLanguage(LanguageSwitcher* s,
-        DWORD newLanguage) {
-        s->setCurrentLanguage(newLanguage);
+    DLLEXPORT void LanguageSwitcher_setCurrentLanguage(DWORD newLanguage) {
+        LanguageSwitcher::setCurrentLanguage(newLanguage);
     }
 
-    DLLEXPORT void LanguageSwitcher_onRaltUp(LanguageSwitcher* s) {
-        s->onRaltUp();
+    DLLEXPORT void LanguageSwitcher_onRaltUp() {
+        LanguageSwitcher::onRaltUp();
     }
 }

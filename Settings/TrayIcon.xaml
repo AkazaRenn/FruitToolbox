@@ -18,18 +18,6 @@
         </XamlUICommand.KeyboardAccelerators>
     </XamlUICommand>
     <XamlUICommand
-        x:Key="ReloadCommand"
-        Label="Reload"
-        Description="Reload app"
-        >
-        <XamlUICommand.KeyboardAccelerators>
-            <KeyboardAccelerator
-                Key="R"
-                Modifiers="Control"
-                />
-        </XamlUICommand.KeyboardAccelerators>
-    </XamlUICommand>
-    <XamlUICommand
         x:Key="ExitApplicationCommand"
         Label="Exit"
         Description="Exit"
@@ -53,7 +41,6 @@
         <tb:TaskbarIcon.ContextFlyout>
             <MenuFlyout AreOpenCloseAnimationsEnabled="False">
                 <MenuFlyoutItem Command="{StaticResource OpenSettingsCommand}" />
-                <MenuFlyoutItem Command="{StaticResource ReloadCommand}" />
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem Command="{StaticResource ExitApplicationCommand}" />
             </MenuFlyout>

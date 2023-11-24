@@ -19,7 +19,6 @@ namespace FruitToolbox
 
         public static TaskbarIcon TrayIcon { get; private set; }
 
-        private static LanguageSwitcher.Core Switcher;
         private static Hotkey.Core Hotkey;
         private static Settings.View SettingsWindow = null;
         private static LanguageSwitcher.Flyout NewLangFlyout;
@@ -66,9 +65,6 @@ namespace FruitToolbox
             var OpenSettingsCommand = (XamlUICommand)Resources["OpenSettingsCommand"];
             OpenSettingsCommand.ExecuteRequested += OpenSettingsCommand_ExecuteRequested;
 
-            var ReloadCommand = (XamlUICommand)Resources["ReloadCommand"];
-            ReloadCommand.ExecuteRequested += ReloadCommand_ExecuteRequested;
-
             var ExitApplicationCommand = (XamlUICommand)Resources["ExitApplicationCommand"];
             ExitApplicationCommand.ExecuteRequested += ExitApplicationCommand_ExecuteRequested;
 
@@ -78,14 +74,15 @@ namespace FruitToolbox
 
         private static void InitializeFunction()
         {
-            Switcher = new LanguageSwitcher.Core();
-            Hotkey = new(Switcher.SwapCategoryNoReturn,
-                                Switcher.UpdateInputLanguageByKeyboard,
-                                Switcher.OnRaltUp);
+            LanguageSwitcher.Core.Start();
+
+            Hotkey = new(LanguageSwitcher.Core.SwapCategoryNoReturn,
+                                LanguageSwitcher.Core.UpdateInputLanguageByKeyboard,
+                                LanguageSwitcher.Core.OnRaltUp);
             Settings.Core.SettingsChangedEventHandler += Hotkey.SettingsUpdateHandler;
             Settings.Core.SettingsChangedEventHandler += LanguageSwitcher.Flyout.SettingsUpdateHandler;
 
-            if(!Switcher.Ready())
+            if(!LanguageSwitcher.Core.Ready())
             {
                Settings.Core.LanguageSwitcherEnabled = false;
                new ToastContentBuilder()
@@ -107,19 +104,9 @@ namespace FruitToolbox
             SettingsWindow.Activate();
         }
 
-        private void ReloadCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
-        {
-            ReloadComponents();
-        }
-
-        public static void ReloadComponents()
-        {
-            Switcher.Reload();
-            NewLangFlyout.Reload();
-        }
-
         private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
         {
+            LanguageSwitcher.Core.Stop();
             TrayIcon?.Dispose();
             Environment.Exit(0);
         }

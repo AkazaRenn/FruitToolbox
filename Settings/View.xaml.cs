@@ -21,18 +21,16 @@ internal sealed partial class View: WindowEx
         (sender as ToggleSwitch).IsOn = FruitToolbox.Settings.Core.StartUp;
     }
 
-    private void ReloadButton_Click(object sender, RoutedEventArgs e)
-    {
-        App.ReloadComponents();
-    }
     private void ShowFlyout_Toggle(object sender, RoutedEventArgs e)
     {
         FruitToolbox.Settings.Core.FlyoutEnabled = (sender as ToggleSwitch).IsOn;
     }
+
     private void RemapLGui_Toggle(object sender, RoutedEventArgs e)
     {
         FruitToolbox.Settings.Core.LGuiRemapEnabled = (sender as ToggleSwitch).IsOn;
     }
+
     private void ReverseScroll_Toggle(object sender, RoutedEventArgs e)
     {
         FruitToolbox.Settings.Core.ReverseMouseWheelEnabled = (sender as ToggleSwitch).IsOn;
