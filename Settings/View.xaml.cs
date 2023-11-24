@@ -3,11 +3,11 @@ using Microsoft.UI.Xaml.Controls;
 
 using WinUIEx;
 
-namespace FruitLanguageSwitcher.Views;
+namespace FruitToolbox.Settings;
 
-internal sealed partial class Settings: WindowEx
+internal sealed partial class View: WindowEx
 {
-    public Settings()
+    public View()
     {
         InitializeComponent();
 
@@ -17,8 +17,8 @@ internal sealed partial class Settings: WindowEx
 
     private void StartUp_Toggle(object sender, RoutedEventArgs e)
     {
-        Core.Settings.StartUp = (sender as ToggleSwitch).IsOn;
-        (sender as ToggleSwitch).IsOn = Core.Settings.StartUp;
+        FruitToolbox.Settings.Core.StartUp = (sender as ToggleSwitch).IsOn;
+        (sender as ToggleSwitch).IsOn = FruitToolbox.Settings.Core.StartUp;
     }
 
     private void ReloadButton_Click(object sender, RoutedEventArgs e)
@@ -27,15 +27,15 @@ internal sealed partial class Settings: WindowEx
     }
     private void ShowFlyout_Toggle(object sender, RoutedEventArgs e)
     {
-        Core.Settings.FlyoutEnabled = (sender as ToggleSwitch).IsOn;
+        FruitToolbox.Settings.Core.FlyoutEnabled = (sender as ToggleSwitch).IsOn;
     }
     private void RemapLGui_Toggle(object sender, RoutedEventArgs e)
     {
-        Core.Settings.LGuiRemapEnabled = (sender as ToggleSwitch).IsOn;
+        FruitToolbox.Settings.Core.LGuiRemapEnabled = (sender as ToggleSwitch).IsOn;
     }
     private void ReverseScroll_Toggle(object sender, RoutedEventArgs e)
     {
-        Core.Settings.ReverseMouseWheelEnabled = (sender as ToggleSwitch).IsOn;
+        FruitToolbox.Settings.Core.ReverseMouseWheelEnabled = (sender as ToggleSwitch).IsOn;
     }
 
 }

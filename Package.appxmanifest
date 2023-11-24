@@ -37,7 +37,7 @@
 		  EntryPoint="$targetentrypoint$">
 			<uap:VisualElements
 			  DisplayName="Fruit Language Switcher"
-			  Description="FruitLanguageSwitcher"
+			  Description="FruitToolbox"
 			  Square150x150Logo="Assets\Square150x150Logo.png"
 			  Square44x44Logo="Assets\Square44x44Logo.png" BackgroundColor="transparent">
 				<uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"  Square310x310Logo="Assets\LargeTile.png"  Square71x71Logo="Assets\SmallTile.png" ShortName="durian">
@@ -57,21 +57,21 @@
 				<desktop:Extension Category="windows.toastNotificationActivation">
 					<desktop:ToastNotificationActivation ToastActivatorCLSID="9A19103F-16F7-4668-BE54-9A1E7A4F7556" />
 				</desktop:Extension>
-				<desktop:Extension Category="windows.startupTask" Executable="FruitLanguageSwitcher.exe" EntryPoint="Windows.FullTrustApplication">
+				<desktop:Extension Category="windows.startupTask" Executable="FruitToolbox.exe" EntryPoint="Windows.FullTrustApplication">
 					<desktop:StartupTask TaskId="MyStartupId" Enabled="false" DisplayName="Fruit Language Switcher" />
 				</desktop:Extension>
 
 				<!--Register COM CLSID LocalServer32 registry key-->
 				<com:Extension Category="windows.comServer">
 					<com:ComServer>
-						<com:ExeServer Executable="FruitLanguageSwitcher.exe" Arguments="-ToastActivated" DisplayName="Toast activator">
+						<com:ExeServer Executable="FruitToolbox.exe" Arguments="-ToastActivated" DisplayName="Toast activator">
 							<com:Class Id="9A19103F-16F7-4668-BE54-9A1E7A4F7556" DisplayName="Toast activator"/>
 						</com:ExeServer>
 					</com:ComServer>
 				</com:Extension>
 				<uap5:Extension
 				    Category="windows.appExecutionAlias"
-				    Executable="FruitLanguageSwitcher.exe"
+				    Executable="FruitToolbox.exe"
 				    EntryPoint="Windows.FullTrustApplication">
 				    <uap5:AppExecutionAlias>
 						<uap5:ExecutionAlias Alias="fls.exe" />

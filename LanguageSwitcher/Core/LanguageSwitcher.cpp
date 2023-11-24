@@ -4,7 +4,7 @@
 
 #pragma comment(lib, "imm32")
 
-using namespace FruitLanguageSwitcher;
+using namespace FruitToolbox::LanguageSwitcher::Core;
 
 constexpr size_t             REG_LANGUAGE_MULTI_SZ_MAX_LENGTH = 1024;
 constexpr LPCWSTR            REG_LANGUAGES_DIR = L"Control Panel\\International\\User Profile";

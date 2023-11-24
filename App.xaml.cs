@@ -1,5 +1,4 @@
-using FruitLanguageSwitcher.Core;
-
+using FruitToolbox.LanguageSwitcher;
 using H.NotifyIcon;
 
 using Microsoft.Toolkit.Uwp.Notifications;
@@ -9,7 +8,7 @@ using Microsoft.UI.Xaml.Input;
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace FruitLanguageSwitcher
+namespace FruitToolbox
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -20,10 +19,10 @@ namespace FruitLanguageSwitcher
 
         public static TaskbarIcon TrayIcon { get; private set; }
 
-        private static LanguageSwitcher Switcher;
-        private static Hotkey Hotkey;
-        private static Views.Settings SettingsWindow = null;
-        private static Views.Flyout NewLangFlyout;
+        private static LanguageSwitcher.Core Switcher;
+        private static Hotkey.Core Hotkey;
+        private static Settings.View SettingsWindow = null;
+        private static LanguageSwitcher.Flyout NewLangFlyout;
 
         #endregion
 
@@ -58,7 +57,7 @@ namespace FruitLanguageSwitcher
         {
             NewLangFlyout = new();
 
-            LanguageSwitcher.NewLanguageEvent += NewLangFlyout.UpdateText;
+            LanguageSwitcher.Core.NewLanguageEvent += NewLangFlyout.UpdateText;
             NewLangFlyout.Activate();
         }
 
@@ -79,16 +78,16 @@ namespace FruitLanguageSwitcher
 
         private static void InitializeFunction()
         {
-            Switcher = new LanguageSwitcher();
-            Hotkey = new Hotkey(Switcher.SwapCategoryNoReturn,
+            Switcher = new LanguageSwitcher.Core();
+            Hotkey = new(Switcher.SwapCategoryNoReturn,
                                 Switcher.UpdateInputLanguageByKeyboard,
                                 Switcher.OnRaltUp);
-            Settings.SettingsChangedEventHandler += Hotkey.SettingsUpdateHandler;
-            Settings.SettingsChangedEventHandler += Views.Flyout.SettingsUpdateHandler;
+            Settings.Core.SettingsChangedEventHandler += Hotkey.SettingsUpdateHandler;
+            Settings.Core.SettingsChangedEventHandler += LanguageSwitcher.Flyout.SettingsUpdateHandler;
 
             if(!Switcher.Ready())
             {
-               Settings.LanguageSwitcherEnabled = false;
+               Settings.Core.LanguageSwitcherEnabled = false;
                new ToastContentBuilder()
                    .AddText("Unable to enable language switcher")
                    .AddText("Please make sure you have both keyboard languages and IME languages installed")

@@ -1,10 +1,10 @@
 {
   "profiles": {
-    "FruitLanguageSwitcher (Package)": {
+    "FruitToolbox (Package)": {
       "commandName": "MsixPackage",
       "nativeDebugging": true
     },
-    "FruitLanguageSwitcher (Unpackaged)": {
+    "FruitToolbox (Unpackaged)": {
       "commandName": "Project",
       "nativeDebugging": true
     },

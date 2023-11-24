@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "LanguageSwitcher.h"
 
-using namespace FruitLanguageSwitcher;
+using namespace FruitToolbox::LanguageSwitcher::Core;
 
 #define DLLEXPORT __declspec(dllexport)
 

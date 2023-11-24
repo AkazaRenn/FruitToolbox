@@ -1,10 +1,10 @@
 ﻿<winex:WindowEx
-    x:Class="FruitLanguageSwitcher.Views.Settings"
+    x:Class="FruitToolbox.Settings.View"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:wuc="using:WinUICommunity"
     xmlns:winex="using:WinUIEx"
-    xmlns:core="using:FruitLanguageSwitcher.Core"
+    xmlns:settings="using:FruitToolbox.Settings"
     MinWidth="600"
     Width="600"
     MinHeight="650"
@@ -21,7 +21,7 @@
                     <wuc:SettingsCard Margin="0,-6,0,0"
                                       Description="Start with system launch"
                                       Header="StartUp">
-                        <ToggleSwitch Toggled="StartUp_Toggle" IsOn="{x:Bind core:Settings.StartUp}"/>
+                            <ToggleSwitch Toggled="StartUp_Toggle" IsOn="{x:Bind settings:Core.StartUp}"/>
                     </wuc:SettingsCard>
                     <wuc:SettingsCard Margin="0,-6,0,0"
                                       Description="In case it is not functioning as expected"
@@ -32,7 +32,7 @@
                     <wuc:SettingsCard Margin="0,-6,0,0"
                                       Description="A flyout will be shown to indicate the new language"
                                       Header="Show flyout">
-                            <ToggleSwitch Toggled="ShowFlyout_Toggle" IsOn="{x:Bind core:Settings.FlyoutEnabled}"/>
+                            <ToggleSwitch Toggled="ShowFlyout_Toggle" IsOn="{x:Bind settings:Core.FlyoutEnabled}"/>
                     </wuc:SettingsCard>
                 </wuc:SimpleSettingsGroup >
                 <wuc:SimpleSettingsGroup Header="Additional Tools"
@@ -40,18 +40,18 @@
                     <wuc:SettingsCard Margin="0,-6,0,0"
                                       Description="It will send super + alt + ctrl + shift + S instead, hotkeys will not be affected"
                                       Header="Remap left Super/GUI/Win key">
-                            <ToggleSwitch Toggled="RemapLGui_Toggle" IsOn="{x:Bind core:Settings.LGuiRemapEnabled}"/>
+                            <ToggleSwitch Toggled="RemapLGui_Toggle" IsOn="{x:Bind settings:Core.LGuiRemapEnabled}"/>
                     </wuc:SettingsCard>
                     <wuc:SettingsCard Margin="0,-6,0,0"
                                       Description="Not that it may make the trackpad hard to scroll, disable it in that case"
                                       Header="Reverse scrolling direction">
-                            <ToggleSwitch Toggled="ReverseScroll_Toggle" IsOn="{x:Bind core:Settings.ReverseMouseWheelEnabled}"/>
+                            <ToggleSwitch Toggled="ReverseScroll_Toggle" IsOn="{x:Bind settings:Core.ReverseMouseWheelEnabled}"/>
                     </wuc:SettingsCard>
                 </wuc:SimpleSettingsGroup >
             </StackPanel>
         </wuc:SettingsPageControl.ModuleContent>
         <wuc:SettingsPageControl.SecondaryLinks>
-            <wuc:PageLink Link="https://github.com/AkazaRenn/FruitLanguageSwitcher/"
+            <wuc:PageLink Link="https://github.com/AkazaRenn/FruitToolbox/"
                           Text="GitHub Repo" />
             <wuc:PageLink Link="https://apps.microsoft.com/detail/fruit-language-switcher/9NJD8G4V1G1K"
                           Text="Microsoft Store" />
