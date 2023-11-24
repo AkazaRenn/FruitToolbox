@@ -26,7 +26,7 @@ namespace FruitToolbox.LanguageSwitcher;
 /// <summary>
 /// An empty window that can be used on its own or navigated to within a Frame.
 /// </summary>
-internal sealed partial class Flyout: WindowEx
+internal sealed partial class Flyout: WindowEx, IDisposable
 {
     private static bool Enabled = true;
 
@@ -54,6 +54,8 @@ internal sealed partial class Flyout: WindowEx
             this.Hide();
         };
         UISettings.ColorValuesChanged += (_, _) => UpdateTheme();
+        Settings.Core.SettingsChangedEventHandler += SettingsUpdateHandler;
+        Core.NewLanguageEvent += UpdateText;
 
         this.Hide();
         IsShownInSwitchers = false;
@@ -68,6 +70,18 @@ internal sealed partial class Flyout: WindowEx
             ExtendedWindowStyle.Transparent | ExtendedWindowStyle.NoActivate | ExtendedWindowStyle.ToolWindow);
         DesktopWindowManager.DisableRoundCorners(this.GetWindowHandle());
         MoveToDestination();
+    }
+
+    ~Flyout()
+    {
+        Dispose();
+    }
+
+    public void Dispose()
+    {
+        Settings.Core.SettingsChangedEventHandler -= SettingsUpdateHandler;
+        Core.NewLanguageEvent -= UpdateText;
+        GC.SuppressFinalize(this);
     }
 
     public static void SettingsUpdateHandler(object sender, EventArgs e)

@@ -21,7 +21,6 @@ namespace FruitToolbox
 
         private static Hotkey.Core Hotkey;
         private static Settings.View SettingsWindow = null;
-        private static LanguageSwitcher.Flyout NewLangFlyout;
 
         #endregion
 
@@ -49,15 +48,6 @@ namespace FruitToolbox
         {
             InitializeFunction();
             InitializeTrayIcon();
-            InitializeFlyout();
-        }
-
-        private static void InitializeFlyout()
-        {
-            NewLangFlyout = new();
-
-            LanguageSwitcher.Core.NewLanguageEvent += NewLangFlyout.UpdateText;
-            NewLangFlyout.Activate();
         }
 
         private void InitializeTrayIcon()
@@ -80,7 +70,6 @@ namespace FruitToolbox
                                 LanguageSwitcher.Core.UpdateInputLanguageByKeyboard,
                                 LanguageSwitcher.Core.OnRaltUp);
             Settings.Core.SettingsChangedEventHandler += Hotkey.SettingsUpdateHandler;
-            Settings.Core.SettingsChangedEventHandler += LanguageSwitcher.Flyout.SettingsUpdateHandler;
 
             if(!LanguageSwitcher.Core.Ready())
             {

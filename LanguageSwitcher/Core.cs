@@ -8,8 +8,8 @@ namespace FruitToolbox.LanguageSwitcher;
 internal static partial class Core {
     public const int WindowActivateWaitMs = 500;
 
+    private static Flyout NewLangFlyout = new();
     private delegate void LanguageChangedCallbackDelegate(int lcid);
-
     public static event EventHandler<Constants.LanguageEvent> NewLanguageEvent;
     private static void InvokeNewLanguageEvent(int lcid)
     {
@@ -19,11 +19,19 @@ internal static partial class Core {
     [LibraryImport("LanguageSwitcher")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool LanguageSwitcher_start(LanguageChangedCallbackDelegate fn);
-    public static bool Start() => LanguageSwitcher_start(InvokeNewLanguageEvent);
+    public static bool Start()
+    {
+        NewLangFlyout.Activate();
+        return LanguageSwitcher_start(InvokeNewLanguageEvent);
+    }
 
     [LibraryImport("LanguageSwitcher")]
     private static partial void LanguageSwitcher_stop();
-    public static void Stop() => LanguageSwitcher_stop();
+    public static void Stop()
+    {
+        NewLangFlyout.Dispose();
+        LanguageSwitcher_stop();
+    }
 
     [LibraryImport("LanguageSwitcher")]
     [return: MarshalAs(UnmanagedType.Bool)]
