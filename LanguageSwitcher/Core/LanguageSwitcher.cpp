@@ -78,6 +78,7 @@ void LanguageSwitcher::onRaltUp() {
     getPerLanguageMethods(getCurrentLanguage()).onRaltUp();
 }
 
+// Reset all values in stop()
 map<LCID, Language> LanguageSwitcher::languageList = {};
 LCID LanguageSwitcher::activeLanguages[2] = {};
 bool LanguageSwitcher::inImeMode = false;
@@ -87,12 +88,12 @@ onLanguageChangeCallback LanguageSwitcher::languageChangeHandler = nullptr;
 void LanguageSwitcher::stop() {
     UnhookWinEvent(windowChangeEvent);
 
-    LanguageSwitcher::languageList = {};
-    LanguageSwitcher::activeLanguages[2] = {};
-    LanguageSwitcher::inImeMode = false;
+    languageList = {};
+    fill_n(activeLanguages, sizeof(activeLanguages), 0);
+    inImeMode = false;
 
-    LanguageSwitcher::windowChangeEvent = nullptr;
-    LanguageSwitcher::languageChangeHandler = nullptr;
+    windowChangeEvent = nullptr;
+    languageChangeHandler = nullptr;
 }
 
 bool LanguageSwitcher::start(onLanguageChangeCallback handler) {
