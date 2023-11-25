@@ -103,9 +103,9 @@ namespace FruitToolbox.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] WinKeyToPTRun {
+        internal static byte[] RGUIToPTRun {
             get {
-                object obj = ResourceManager.GetObject("WinKeyToPTRun", resourceCulture);
+                object obj = ResourceManager.GetObject("RGUIToPTRun", resourceCulture);
                 return ((byte[])(obj));
             }
         }

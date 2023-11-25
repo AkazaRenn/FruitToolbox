@@ -1,4 +1,3 @@
-using FruitToolbox.LanguageSwitcher;
 using H.NotifyIcon;
 
 using Microsoft.Toolkit.Uwp.Notifications;
@@ -18,8 +17,6 @@ namespace FruitToolbox
         #region Properties
 
         public static TaskbarIcon TrayIcon { get; private set; }
-
-        private static Hotkey.Core Hotkey;
         private static Settings.View SettingsWindow = null;
 
         #endregion
@@ -66,10 +63,10 @@ namespace FruitToolbox
         {
             LanguageSwitcher.Core.Start();
 
-            Hotkey = new(LanguageSwitcher.Core.SwapCategoryNoReturn,
-                                LanguageSwitcher.Core.UpdateInputLanguageByKeyboard,
-                                LanguageSwitcher.Core.OnRaltUp);
-            Settings.Core.SettingsChangedEventHandler += Hotkey.SettingsUpdateHandler;
+            Hotkey.Core.Start();
+            Hotkey.Core.CapsLockSwitchLanguageEvent += LanguageSwitcher.Core.SwapCategoryNoReturn;
+            Hotkey.Core.LanguageChangeEvent += LanguageSwitcher.Core.UpdateInputLanguageByKeyboard;
+            Hotkey.Core.RAltUpEvent += LanguageSwitcher.Core.OnRaltUp;
 
             if(!LanguageSwitcher.Core.Ready())
             {

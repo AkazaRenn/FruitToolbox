@@ -41,7 +41,8 @@ internal static partial class Core {
     [LibraryImport("LanguageSwitcher")]
     private static partial void LanguageSwitcher_updateInputLanguage([MarshalAs(UnmanagedType.Bool)] bool doCallback);
     public static void UpdateInputLanguage() => LanguageSwitcher_updateInputLanguage(true);
-    public static void UpdateInputLanguageByKeyboard() {
+    public static void UpdateInputLanguageByKeyboard(object _, EventArgs e)
+    {
         Thread.Sleep(WindowActivateWaitMs);
         LanguageSwitcher_updateInputLanguage(false);
     }
@@ -50,7 +51,7 @@ internal static partial class Core {
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool LanguageSwitcher_swapCategory();
     public static bool SwapCategory() => LanguageSwitcher_swapCategory();
-    public static void SwapCategoryNoReturn() => LanguageSwitcher_swapCategory();
+    public static void SwapCategoryNoReturn(object _, EventArgs e) => LanguageSwitcher_swapCategory();
 
     [LibraryImport("LanguageSwitcher")]
     [return: MarshalAs(UnmanagedType.Bool)]
@@ -71,5 +72,5 @@ internal static partial class Core {
 
     [LibraryImport("LanguageSwitcher")]
     private static partial void LanguageSwitcher_onRaltUp();
-    public static void OnRaltUp() => LanguageSwitcher_onRaltUp();
+    public static void OnRaltUp(object _, EventArgs e) => LanguageSwitcher_onRaltUp();
 }
