@@ -1,6 +1,5 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Threading;
+﻿using System.Runtime.InteropServices;
+
 using FruitToolbox.Utils;
 
 namespace FruitToolbox.LanguageSwitcher;

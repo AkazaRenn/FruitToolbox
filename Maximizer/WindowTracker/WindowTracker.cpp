@@ -119,6 +119,7 @@ bool WindowTracker::start(onWindowChangeCallback _newFloatWindowHandler,
 
     for (const auto hook : hooks) {
         if (hook == nullptr) {
+            stop();
             return false;
         }
     }

@@ -124,7 +124,14 @@ bool LanguageSwitcher::start(onLanguageChangeCallback handler) {
     applyInputLanguage();
 
     windowChangeHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, onActiveWindowChange, 0, 0, WINEVENT_OUTOFCONTEXT);
-    return (activeLanguages[false] != 0) && (activeLanguages[true] != 0) && (windowChangeHook != nullptr);
+
+    // When it failed to hook or doesn't need to work
+    if ((activeLanguages[false] == 0) || (activeLanguages[true] == 0) || (windowChangeHook == nullptr)) {
+        stop();
+        return false;
+    }
+
+    return true;
 }
 
 void LanguageSwitcher::stop() {

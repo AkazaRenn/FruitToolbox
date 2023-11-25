@@ -1,22 +1,23 @@
-using System;
+using System.Globalization;
+
+using FruitToolbox.Utils;
 
 using H.NotifyIcon;
 
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.Win32;
 
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
 
+using WindowsDesktop;
+
 using WindowsDisplayAPI;
 
 using WinUIEx;
-using Microsoft.UI.Dispatching;
-using Microsoft.UI.Windowing;
-using Microsoft.Win32;
-using System.Globalization;
-using FruitToolbox.Utils;
-using System.Threading;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -69,7 +70,7 @@ internal sealed partial class Flyout: WindowEx, IDisposable
         IsTitleBarVisible = false;
         IsAlwaysOnTop = true;
 
-        VirtualDesktop.PinApp(Constants.AppID);
+        VirtualDesktop.PinApplication(Constants.AppID);
         HwndExtensions.SetExtendedWindowStyle(this.GetWindowHandle(),
             ExtendedWindowStyle.Transparent | ExtendedWindowStyle.NoActivate | ExtendedWindowStyle.ToolWindow);
         DesktopWindowManager.DisableRoundCorners(this.GetWindowHandle());

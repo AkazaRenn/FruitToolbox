@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FruitToolbox.Utils;
+﻿namespace FruitToolbox.Utils;
 
 using HWND = IntPtr;
 

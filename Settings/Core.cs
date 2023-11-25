@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using Microsoft.UI.Xaml.Input;
-
-using Windows.ApplicationModel;
+﻿using Windows.ApplicationModel;
 
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -18,6 +14,7 @@ internal class Entries
     public bool LGuiRemapEnabled { get; set; } = false;
     public bool ReverseMouseWheelEnabled { get; set; } = false;
     public bool DesktopToHomeEnabled { get; set; } = false;
+    public uint ReorgnizeDesktopDelaySec { get; set; } = 5;
 }
 
 public static class Core
@@ -26,7 +23,7 @@ public static class Core
     private static readonly string SaveFilePath = Path.Combine(SaveFileDir, "settings.yaml");
 
     public static event EventHandler SettingsChangedEventHandler;
-    private static Entries SettingsProperties;
+    private static Entries SettingsEntries;
     private static bool Loaded = false;
 
     private static void EnsureLoaded()
@@ -60,12 +57,12 @@ public static class Core
         get
         {
             EnsureLoaded();
-            return SettingsProperties.LanguageSwitcherEnabled;
+            return SettingsEntries.LanguageSwitcherEnabled;
         }
         set
         {
             EnsureLoaded();
-            SettingsProperties.LanguageSwitcherEnabled = value;
+            SettingsEntries.LanguageSwitcherEnabled = value;
             OnSettingsUpdate();
         }
     }
@@ -75,12 +72,12 @@ public static class Core
         get
         {
             EnsureLoaded();
-            return SettingsProperties.FlyoutEnabled;
+            return SettingsEntries.FlyoutEnabled;
         }
         set
         {
             EnsureLoaded();
-            SettingsProperties.FlyoutEnabled = value;
+            SettingsEntries.FlyoutEnabled = value;
             OnSettingsUpdate();
         }
     }
@@ -89,12 +86,12 @@ public static class Core
         get
         {
             EnsureLoaded();
-            return SettingsProperties.RAltModifierEnabled;
+            return SettingsEntries.RAltModifierEnabled;
         }
         set
         {
             EnsureLoaded();
-            SettingsProperties.RAltModifierEnabled = value;
+            SettingsEntries.RAltModifierEnabled = value;
             OnSettingsUpdate();
         }
     }
@@ -103,12 +100,12 @@ public static class Core
         get
         {
             EnsureLoaded();
-            return SettingsProperties.LGuiRemapEnabled;
+            return SettingsEntries.LGuiRemapEnabled;
         }
         set
         {
             EnsureLoaded();
-            SettingsProperties.LGuiRemapEnabled = value;
+            SettingsEntries.LGuiRemapEnabled = value;
             OnSettingsUpdate();
         }
     }
@@ -117,12 +114,12 @@ public static class Core
         get
         {
             EnsureLoaded();
-            return SettingsProperties.ReverseMouseWheelEnabled;
+            return SettingsEntries.ReverseMouseWheelEnabled;
         }
         set
         {
             EnsureLoaded();
-            SettingsProperties.ReverseMouseWheelEnabled = value;
+            SettingsEntries.ReverseMouseWheelEnabled = value;
             OnSettingsUpdate();
         }
     }
@@ -132,12 +129,26 @@ public static class Core
         get
         {
             EnsureLoaded();
-            return SettingsProperties.DesktopToHomeEnabled;
+            return SettingsEntries.DesktopToHomeEnabled;
         }
         set
         { 
             EnsureLoaded();
-            SettingsProperties.DesktopToHomeEnabled = value;
+            SettingsEntries.DesktopToHomeEnabled = value;
+            OnSettingsUpdate();
+        }
+    }
+
+    public static uint ReorgnizeDesktopDelaySec
+    {
+        get
+        {
+            EnsureLoaded();
+            return SettingsEntries.ReorgnizeDesktopDelaySec;
+        }
+        set { 
+            EnsureLoaded();
+            SettingsEntries.ReorgnizeDesktopDelaySec = value;
             OnSettingsUpdate();
         }
     }
@@ -156,11 +167,11 @@ public static class Core
             var deserializer = new DeserializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
             .Build();
-            SettingsProperties = deserializer.Deserialize<Entries>(yaml);
+            SettingsEntries = deserializer.Deserialize<Entries>(yaml);
         }
         catch
         {
-            SettingsProperties = new();
+            SettingsEntries = new();
         }
 
         Loaded = true;
@@ -171,7 +182,7 @@ public static class Core
         var serializer = new SerializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
             .Build();
-        var yaml = serializer.Serialize(SettingsProperties);
+        var yaml = serializer.Serialize(SettingsEntries);
         Directory.CreateDirectory(SaveFileDir);
         await File.WriteAllTextAsync(SaveFilePath, yaml);
     }
