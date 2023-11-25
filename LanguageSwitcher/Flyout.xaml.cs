@@ -54,8 +54,12 @@ internal sealed partial class Flyout: WindowEx, IDisposable
             this.Hide();
         };
         UISettings.ColorValuesChanged += (_, _) => UpdateTheme();
+
+        // Need to update Dispose() as well
+        Core.NewLanguageEvent += OnNewLanguage;
         Settings.Core.SettingsChangedEventHandler += SettingsUpdateHandler;
-        Core.NewLanguageEvent += UpdateText;
+        Hotkey.Core.CapsLockOnEvent += OnCapsLockOn;
+        Hotkey.Core.CapsLockOffEvent += OnCapsLockOff;
 
         this.Hide();
         IsShownInSwitchers = false;
@@ -79,8 +83,11 @@ internal sealed partial class Flyout: WindowEx, IDisposable
 
     public void Dispose()
     {
+        Core.NewLanguageEvent -= OnNewLanguage;
         Settings.Core.SettingsChangedEventHandler -= SettingsUpdateHandler;
-        Core.NewLanguageEvent -= UpdateText;
+        Hotkey.Core.CapsLockOnEvent -= OnCapsLockOn;
+        Hotkey.Core.CapsLockOffEvent -= OnCapsLockOff;
+
         GC.SuppressFinalize(this);
     }
 
@@ -95,13 +102,28 @@ internal sealed partial class Flyout: WindowEx, IDisposable
         HideFlyoutTimer.Stop();
     }
 
-    public void UpdateText(object sender, Constants.LanguageEvent e)
+    public void OnNewLanguage(object sender, Constants.LanguageEvent e)
+    {
+        UpdateFlyout(new CultureInfo(e.LCID).NativeName);
+    }
+
+    public void OnCapsLockOn(object sender, EventArgs e)
+    {
+        UpdateFlyout("Caps Lock ON");
+    }
+
+    public void OnCapsLockOff(object sender, EventArgs e)
+    {
+        UpdateFlyout("Caps Lock OFF");
+    }
+
+    private void UpdateFlyout(string newText)
     {
         if(Enabled)
         {
             DispatcherQueue.TryEnqueue(() =>
             {
-                FlyoutText.Text = new CultureInfo(e.LCID).NativeName;
+                FlyoutText.Text = newText;
 
                 this.Show();
                 FlyoutBase.ShowAttachedFlyout(FlyoutAnchor);

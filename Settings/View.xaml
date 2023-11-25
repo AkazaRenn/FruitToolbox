@@ -20,7 +20,7 @@
                                             Visibility="Visible">
                     <wuc:SettingsCard Margin="0,-6,0,0"
                                         Description="Start with system launch"
-                                        Header="StartUp">
+                                        Header="Start Up">
                             <ToggleSwitch Toggled="StartUp_Toggle" IsOn="{x:Bind settings:Core.StartUp}"/>
                     </wuc:SettingsCard>
                 </wuc:SimpleSettingsGroup >
