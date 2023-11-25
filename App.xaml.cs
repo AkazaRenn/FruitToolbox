@@ -61,21 +61,19 @@ namespace FruitToolbox
 
         private static void InitializeFunction()
         {
-            LanguageSwitcher.Core.Start();
+            if(!LanguageSwitcher.Core.Start())
+            {
+                Settings.Core.LanguageSwitcherEnabled = false;
+                new ToastContentBuilder()
+                    .AddText("Unable to enable language switcher")
+                    .AddText("Please make sure you have both keyboard languages and IME languages installed")
+                    .Show();
+            }
 
             Hotkey.Core.Start();
             Hotkey.Core.CapsLockSwitchLanguageEvent += LanguageSwitcher.Core.SwapCategoryNoReturn;
             Hotkey.Core.LanguageChangeEvent += LanguageSwitcher.Core.UpdateInputLanguageByKeyboard;
             Hotkey.Core.RAltUpEvent += LanguageSwitcher.Core.OnRaltUp;
-
-            if(!LanguageSwitcher.Core.Ready())
-            {
-               Settings.Core.LanguageSwitcherEnabled = false;
-               new ToastContentBuilder()
-                   .AddText("Unable to enable language switcher")
-                   .AddText("Please make sure you have both keyboard languages and IME languages installed")
-                   .Show();
-            }
 
         }
 

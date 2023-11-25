@@ -18,20 +18,20 @@ namespace FruitToolbox {
         static bool inImeMode;
         static onLanguageChangeCallback languageChangeHandler;
 
+        static void resetFields();
+
         static void applyInputLanguage();
         static void fixImeConversionMode(HWND hWnd);
         static void fixImeConversionMode(HWND hWnd, LCID language);
 
-
         // Windows hook related
-        static HWINEVENTHOOK windowChangeEvent;
+        static HWINEVENTHOOK windowChangeHook;
         static void CALLBACK onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
         static void updateInputLanguage(HWND hwnd, bool doCallback = true);
 
     public:
         static bool start(onLanguageChangeCallback handler);
         static void stop();
-        static bool ready();
 
         static void updateInputLanguage(bool doCallback = true);
         static bool swapCategory();

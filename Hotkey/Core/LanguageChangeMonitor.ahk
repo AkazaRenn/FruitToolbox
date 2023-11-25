@@ -1,7 +1,7 @@
 #if (LanguageSwitcherEnabled)
-    $~<#^Space::
-    $~<#+Space::
-    $~<#Space::
+    $~#^Space::
+    $~#+Space::
+    $~#Space::
         KeyWait, LWin, U
         DllCall(onLanguageChangePtr)
     Return

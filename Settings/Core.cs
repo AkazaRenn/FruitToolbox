@@ -17,6 +17,7 @@ internal class Entries
     public bool RAltModifierEnabled { get; set; } = true;
     public bool LGuiRemapEnabled { get; set; } = false;
     public bool ReverseMouseWheelEnabled { get; set; } = false;
+    public bool DesktopToHomeEnabled { get; set; } = false;
 }
 
 public static class Core
@@ -122,6 +123,21 @@ public static class Core
         {
             EnsureLoaded();
             SettingsProperties.ReverseMouseWheelEnabled = value;
+            OnSettingsUpdate();
+        }
+    }
+
+    public static bool DesktopToHomeEnabled
+    {
+        get
+        {
+            EnsureLoaded();
+            return SettingsProperties.DesktopToHomeEnabled;
+        }
+        set
+        { 
+            EnsureLoaded();
+            SettingsProperties.DesktopToHomeEnabled = value;
             OnSettingsUpdate();
         }
     }

@@ -78,26 +78,24 @@ void LanguageSwitcher::onRaltUp() {
     getPerLanguageMethods(getCurrentLanguage()).onRaltUp();
 }
 
-// Reset all values in stop()
+// Reset all values in resetFields()
 map<LCID, Language> LanguageSwitcher::languageList = {};
 LCID LanguageSwitcher::activeLanguages[2] = {};
 bool LanguageSwitcher::inImeMode = false;
 
-HWINEVENTHOOK LanguageSwitcher::windowChangeEvent = nullptr;
+HWINEVENTHOOK LanguageSwitcher::windowChangeHook = nullptr;
 onLanguageChangeCallback LanguageSwitcher::languageChangeHandler = nullptr;
-void LanguageSwitcher::stop() {
-    UnhookWinEvent(windowChangeEvent);
-
+void LanguageSwitcher::resetFields() {
     languageList = {};
     fill_n(activeLanguages, sizeof(activeLanguages), 0);
     inImeMode = false;
 
-    windowChangeEvent = nullptr;
+    windowChangeHook = nullptr;
     languageChangeHandler = nullptr;
 }
 
 bool LanguageSwitcher::start(onLanguageChangeCallback handler) {
-    if(windowChangeEvent != nullptr) {
+    if(windowChangeHook != nullptr) {
         return false;
     }
 
@@ -125,12 +123,14 @@ bool LanguageSwitcher::start(onLanguageChangeCallback handler) {
 
     applyInputLanguage();
 
-    windowChangeEvent = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, LanguageSwitcher::onActiveWindowChange, 0, 0, WINEVENT_OUTOFCONTEXT);
-    return (windowChangeEvent != nullptr);
+    windowChangeHook = SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, onActiveWindowChange, 0, 0, WINEVENT_OUTOFCONTEXT);
+    return (activeLanguages[false] != 0) && (activeLanguages[true] != 0) && (windowChangeHook != nullptr);
 }
 
-bool LanguageSwitcher::ready() {
-    return (activeLanguages[false] != 0 && activeLanguages[true] != 0);
+void LanguageSwitcher::stop() {
+    UnhookWinEvent(windowChangeHook);
+
+    resetFields();
 }
 
 void CALLBACK LanguageSwitcher::onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {

@@ -31,6 +31,11 @@ internal sealed partial class View: WindowEx
         FruitToolbox.Settings.Core.LGuiRemapEnabled = (sender as ToggleSwitch).IsOn;
     }
 
+    private void DesktopToHome_Toggle(object sender, RoutedEventArgs e)
+    {
+        FruitToolbox.Settings.Core.DesktopToHomeEnabled = (sender as ToggleSwitch).IsOn;
+    }
+
     private void ReverseScroll_Toggle(object sender, RoutedEventArgs e)
     {
         FruitToolbox.Settings.Core.ReverseMouseWheelEnabled = (sender as ToggleSwitch).IsOn;

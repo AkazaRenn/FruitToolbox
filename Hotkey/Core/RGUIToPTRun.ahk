@@ -1,4 +1,4 @@
-#if (LWinRemapEnabled)
+#if (LGUIRemapEnabled)
     <#V::>#V ; fix the non-sense problem with win+v
     $LWin Up::
       If (A_PriorKey = "LWin")

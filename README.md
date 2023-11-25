@@ -1,4 +1,4 @@
-# Fruit Language Switcher
+# Fruit Toolbox
 
 A tool to mimic the famous you-know-who fruit's language switcher on Windows.
 

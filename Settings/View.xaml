@@ -12,7 +12,7 @@
     >
     <Grid>
         <Border x:Name="AppTitleBar" Grid.Column="1" VerticalAlignment="Top" Padding="0, 0, 0, 100"/>
-        <wuc:SettingsPageControl ModuleTitle="Fruit Language Switcher Settings" Margin="0, -20, 0, 0">
+        <wuc:SettingsPageControl ModuleTitle="Fruit Toolbox Settings" Margin="0, -20, 0, 0">
         <wuc:SettingsPageControl.ModuleContent>
             <StackPanel ChildrenTransitions="{StaticResource SettingsCardsAnimations}"
                         Orientation="Vertical" Margin="0, -100, 0, 0">
@@ -31,8 +31,16 @@
                                       Header="Show flyout">
                             <ToggleSwitch Toggled="ShowFlyout_Toggle" IsOn="{x:Bind settings:Core.FlyoutEnabled}"/>
                     </wuc:SettingsCard>
-                </wuc:SimpleSettingsGroup >
-                <wuc:SimpleSettingsGroup Header="Additional Tools"
+                    </wuc:SimpleSettingsGroup>
+                    <wuc:SimpleSettingsGroup Header="Maximizer"
+                                         Visibility="Visible">
+                        <wuc:SettingsCard Margin="0,-6,0,0"
+                                      Description="Gui + D now goes to the first desktop without minimizing any window"
+                                      Header="Take over Gui + D">
+                            <ToggleSwitch Toggled="DesktopToHome_Toggle" IsOn="{x:Bind settings:Core.DesktopToHomeEnabled}"/>
+                        </wuc:SettingsCard>
+                    </wuc:SimpleSettingsGroup >
+                    <wuc:SimpleSettingsGroup Header="Additional Tools"
                                          Visibility="Visible">
                     <wuc:SettingsCard Margin="0,-6,0,0"
                                       Description="It will send super + alt + ctrl + shift + S instead, key combinations will not be affected"

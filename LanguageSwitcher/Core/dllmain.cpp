@@ -15,10 +15,6 @@ extern "C" {
         LanguageSwitcher::stop();
     }
 
-    DLLEXPORT bool LanguageSwitcher_ready() {
-        return LanguageSwitcher::ready();
-    }
-
     DLLEXPORT void LanguageSwitcher_updateInputLanguage(bool doCallback) {
         LanguageSwitcher::updateInputLanguage(doCallback);
     }

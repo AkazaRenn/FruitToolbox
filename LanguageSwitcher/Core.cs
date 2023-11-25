@@ -41,11 +41,6 @@ internal static partial class Core {
     }
 
     [LibraryImport("LanguageSwitcher")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool LanguageSwitcher_ready();
-    public static bool Ready() => LanguageSwitcher_ready();
-
-    [LibraryImport("LanguageSwitcher")]
     private static partial void LanguageSwitcher_updateInputLanguage([MarshalAs(UnmanagedType.Bool)] bool doCallback);
     public static void UpdateInputLanguage() => LanguageSwitcher_updateInputLanguage(true);
     public static void UpdateInputLanguageByKeyboard(object _, EventArgs e)

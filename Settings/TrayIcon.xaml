@@ -36,7 +36,7 @@
         ContextMenuMode="PopupMenu"
         NoLeftClickDelay="True"
         MenuActivation="RightClick"
-        ToolTipText="Fruit Language Switcher"
+        ToolTipText="Fruit Toolbox"
         >
         <tb:TaskbarIcon.ContextFlyout>
             <MenuFlyout AreOpenCloseAnimationsEnabled="False">

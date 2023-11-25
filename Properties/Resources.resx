@@ -121,6 +121,9 @@
   <data name="CapsLock" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Hotkey\Core\CapsLock.ahk;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="DesktopToHome" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Hotkey\Core\DesktopToHome.ahk;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="LanguageChangeMonitor" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Hotkey\Core\LanguageChangeMonitor.ahk;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
