@@ -12,11 +12,11 @@ namespace FruitToolbox.Settings;
 [Serializable]
 internal class Entries
 {
-    internal bool LanguageSwitcherEnabled { get; set; } = true;
-    internal bool FlyoutEnabled { get; set; } = true;
-    internal bool RAltModifierEnabled { get; set; } = true;
-    internal bool LGuiRemapEnabled { get; set; } = false;
-    internal bool ReverseMouseWheelEnabled { get; set; } = false;
+    public bool LanguageSwitcherEnabled { get; set; } = true;
+    public bool FlyoutEnabled { get; set; } = true;
+    public bool RAltModifierEnabled { get; set; } = true;
+    public bool LGuiRemapEnabled { get; set; } = false;
+    public bool ReverseMouseWheelEnabled { get; set; } = false;
 }
 
 public static class Core
@@ -25,7 +25,7 @@ public static class Core
     private static readonly string SaveFilePath = Path.Combine(SaveFileDir, "settings.yaml");
 
     public static event EventHandler SettingsChangedEventHandler;
-    private static Entries SettingsProperties = new();
+    private static Entries SettingsProperties;
     private static bool Loaded = false;
 
     private static void EnsureLoaded()
