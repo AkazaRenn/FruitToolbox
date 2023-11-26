@@ -1,6 +1,6 @@
 ﻿namespace FruitToolbox.Utils;
 
-using HWND = IntPtr;
+using HWND = nint;
 
 internal class Constants
 {
@@ -13,8 +13,8 @@ internal class Constants
     }
 
     public delegate void WindowEventHandler(object sender, HWND e);
-    public class WindowEvent(HWND hwnd): EventArgs
+    public class WindowEvent(HWND hWnd): EventArgs
     {
-        public HWND hwnd { get; } = hwnd;
+        public HWND HWnd { get; } = hWnd;
     }
 }
