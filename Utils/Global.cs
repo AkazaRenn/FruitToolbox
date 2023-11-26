@@ -1,6 +1,10 @@
 ﻿namespace FruitToolbox.Utils;
 
-using HWND = IntPtr;
+using System.Runtime.InteropServices;
+
+using static FruitToolbox.Hotkey.Core;
+
+using HWND = nint;
 
 internal class Constants
 {
@@ -17,4 +21,9 @@ internal class Constants
     {
         public HWND hwnd { get; } = hwnd;
     }
+
+    public static string GetActionDelegateStr(AHKDelegate act)
+        => Marshal.GetFunctionPointerForDelegate(act).ToInt64().ToString();
+    public static string GetBoolStr(bool input)
+        => Convert.ToUInt16(input).ToString();
 }

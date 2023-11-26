@@ -2,7 +2,7 @@
 #include "WindowTracker.h"
 
 using namespace std;
-using namespace FruitToolbox;
+using namespace FruitToolbox::Maximizer;
 
 void CALLBACK WindowTracker::onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (idObject == OBJID_WINDOW &&
@@ -97,11 +97,12 @@ void WindowTracker::sortCurrentWindows() {
     EnumWindows((WNDENUMPROC)EnumWindowsProc, 0);
 }
 
-bool WindowTracker::start(onWindowChangeCallback _newFloatWindowHandler,
-                          onWindowChangeCallback _maxWindowHandler,
-                          onWindowChangeCallback _unmaxWindowHandler,
-                          onWindowChangeCallback _minWindowHandler,
-                          onWindowChangeCallback _closeWindowHandler) {
+bool WindowTracker::start(
+    onWindowChangeCallback _newFloatWindowHandler,
+    onWindowChangeCallback _maxWindowHandler,
+    onWindowChangeCallback _unmaxWindowHandler,
+    onWindowChangeCallback _minWindowHandler,
+    onWindowChangeCallback _closeWindowHandler) {
     if(((newFloatWindowHandler = _newFloatWindowHandler) == nullptr) ||
        ((maxWindowHandler = _maxWindowHandler) == nullptr) ||
        ((unmaxWindowHandler = _unmaxWindowHandler) == nullptr) ||

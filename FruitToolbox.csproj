@@ -80,39 +80,32 @@
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64'">
-		<Reference Include="LanguageSwitcher">
-			<HintPath>x64\Debug\LanguageSwitcher.dll</HintPath>
-		</Reference>
 		<Reference Include="WindowTracker">
 			<HintPath>x64\Debug\WindowTracker.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64'">
-		<Reference Include="LanguageSwitcher">
-			<HintPath>x64\Release\LanguageSwitcher.dll</HintPath>
-		</Reference>
 		<Reference Include="WindowTracker">
 			<HintPath>x64\Release\WindowTracker.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|arm64'">
-		<Reference Include="LanguageSwitcher">
-			<HintPath>ARM64\Debug\LanguageSwitcher.dll</HintPath>
-		</Reference>
 		<Reference Include="WindowTracker">
 			<HintPath>ARM64\Debug\WindowTracker.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
 	<ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|arm64'">
-		<Reference Include="LanguageSwitcher">
-			<HintPath>ARM64\Release\LanguageSwitcher.dll</HintPath>
-		</Reference>
 		<Reference Include="WindowTracker">
 			<HintPath>ARM64\Release\WindowTracker.dll</HintPath>
 		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="LanguageSwitcher\Interop\LanguageSwitcher.vcxproj" />
+	  <ProjectReference Include="Maximizer\WindowTracker\WindowTracker.vcxproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -141,7 +134,7 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </Page>
 	</ItemGroup>
-
+	
 	<!--
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
     Explorer "Package and Publish" context menu entry to be enabled for this project even if

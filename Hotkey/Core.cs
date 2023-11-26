@@ -2,6 +2,8 @@
 
 using AutoHotkey.Interop;
 
+using FruitToolbox.Utils;
+
 
 namespace FruitToolbox.Hotkey;
 
@@ -34,18 +36,18 @@ internal static class Core
 
     private static void InitializeHandlers() 
     { 
-        AHKEngine.SetVar("onCapsLockLanguageSwitchPtr", GetActionDelegateStr(OnCapsLockSwitchLanguage));
-        AHKEngine.SetVar("onCapsLockOnPtr", GetActionDelegateStr(OnCapsLockOn));
-        AHKEngine.SetVar("onCapsLockOffPtr", GetActionDelegateStr(OnCapsLockOffEvent));
+        AHKEngine.SetVar("onCapsLockLanguageSwitchPtr", Constants.GetActionDelegateStr(OnCapsLockSwitchLanguage));
+        AHKEngine.SetVar("onCapsLockOnPtr", Constants.GetActionDelegateStr(OnCapsLockOn));
+        AHKEngine.SetVar("onCapsLockOffPtr", Constants.GetActionDelegateStr(OnCapsLockOffEvent));
         AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.CapsLock));
 
-        AHKEngine.SetVar("onLanguageChangePtr", GetActionDelegateStr(OnLanguageChange));
+        AHKEngine.SetVar("onLanguageChangePtr", Constants.GetActionDelegateStr(OnLanguageChange));
         AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.LanguageChangeMonitor));
 
-        AHKEngine.SetVar("onRaltUpPtr", GetActionDelegateStr(OnRAltUp));
+        AHKEngine.SetVar("onRaltUpPtr", Constants.GetActionDelegateStr(OnRAltUp));
         AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.RAltModifier));
 
-        AHKEngine.SetVar("onHomePtr", GetActionDelegateStr(OnHome));
+        AHKEngine.SetVar("onHomePtr", Constants.GetActionDelegateStr(OnHome));
         AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.DesktopToHome));
 
         AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.RGuiToPTRun));
@@ -54,11 +56,11 @@ internal static class Core
 
     private static void SetVarOnSettings()
     {
-        AHKEngine.SetVar("LanguageSwitcherEnabled", GetBoolStr(Settings.Core.LanguageSwitcherEnabled));
-        AHKEngine.SetVar("RAltModifierEnabled", GetBoolStr(Settings.Core.RAltModifierEnabled));
-        AHKEngine.SetVar("LGuiRemapEnabled", GetBoolStr(Settings.Core.LGuiRemapEnabled));
-        AHKEngine.SetVar("ReverseMouseWheelEnabled", GetBoolStr(Settings.Core.ReverseMouseWheelEnabled));
-        AHKEngine.SetVar("DesktopToHomeEnabled", GetBoolStr(Settings.Core.DesktopToHomeEnabled));
+        AHKEngine.SetVar("LanguageSwitcherEnabled", Constants.GetBoolStr(Settings.Core.LanguageSwitcherEnabled));
+        AHKEngine.SetVar("RAltModifierEnabled", Constants.GetBoolStr(Settings.Core.RAltModifierEnabled));
+        AHKEngine.SetVar("LGuiRemapEnabled", Constants.GetBoolStr(Settings.Core.LGuiRemapEnabled));
+        AHKEngine.SetVar("ReverseMouseWheelEnabled", Constants.GetBoolStr(Settings.Core.ReverseMouseWheelEnabled));
+        AHKEngine.SetVar("DesktopToHomeEnabled", Constants.GetBoolStr(Settings.Core.DesktopToHomeEnabled));
     }
 
     private static void OnCapsLockSwitchLanguage()
@@ -95,9 +97,4 @@ internal static class Core
     {
         SetVarOnSettings();
     }
-
-    static private string GetActionDelegateStr(AHKDelegate act)
-        => Marshal.GetFunctionPointerForDelegate(act).ToInt64().ToString();
-    static private string GetBoolStr(bool input)
-        => Convert.ToUInt16(input).ToString();
 }

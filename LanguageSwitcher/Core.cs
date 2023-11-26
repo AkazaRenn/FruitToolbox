@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-using FruitToolbox.Utils;
+﻿using FruitToolbox.Utils;
 
 namespace FruitToolbox.LanguageSwitcher;
 
@@ -8,35 +6,29 @@ internal static partial class Core {
     public const int WindowActivateWaitMs = 500;
 
     private static Flyout NewLangFlyout = null;
-    private delegate void LanguageChangedCallbackDelegate(int lcid);
     public static event EventHandler<Constants.LanguageEvent> NewLanguageEvent;
     private static void InvokeNewLanguageEvent(int lcid)
     {
         NewLanguageEvent?.Invoke(null, new Constants.LanguageEvent(lcid));
     }
 
-    [LibraryImport("LanguageSwitcher")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool LanguageSwitcher_start(LanguageChangedCallbackDelegate fn);
     public static bool Start()
     { 
         if(NewLangFlyout != null)
         {
-            Stop();
+            Interop.stop();
         }
 
         ToggleFlyoutEnabled(Settings.Core.FlyoutEnabled);
         ToggleExternalHooks(true);
-        return LanguageSwitcher_start(InvokeNewLanguageEvent);
+        return Interop.start(InvokeNewLanguageEvent);
     }
 
-    [LibraryImport("LanguageSwitcher")]
-    private static partial void LanguageSwitcher_stop();
     public static void Stop()
     {
         ToggleExternalHooks(false);
         ToggleFlyoutEnabled(false);
-        LanguageSwitcher_stop();
+        Interop.stop();
     }
 
     public static void SettingsUpdateHandler(object sender, EventArgs e)
@@ -71,39 +63,18 @@ internal static partial class Core {
         }
     }
 
-    [LibraryImport("LanguageSwitcher")]
-    private static partial void LanguageSwitcher_updateInputLanguage([MarshalAs(UnmanagedType.Bool)] bool doCallback);
-    public static void UpdateInputLanguage() => LanguageSwitcher_updateInputLanguage(true);
+    public static void UpdateInputLanguage() => Interop.updateInputLanguage(true);
     public static void UpdateInputLanguageByKeyboard(object _, EventArgs e)
     {
         Thread.Sleep(WindowActivateWaitMs);
-        LanguageSwitcher_updateInputLanguage(false);
+        Interop.updateInputLanguage(false);
     }
 
-    [LibraryImport("LanguageSwitcher")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool LanguageSwitcher_swapCategory();
-    public static bool SwapCategory() => LanguageSwitcher_swapCategory();
-    public static void SwapCategoryNoReturn(object _, EventArgs e) => LanguageSwitcher_swapCategory();
+    public static bool SwapCategory() => Interop.swapCategory();
 
-    [LibraryImport("LanguageSwitcher")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool LanguageSwitcher_getCategory();
-    public static bool GetCategory() => LanguageSwitcher_getCategory();
+    public static void SwapCategoryNoReturn(object _, EventArgs e) => Interop.swapCategory();
 
-    [LibraryImport("LanguageSwitcher")]
-    private static partial uint LanguageSwitcher_getCurrentLanguage();
-    public static uint GetCurrentLanguage() => LanguageSwitcher_getCurrentLanguage();
+    public static bool GetCategory() => Interop.getCategory();
 
-    [LibraryImport("LanguageSwitcher")]
-    private static partial void LanguageSwitcher_setCurrentLanguage(uint newLanguage);
-    public static void SetCurrentLanguage(uint newLanguage) => LanguageSwitcher_setCurrentLanguage(newLanguage);
-
-    [LibraryImport("LanguageSwitcher")]
-    private static partial uint LanguageSwitcher_getLanguageList([MarshalAs(UnmanagedType.Bool)] bool isImeLanguageList, uint[] list);
-    public static uint GetLanguageList(bool isImeLanguageList, uint[] list) => LanguageSwitcher_getLanguageList(isImeLanguageList, list);
-
-    [LibraryImport("LanguageSwitcher")]
-    private static partial void LanguageSwitcher_onRaltUp();
-    public static void OnRaltUp(object _, EventArgs e) => LanguageSwitcher_onRaltUp();
+    public static void OnRaltUp(object _, EventArgs e) => Interop.onRaltUp();
 }
