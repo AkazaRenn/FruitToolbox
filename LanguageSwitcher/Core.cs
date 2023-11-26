@@ -26,7 +26,7 @@ internal static partial class Core {
         }
 
         ToggleFlyoutEnabled(Settings.Core.FlyoutEnabled);
-        Settings.Core.SettingsChangedEventHandler += SettingsUpdateHandler;
+        ToggleExternalHooks(true);
         return LanguageSwitcher_start(InvokeNewLanguageEvent);
     }
 
@@ -34,7 +34,7 @@ internal static partial class Core {
     private static partial void LanguageSwitcher_stop();
     public static void Stop()
     {
-        Settings.Core.SettingsChangedEventHandler -= SettingsUpdateHandler;
+        ToggleExternalHooks(false);
         ToggleFlyoutEnabled(false);
         LanguageSwitcher_stop();
     }
@@ -44,9 +44,20 @@ internal static partial class Core {
         ToggleFlyoutEnabled(Settings.Core.FlyoutEnabled);
     }
 
-    private static void ToggleFlyoutEnabled(bool enabled)
+    private static void ToggleExternalHooks(bool enable)
     {
-        if(enabled)
+        if(enable)
+        {
+            Settings.Core.SettingsChangedEventHandler += SettingsUpdateHandler;
+        } else
+        {
+            Settings.Core.SettingsChangedEventHandler -= SettingsUpdateHandler;
+        }
+    }
+
+    private static void ToggleFlyoutEnabled(bool enable)
+    {
+        if(enable)
         {
             if(NewLangFlyout == null)
             {

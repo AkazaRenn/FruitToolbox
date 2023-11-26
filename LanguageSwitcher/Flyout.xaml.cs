@@ -54,11 +54,6 @@ internal sealed partial class Flyout: WindowEx, IDisposable
         };
         UISettings.ColorValuesChanged += (_, _) => UpdateTheme();
 
-        // Need to update Dispose() as well
-        Core.NewLanguageEvent += OnNewLanguage;
-        Hotkey.Core.CapsLockOnEvent += OnCapsLockOn;
-        Hotkey.Core.CapsLockOffEvent += OnCapsLockOff;
-
         this.Hide();
         IsShownInSwitchers = false;
         IsMinimizable = false;
@@ -72,6 +67,7 @@ internal sealed partial class Flyout: WindowEx, IDisposable
             ExtendedWindowStyle.Transparent | ExtendedWindowStyle.NoActivate | ExtendedWindowStyle.ToolWindow);
         DesktopWindowManager.DisableRoundCorners(this.GetWindowHandle());
         MoveToDestination();
+        ToggleExternalHooks(true);
     }
 
     ~Flyout()
@@ -79,12 +75,24 @@ internal sealed partial class Flyout: WindowEx, IDisposable
         Dispose();
     }
 
+    private void ToggleExternalHooks(bool enable)
+    {
+        if(enable)
+        {
+            Core.NewLanguageEvent += OnNewLanguage;
+            Hotkey.Core.CapsLockOnEvent += OnCapsLockOn;
+            Hotkey.Core.CapsLockOffEvent += OnCapsLockOff;
+        } else
+        {
+            Core.NewLanguageEvent -= OnNewLanguage;
+            Hotkey.Core.CapsLockOnEvent -= OnCapsLockOn;
+            Hotkey.Core.CapsLockOffEvent -= OnCapsLockOff;
+        }
+    }
+
     public void Dispose()
     {
-        Core.NewLanguageEvent -= OnNewLanguage;
-        Hotkey.Core.CapsLockOnEvent -= OnCapsLockOn;
-        Hotkey.Core.CapsLockOffEvent -= OnCapsLockOff;
-
+        ToggleExternalHooks(false);
         Close();
         GC.SuppressFinalize(this);
     }

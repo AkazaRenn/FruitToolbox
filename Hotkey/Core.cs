@@ -48,7 +48,7 @@ internal static class Core
         AHKEngine.SetVar("onHomePtr", GetActionDelegateStr(OnHome));
         AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.DesktopToHome));
 
-        AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.RGUIToPTRun));
+        AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.RGuiToPTRun));
         AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.ReverseMouseWheel));
     }
 
@@ -56,7 +56,7 @@ internal static class Core
     {
         AHKEngine.SetVar("LanguageSwitcherEnabled", GetBoolStr(Settings.Core.LanguageSwitcherEnabled));
         AHKEngine.SetVar("RAltModifierEnabled", GetBoolStr(Settings.Core.RAltModifierEnabled));
-        AHKEngine.SetVar("LGUIRemapEnabled", GetBoolStr(Settings.Core.LGuiRemapEnabled));
+        AHKEngine.SetVar("LGuiRemapEnabled", GetBoolStr(Settings.Core.LGuiRemapEnabled));
         AHKEngine.SetVar("ReverseMouseWheelEnabled", GetBoolStr(Settings.Core.ReverseMouseWheelEnabled));
         AHKEngine.SetVar("DesktopToHomeEnabled", GetBoolStr(Settings.Core.DesktopToHomeEnabled));
     }
