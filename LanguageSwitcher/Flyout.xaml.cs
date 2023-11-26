@@ -29,8 +29,6 @@ namespace FruitToolbox.LanguageSwitcher;
 /// </summary>
 internal sealed partial class Flyout: WindowEx, IDisposable
 {
-    private static bool Enabled = true;
-
     private const double WindowMarginFromBottom = 38;
     private static double ScaleFactor = 1;
     private static Point MainDisplay = new(0, 0);
@@ -58,7 +56,6 @@ internal sealed partial class Flyout: WindowEx, IDisposable
 
         // Need to update Dispose() as well
         Core.NewLanguageEvent += OnNewLanguage;
-        Settings.Core.SettingsChangedEventHandler += SettingsUpdateHandler;
         Hotkey.Core.CapsLockOnEvent += OnCapsLockOn;
         Hotkey.Core.CapsLockOffEvent += OnCapsLockOff;
 
@@ -85,16 +82,11 @@ internal sealed partial class Flyout: WindowEx, IDisposable
     public void Dispose()
     {
         Core.NewLanguageEvent -= OnNewLanguage;
-        Settings.Core.SettingsChangedEventHandler -= SettingsUpdateHandler;
         Hotkey.Core.CapsLockOnEvent -= OnCapsLockOn;
         Hotkey.Core.CapsLockOffEvent -= OnCapsLockOff;
 
+        Close();
         GC.SuppressFinalize(this);
-    }
-
-    public static void SettingsUpdateHandler(object sender, EventArgs e)
-    {
-        Enabled = FruitToolbox.Settings.Core.FlyoutEnabled;
     }
 
     void HideFlyout(object t, object s)
@@ -120,17 +112,14 @@ internal sealed partial class Flyout: WindowEx, IDisposable
 
     private void UpdateFlyout(string newText)
     {
-        if(Enabled)
+        DispatcherQueue.TryEnqueue(() =>
         {
-            DispatcherQueue.TryEnqueue(() =>
-            {
-                FlyoutText.Text = newText;
+            FlyoutText.Text = newText;
 
-                this.Show();
-                FlyoutBase.ShowAttachedFlyout(FlyoutAnchor);
-                HideFlyoutTimer.Start();
-            });
-        }
+            this.Show();
+            FlyoutBase.ShowAttachedFlyout(FlyoutAnchor);
+            HideFlyoutTimer.Start();
+        });
     }
 
     public void Reload()

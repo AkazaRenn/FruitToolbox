@@ -25,8 +25,8 @@ internal static partial class Core {
             Stop();
         }
 
-        NewLangFlyout = new();
-        NewLangFlyout.Activate();
+        ToggleFlyoutEnabled(Settings.Core.FlyoutEnabled);
+        Settings.Core.SettingsChangedEventHandler += SettingsUpdateHandler;
         return LanguageSwitcher_start(InvokeNewLanguageEvent);
     }
 
@@ -34,9 +34,30 @@ internal static partial class Core {
     private static partial void LanguageSwitcher_stop();
     public static void Stop()
     {
-        NewLangFlyout.Dispose();
-        NewLangFlyout = null;
+        Settings.Core.SettingsChangedEventHandler -= SettingsUpdateHandler;
+        ToggleFlyoutEnabled(false);
         LanguageSwitcher_stop();
+    }
+
+    public static void SettingsUpdateHandler(object sender, EventArgs e)
+    {
+        ToggleFlyoutEnabled(Settings.Core.FlyoutEnabled);
+    }
+
+    private static void ToggleFlyoutEnabled(bool enabled)
+    {
+        if(enabled)
+        {
+            if(NewLangFlyout == null)
+            {
+                NewLangFlyout = new();
+                NewLangFlyout.Activate();
+            }
+        } else if(NewLangFlyout != null)
+        {
+            NewLangFlyout.Dispose();
+            NewLangFlyout = null;
+        }
     }
 
     [LibraryImport("LanguageSwitcher")]
