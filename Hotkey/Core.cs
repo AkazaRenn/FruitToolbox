@@ -2,6 +2,8 @@
 
 using AutoHotkey.Interop;
 
+using FruitToolbox.Utils;
+
 
 namespace FruitToolbox.Hotkey;
 
@@ -96,8 +98,8 @@ internal static class Core
         SetVarOnSettings();
     }
 
-    static private string GetActionDelegateStr(AHKDelegate act)
+    public static string GetActionDelegateStr(AHKDelegate act)
         => Marshal.GetFunctionPointerForDelegate(act).ToInt64().ToString();
-    static private string GetBoolStr(bool input)
+    public static string GetBoolStr(bool input)
         => Convert.ToUInt16(input).ToString();
 }

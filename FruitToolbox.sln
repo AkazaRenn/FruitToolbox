@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FruitToolbox", "FruitToolbo
 		{A1D89EB7-6B17-48B7-A4C0-0FBF5256BDA3} = {A1D89EB7-6B17-48B7-A4C0-0FBF5256BDA3}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LanguageSwitcher", "LanguageSwitcher\Core\LanguageSwitcher.vcxproj", "{8EABF3AD-23D8-49FD-88A8-13C7A0CACBD0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LanguageSwitcher", "LanguageSwitcher\Interop\LanguageSwitcher.vcxproj", "{8EABF3AD-23D8-49FD-88A8-13C7A0CACBD0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WindowTracker", "Maximizer\WindowTracker\WindowTracker.vcxproj", "{A1D89EB7-6B17-48B7-A4C0-0FBF5256BDA3}"
 EndProject
