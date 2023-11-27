@@ -1,54 +1,54 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="LanguageSwitcher">
+      <UniqueIdentifier>{989e102f-ea1e-4b19-96e6-977ea0822dc1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Maximizer">
+      <UniqueIdentifier>{ec41b8b1-c02d-4565-a614-04235378392b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{5e65ca88-b14c-4f65-a5e4-afac4e5b8204}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{eca6faf0-58a0-4069-8495-7011696fcf10}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Language.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PerLanguageMethods.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LanguageSwitcher.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Main.h">
-      <Filter>Header Files</Filter>
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="WindowTracker.h">
-      <Filter>Header Files</Filter>
+      <Filter>Maximizer</Filter>
+    </ClInclude>
+    <ClInclude Include="PerLanguageMethods.h">
+      <Filter>LanguageSwitcher</Filter>
+    </ClInclude>
+    <ClInclude Include="Language.h">
+      <Filter>LanguageSwitcher</Filter>
+    </ClInclude>
+    <ClInclude Include="LanguageSwitcher.h">
+      <Filter>LanguageSwitcher</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Language.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>LanguageSwitcher</Filter>
     </ClCompile>
     <ClCompile Include="LanguageSwitcher.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>LanguageSwitcher</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="WindowTracker.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Maximizer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
