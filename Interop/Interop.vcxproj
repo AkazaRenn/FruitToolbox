@@ -130,23 +130,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="Main.h" />
     <ClInclude Include="LanguageSwitcher.h" />
     <ClInclude Include="Language.h" />
-    <ClInclude Include="Main.h" />
-    <ClInclude Include="pch.h" />
     <ClInclude Include="PerLanguageMethods.h" />
     <ClInclude Include="WindowTracker.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LanguageSwitcher.cpp" />
-    <ClCompile Include="Language.cpp" />
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="LanguageSwitcher.cpp" />
+    <ClCompile Include="Language.cpp" />
     <ClCompile Include="WindowTracker.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
