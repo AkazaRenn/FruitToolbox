@@ -18,10 +18,19 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="WindowTracker.h">
+    <ClInclude Include="Language.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Interop.h">
+    <ClInclude Include="PerLanguageMethods.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LanguageSwitcher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,10 +38,16 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WindowTracker.cpp">
+    <ClCompile Include="Language.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Interop.cpp">
+    <ClCompile Include="LanguageSwitcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

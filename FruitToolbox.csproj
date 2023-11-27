@@ -78,10 +78,8 @@
 	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
-
 	<ItemGroup>
-	  <ProjectReference Include="LanguageSwitcher\Interop\LanguageSwitcher.vcxproj" />
-	  <ProjectReference Include="Maximizer\WindowTracker\WindowTracker.vcxproj" />
+	  <ProjectReference Include="Interop\Interop.vcxproj" />
 	</ItemGroup>
 
 	<ItemGroup>

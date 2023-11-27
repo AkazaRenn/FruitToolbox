@@ -8,8 +8,10 @@
 #define PCH_H
 
 // add headers that you want to pre-compile here
-#include "Windows.h"
+#include <Windows.h>
 
-#include <vector>
+#include <iostream>
 #include <set>
+#include <map>
+#include <functional>
 #endif //PCH_H

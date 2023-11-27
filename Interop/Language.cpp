@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Language.h"
 
-using namespace FruitToolbox::LanguageSwitcher;
+using namespace FruitToolbox::Interop::Unmanaged;
 
 constexpr long LANGUAGE_TO_LOCALE_OFFSET = 0x400;
 #define		   IS_LOCALE(lcid)			 (lcid >= LANGUAGE_TO_LOCALE_OFFSET)

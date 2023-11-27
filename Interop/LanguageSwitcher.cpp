@@ -1,11 +1,11 @@
 #include "pch.h"
 
-#include "Core.h"
+#include "LanguageSwitcher.h"
 #include "PerLanguageMethods.h"
 
 #pragma comment(lib, "imm32")
 
-using namespace FruitToolbox::LanguageSwitcher;
+using namespace FruitToolbox::Interop::Unmanaged;
 
 constexpr size_t             REG_LANGUAGE_MULTI_SZ_MAX_LENGTH = 1024;
 constexpr LPCWSTR            REG_LANGUAGES_DIR = L"Control Panel\\International\\User Profile";
@@ -14,7 +14,7 @@ constexpr LPCWSTR            REG_LANGUAGES_KEY = L"Languages";
 constexpr UINT               MAX_TRY_TIMES = 2;
 constexpr UINT               RETRY_WAIT_MS = 50;
 
-void Core::applyInputLanguage() {
+void LanguageSwitcher::applyInputLanguage() {
     if(getCurrentLanguage()) {
         auto hwnd = GetForegroundWindow();
 
@@ -23,16 +23,16 @@ void Core::applyInputLanguage() {
     }
 }
 
-void Core::updateInputLanguage(bool doCallback) {
+void LanguageSwitcher::updateInputLanguage(bool doCallback) {
     updateInputLanguage(GetForegroundWindow(), doCallback);
 }
 
-void Core::updateInputLanguage(HWND hwnd, bool doCallback) {
+void LanguageSwitcher::updateInputLanguage(HWND hwnd, bool doCallback) {
     setCurrentLanguage(hklToLcid(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))), doCallback);
     fixImeConversionMode(hwnd);
 }
 
-bool Core::swapCategory() {
+bool LanguageSwitcher::swapCategory() {
     inImeMode = !inImeMode;
     applyInputLanguage();
 
@@ -40,11 +40,11 @@ bool Core::swapCategory() {
     return inImeMode;
 }
 
-bool Core::getCategory() {
+bool LanguageSwitcher::getCategory() {
     return inImeMode;
 }
 
-void Core::setCurrentLanguage(LCID lcid, bool doCallback) {
+void LanguageSwitcher::setCurrentLanguage(LCID lcid, bool doCallback) {
     if(languageList.find(lcid) == languageList.end()) {
         languageList[lcid] = Language(lcid);
     }
@@ -60,7 +60,7 @@ void Core::setCurrentLanguage(LCID lcid, bool doCallback) {
 //[TODO] handle focused box change within the same app (like Edge webpages)
 // not sure how to achieve, need help
 //[TODO] put in a thread so it can do non-block retries
-void Core::fixImeConversionMode(HWND hWnd, LCID language) {
+void LanguageSwitcher::fixImeConversionMode(HWND hWnd, LCID language) {
     auto retryCount = 0;
     auto perLangMethods = getPerLanguageMethods(language);
     while((!perLangMethods.inConversionMode(hWnd)) && (retryCount++ <= MAX_TRY_TIMES)) {
@@ -69,24 +69,24 @@ void Core::fixImeConversionMode(HWND hWnd, LCID language) {
     }
 }
 
-void Core::fixImeConversionMode(HWND hWnd) {
+void LanguageSwitcher::fixImeConversionMode(HWND hWnd) {
     if(languageList[getCurrentLanguage()].isImeLanguage()) {
         fixImeConversionMode(hWnd, getCurrentLanguage());
     }
 }
 
-void Core::onRaltUp() {
+void LanguageSwitcher::onRaltUp() {
     getPerLanguageMethods(getCurrentLanguage()).onRaltUp();
 }
 
 // Reset all values in resetFields()
-map<LCID, Language> Core::languageList = {};
-LCID Core::activeLanguages[2] = {};
-bool Core::inImeMode = false;
+map<LCID, Language> LanguageSwitcher::languageList = {};
+LCID LanguageSwitcher::activeLanguages[2] = {};
+bool LanguageSwitcher::inImeMode = false;
 
-HWINEVENTHOOK Core::windowChangeHook = nullptr;
-onLanguageChangeCallback Core::languageChangeHandler = nullptr;
-void Core::resetFields() {
+HWINEVENTHOOK LanguageSwitcher::windowChangeHook = nullptr;
+onLanguageChangeCallback LanguageSwitcher::languageChangeHandler = nullptr;
+void LanguageSwitcher::resetFields() {
     languageList = {};
     fill_n(activeLanguages, sizeof(activeLanguages), 0);
     inImeMode = false;
@@ -95,7 +95,7 @@ void Core::resetFields() {
     languageChangeHandler = nullptr;
 }
 
-bool Core::start(onLanguageChangeCallback handler) {
+bool LanguageSwitcher::start(onLanguageChangeCallback handler) {
     if(windowChangeHook != nullptr) {
         return false;
     }
@@ -135,13 +135,13 @@ bool Core::start(onLanguageChangeCallback handler) {
     return true;
 }
 
-void Core::stop() {
+void LanguageSwitcher::stop() {
     UnhookWinEvent(windowChangeHook);
 
     resetFields();
 }
 
-void CALLBACK Core::onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
+void CALLBACK LanguageSwitcher::onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if(hwnd == GetForegroundWindow()) {
         updateInputLanguage(hwnd);
     }

@@ -2,7 +2,7 @@
 #include "WindowTracker.h"
 
 using namespace std;
-using namespace FruitToolbox::Maximizer;
+using namespace FruitToolbox::Interop::Unmanaged;
 
 void CALLBACK WindowTracker::onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (idObject == OBJID_WINDOW &&

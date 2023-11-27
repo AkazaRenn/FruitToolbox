@@ -16,19 +16,19 @@ internal static partial class Core {
     { 
         if(NewLangFlyout != null)
         {
-            Interop.stop();
+            Interop.LanguageSwitcher.stop();
         }
 
         ToggleFlyoutEnabled(Settings.Core.FlyoutEnabled);
         ToggleExternalHooks(true);
-        return Interop.start(InvokeNewLanguageEvent);
+        return Interop.LanguageSwitcher.start(InvokeNewLanguageEvent);
     }
 
     public static void Stop()
     {
         ToggleExternalHooks(false);
         ToggleFlyoutEnabled(false);
-        Interop.stop();
+        Interop.LanguageSwitcher.stop();
     }
 
     public static void SettingsUpdateHandler(object sender, EventArgs e)
@@ -63,18 +63,18 @@ internal static partial class Core {
         }
     }
 
-    public static void UpdateInputLanguage() => Interop.updateInputLanguage(true);
+    public static void UpdateInputLanguage() => Interop.LanguageSwitcher.updateInputLanguage(true);
     public static void UpdateInputLanguageByKeyboard(object _, EventArgs e)
     {
         Thread.Sleep(WindowActivateWaitMs);
-        Interop.updateInputLanguage(false);
+        Interop.LanguageSwitcher.updateInputLanguage(false);
     }
 
-    public static bool SwapCategory() => Interop.swapCategory();
+    public static bool SwapCategory() => Interop.LanguageSwitcher.swapCategory();
 
-    public static void SwapCategoryNoReturn(object _, EventArgs e) => Interop.swapCategory();
+    public static void SwapCategoryNoReturn(object _, EventArgs e) => Interop.LanguageSwitcher.swapCategory();
 
-    public static bool GetCategory() => Interop.getCategory();
+    public static bool GetCategory() => Interop.LanguageSwitcher.getCategory();
 
-    public static void OnRaltUp(object _, EventArgs e) => Interop.onRaltUp();
+    public static void OnRaltUp(object _, EventArgs e) => Interop.LanguageSwitcher.onRaltUp();
 }
