@@ -5,15 +5,9 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.22000.0</TargetPlatformMinVersion>
+		<WindowsSdkPackageVersion>10.0.22621.27</WindowsSdkPackageVersion>
+		<SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
 		<Platforms>x64;arm64</Platforms>
-		<SelfContained>true</SelfContained>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<UseWinUI>true</UseWinUI>
-		<EnableMsixTooling>true</EnableMsixTooling>
-		<IsTrimmable>true</IsTrimmable>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<PublishReadyToRun>true</PublishReadyToRun>
-		<Nullable>disable</Nullable>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Platform)'=='x64'">
@@ -52,7 +46,14 @@
 	</ItemGroup>
 
 	<PropertyGroup>
-		<WindowsSdkPackageVersion>10.0.22621.27</WindowsSdkPackageVersion>
+		<SelfContained>true</SelfContained>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<UseWinUI>true</UseWinUI>
+		<EnableMsixTooling>true</EnableMsixTooling>
+		<IsTrimmable>true</IsTrimmable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<PublishReadyToRun>true</PublishReadyToRun>
+		<Nullable>disable</Nullable>
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
@@ -66,8 +67,7 @@
 		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
 		<ApplicationIcon>Assets\durian.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<AppxPackageDir>C:\Users\Renn\Downloads\</AppxPackageDir>
-		<SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
+		<AppxPackageDir>$(SolutionDir)\package</AppxPackageDir>
 	</PropertyGroup>
 
 	<!--
