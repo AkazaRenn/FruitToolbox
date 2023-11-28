@@ -5,8 +5,6 @@ using namespace std;
 using namespace FruitToolbox::Interop::Unmanaged;
 
 bool WindowTracker::isWindow(HWND hwnd, LONG idObject, LONG idChild) {
-    LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-
     return
         (idObject == OBJID_WINDOW) &&
         (idChild == CHILDID_SELF) &&
@@ -14,8 +12,8 @@ bool WindowTracker::isWindow(HWND hwnd, LONG idObject, LONG idChild) {
         (IsWindow(hwnd)) &&
         (IsWindowVisible(hwnd)) &&
         (GetWindowTextLengthW(hwnd) > 0) &&
-        (exStyle & WS_EX_OVERLAPPEDWINDOW) &&
-        !(exStyle & WS_EX_MDICHILD);
+        (GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_OVERLAPPEDWINDOW) &&
+        !(GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_MDICHILD);
 }
 
 void CALLBACK WindowTracker::onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
