@@ -2,9 +2,6 @@
 
 using AutoHotkey.Interop;
 
-using FruitToolbox.Utils;
-
-
 namespace FruitToolbox.Hotkey;
 
 internal static class Core

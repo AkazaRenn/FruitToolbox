@@ -84,7 +84,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>user32.lib;Advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>user32.lib;Advapi32.lib;dwmapi.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
@@ -126,15 +126,16 @@
       <StringPooling>true</StringPooling>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>user32.lib;Advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>user32.lib;Advapi32.lib;dwmapi.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Main.h" />
+    <ClInclude Include="Modules.h" />
     <ClInclude Include="LanguageSwitcher.h" />
     <ClInclude Include="Language.h" />
-    <ClInclude Include="PerLanguageMethods.h" />
+    <ClInclude Include="PerLanguageMethods.hpp" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="WindowTracker.h" />
   </ItemGroup>
   <ItemGroup>
@@ -144,9 +145,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Modules.cpp" />
     <ClCompile Include="LanguageSwitcher.cpp" />
     <ClCompile Include="Language.cpp" />
+    <ClCompile Include="Utils.cpp" />
     <ClCompile Include="WindowTracker.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,7 +1,7 @@
 #include "pch.h"
 
 #include "LanguageSwitcher.h"
-#include "PerLanguageMethods.h"
+#include "PerLanguageMethods.hpp"
 
 #pragma comment(lib, "imm32")
 

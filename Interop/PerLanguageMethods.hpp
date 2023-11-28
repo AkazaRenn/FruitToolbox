@@ -47,7 +47,7 @@ namespace FruitToolbox {
             };
 
             constexpr UINT ChineseImeConversionModeCode = 1;
-            static PerLanguageMethods ChineseMethods{
+            static PerLanguageMethods ChineseMethods {
                 []() -> void {},
                 [](HWND hwnd) -> bool {
                     return SendMessage(ImmGetDefaultIMEWnd(hwnd), WM_IME_CONTROL, IMC_GETCONVERSIONMODE, 0) == ChineseImeConversionModeCode;

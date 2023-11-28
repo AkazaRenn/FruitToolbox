@@ -1,50 +1,50 @@
 #pragma once
 
 #include "pch.h"
-#include "Main.h"
+#include "Modules.h"
 #include "LanguageSwitcher.h"
 #include "WindowTracker.h"
 
 using namespace System::Runtime::InteropServices;
 using namespace FruitToolbox::Interop;
 
-bool LanguageSwitcher::start(onLanguageChangeCallbackDelegate^ handler) {
+bool LanguageSwitcher::Start(OnLanguageChangeCallbackDelegate^ handler) {
     static Unmanaged::onLanguageChangeCallback delegatePtr = nullptr;
     delegatePtr = (Unmanaged::onLanguageChangeCallback)(Marshal::GetFunctionPointerForDelegate(handler).ToPointer());
     return Unmanaged::LanguageSwitcher::start(delegatePtr);
 }
 
-void LanguageSwitcher::stop() {
+void LanguageSwitcher::Stop() {
     Unmanaged::LanguageSwitcher::stop();
 }
 
-void LanguageSwitcher::updateInputLanguage(bool doCallback) {
+void LanguageSwitcher::UpdateInputLanguage(bool doCallback) {
     Unmanaged::LanguageSwitcher::updateInputLanguage(doCallback);
 }
 
-bool LanguageSwitcher::swapCategory() {
+bool LanguageSwitcher::SwapCategory() {
     return Unmanaged::LanguageSwitcher::swapCategory();
 }
 
-bool LanguageSwitcher::getCategory() {
+bool LanguageSwitcher::GetCategory() {
     return Unmanaged::LanguageSwitcher::getCategory();
 }
 
-void LanguageSwitcher::setCurrentLanguage(int lcid) {
+void LanguageSwitcher::SetCurrentLanguage(int lcid) {
     Unmanaged::LanguageSwitcher::setCurrentLanguage(lcid);
 }
 
-void LanguageSwitcher::onRaltUp() {
+void LanguageSwitcher::OnRaltUp() {
     Unmanaged::LanguageSwitcher::onRaltUp();
 }
 
 
-bool WindowTracker::start(
-    windowChangedCallbackDelegate^ _onNewFloatWindowHandler,
-    windowChangedCallbackDelegate^ _onMaxWindowHandler,
-    windowChangedCallbackDelegate^ _onUnmaxWindowHandler,
-    windowChangedCallbackDelegate^ _onMinWindowHandler,
-    windowChangedCallbackDelegate^ _onCloseWindowHandler) {
+bool WindowTracker::Start(
+    WindowChangedCallbackDelegate^ _onNewFloatWindowHandler,
+    WindowChangedCallbackDelegate^ _onMaxWindowHandler,
+    WindowChangedCallbackDelegate^ _onUnmaxWindowHandler,
+    WindowChangedCallbackDelegate^ _onMinWindowHandler,
+    WindowChangedCallbackDelegate^ _onCloseWindowHandler) {
     static Unmanaged::onWindowChangeCallback onNewFloatWindowHandlerPtr = nullptr;
     onNewFloatWindowHandlerPtr = (Unmanaged::onWindowChangeCallback)(Marshal::GetFunctionPointerForDelegate(_onNewFloatWindowHandler).ToPointer());
 
@@ -68,6 +68,6 @@ bool WindowTracker::start(
         onCloseWindowHandlerPtr);
 }
 
-void WindowTracker::stop() {
+void WindowTracker::Stop() {
     Unmanaged::WindowTracker::stop();
 }

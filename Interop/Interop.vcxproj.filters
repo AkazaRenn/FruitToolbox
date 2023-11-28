@@ -7,24 +7,24 @@
     <Filter Include="Maximizer">
       <UniqueIdentifier>{ec41b8b1-c02d-4565-a614-04235378392b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils">
-      <UniqueIdentifier>{5e65ca88-b14c-4f65-a5e4-afac4e5b8204}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Main">
       <UniqueIdentifier>{eca6faf0-58a0-4069-8495-7011696fcf10}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Others">
+      <UniqueIdentifier>{5e65ca88-b14c-4f65-a5e4-afac4e5b8204}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Main.h">
+    <ClInclude Include="Modules.h">
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>Utils</Filter>
+      <Filter>Others</Filter>
     </ClInclude>
     <ClInclude Include="WindowTracker.h">
       <Filter>Maximizer</Filter>
     </ClInclude>
-    <ClInclude Include="PerLanguageMethods.h">
+    <ClInclude Include="PerLanguageMethods.hpp">
       <Filter>LanguageSwitcher</Filter>
     </ClInclude>
     <ClInclude Include="Language.h">
@@ -32,6 +32,9 @@
     </ClInclude>
     <ClInclude Include="LanguageSwitcher.h">
       <Filter>LanguageSwitcher</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -41,14 +44,17 @@
     <ClCompile Include="LanguageSwitcher.cpp">
       <Filter>LanguageSwitcher</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="Modules.cpp">
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Utils</Filter>
+      <Filter>Others</Filter>
     </ClCompile>
     <ClCompile Include="WindowTracker.cpp">
       <Filter>Maximizer</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

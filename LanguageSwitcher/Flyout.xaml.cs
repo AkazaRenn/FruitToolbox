@@ -1,7 +1,5 @@
 using System.Globalization;
 
-using FruitToolbox.Utils;
-
 using H.NotifyIcon;
 
 using Microsoft.UI.Dispatching;
@@ -65,7 +63,7 @@ internal sealed partial class Flyout: WindowEx, IDisposable
         VirtualDesktop.PinApplication(Constants.AppID);
         HwndExtensions.SetExtendedWindowStyle(this.GetWindowHandle(),
             ExtendedWindowStyle.Transparent | ExtendedWindowStyle.NoActivate | ExtendedWindowStyle.ToolWindow);
-        DesktopWindowManager.DisableRoundCorners(this.GetWindowHandle());
+        Interop.Utils.SetBorderlessWindow(this.GetWindowHandle());
         MoveToDestination();
         ToggleExternalHooks(true);
     }

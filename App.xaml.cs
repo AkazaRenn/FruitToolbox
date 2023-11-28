@@ -70,6 +70,8 @@ namespace FruitToolbox
                     .Show();
             }
 
+            Maximizer.Core.Start();
+
             Hotkey.Core.Start();
             Hotkey.Core.CapsLockSwitchLanguageEvent += LanguageSwitcher.Core.SwapCategoryNoReturn;
             Hotkey.Core.LanguageChangeEvent += LanguageSwitcher.Core.UpdateInputLanguageByKeyboard;
@@ -91,6 +93,7 @@ namespace FruitToolbox
         private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args)
         {
             LanguageSwitcher.Core.Stop();
+            Maximizer.Core.Stop();
             TrayIcon?.Dispose();
             Environment.Exit(0);
         }

@@ -16,16 +16,15 @@ void CALLBACK WindowTracker::onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD
 }
 
 void CALLBACK WindowTracker::onMaxUnmaxWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    if (idObject == OBJID_WINDOW && IsWindowVisible(hwnd)){
+    if (idObject == OBJID_WINDOW &&
+        idChild == CHILDID_SELF) {
         if (maxWindows.count(hwnd) <= 0 &&
             IsZoomed(hwnd) && 
-            IsWindow(hwnd) &&
             GetWindowTextLengthW(hwnd) > 0) {
             maxWindows.insert(hwnd);
             maxWindowHandler(hwnd);
         }
-        else if (idObject == OBJID_WINDOW &&
-            idChild == CHILDID_SELF &&
+        else if (
             maxWindows.count(hwnd) > 0 &&
             !IsZoomed(hwnd) &&
             !IsIconic(hwnd)) {
@@ -46,6 +45,7 @@ void CALLBACK WindowTracker::onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dw
     if (idObject == OBJID_WINDOW &&
         idChild == CHILDID_SELF &&
         maxWindows.count(hwnd) > 0) {
+        Sleep(100);
         if (!IsWindow(hwnd))
         {
             maxWindows.erase(hwnd);

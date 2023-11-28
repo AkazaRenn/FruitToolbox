@@ -1,6 +1,4 @@
-﻿using FruitToolbox.Utils;
-
-namespace FruitToolbox.LanguageSwitcher;
+﻿namespace FruitToolbox.LanguageSwitcher;
 
 internal static partial class Core {
     public const int WindowActivateWaitMs = 500;
@@ -16,19 +14,19 @@ internal static partial class Core {
     { 
         if(NewLangFlyout != null)
         {
-            Interop.LanguageSwitcher.stop();
+            Interop.LanguageSwitcher.Stop();
         }
 
         ToggleFlyoutEnabled(Settings.Core.FlyoutEnabled);
         ToggleExternalHooks(true);
-        return Interop.LanguageSwitcher.start(InvokeNewLanguageEvent);
+        return Interop.LanguageSwitcher.Start(InvokeNewLanguageEvent);
     }
 
     public static void Stop()
     {
         ToggleExternalHooks(false);
         ToggleFlyoutEnabled(false);
-        Interop.LanguageSwitcher.stop();
+        Interop.LanguageSwitcher.Stop();
     }
 
     public static void SettingsUpdateHandler(object sender, EventArgs e)
@@ -63,18 +61,18 @@ internal static partial class Core {
         }
     }
 
-    public static void UpdateInputLanguage() => Interop.LanguageSwitcher.updateInputLanguage(true);
+    public static void UpdateInputLanguage() => Interop.LanguageSwitcher.UpdateInputLanguage(true);
     public static void UpdateInputLanguageByKeyboard(object _, EventArgs e)
     {
         Thread.Sleep(WindowActivateWaitMs);
-        Interop.LanguageSwitcher.updateInputLanguage(false);
+        Interop.LanguageSwitcher.UpdateInputLanguage(false);
     }
 
-    public static bool SwapCategory() => Interop.LanguageSwitcher.swapCategory();
+    public static bool SwapCategory() => Interop.LanguageSwitcher.SwapCategory();
 
-    public static void SwapCategoryNoReturn(object _, EventArgs e) => Interop.LanguageSwitcher.swapCategory();
+    public static void SwapCategoryNoReturn(object _, EventArgs e) => Interop.LanguageSwitcher.SwapCategory();
 
-    public static bool GetCategory() => Interop.LanguageSwitcher.getCategory();
+    public static bool GetCategory() => Interop.LanguageSwitcher.GetCategory();
 
-    public static void OnRaltUp(object _, EventArgs e) => Interop.LanguageSwitcher.onRaltUp();
+    public static void OnRaltUp(object _, EventArgs e) => Interop.LanguageSwitcher.OnRaltUp();
 }
