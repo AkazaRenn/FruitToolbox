@@ -4,23 +4,31 @@
 using namespace std;
 using namespace FruitToolbox::Interop::Unmanaged;
 
+bool WindowTracker::isWindow(HWND hwnd, LONG idObject, LONG idChild) {
+    LONG exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+
+    return
+        (idObject == OBJID_WINDOW) &&
+        (idChild == CHILDID_SELF) &&
+        (hwnd != shellWindow) &&
+        (IsWindow(hwnd)) &&
+        (IsWindowVisible(hwnd)) &&
+        (GetWindowTextLengthW(hwnd) > 0) &&
+        (exStyle & WS_EX_OVERLAPPEDWINDOW) &&
+        !(exStyle & WS_EX_MDICHILD);
+}
+
 void CALLBACK WindowTracker::onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    if (idObject == OBJID_WINDOW &&
-        idChild == CHILDID_SELF &&
-        IsWindow(hwnd) &&
-        !IsZoomed(hwnd) &&
-        IsWindowVisible(hwnd) &&
-        GetWindowTextLengthW(hwnd) > 0) {
+    if (isWindow(hwnd, idObject, idChild) &&
+        !IsZoomed(hwnd)) {
         newFloatWindowHandler(hwnd);
     }
 }
 
 void CALLBACK WindowTracker::onMaxUnmaxWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    if (idObject == OBJID_WINDOW &&
-        idChild == CHILDID_SELF) {
+    if (isWindow(hwnd, idObject, idChild)) {
         if (maxWindows.count(hwnd) <= 0 &&
-            IsZoomed(hwnd) && 
-            GetWindowTextLengthW(hwnd) > 0) {
+            IsZoomed(hwnd)) {
             maxWindows.insert(hwnd);
             maxWindowHandler(hwnd);
         }
@@ -77,18 +85,14 @@ void WindowTracker::resetFields() {
 }
 
 bool WindowTracker::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
-    if ((hwnd != shellWindow) && IsWindow(hwnd))
-    {
-        if (IsZoomed(hwnd))
-        {
+    if (isWindow(hwnd, OBJID_WINDOW, CHILDID_SELF)) {
+        if (IsZoomed(hwnd)) {
             maxWindows.insert(hwnd);
             maxWindowHandler(hwnd);
-        }
-        else if (!IsIconic(hwnd))
-        {
+        } else {
             newFloatWindowHandler(hwnd);
         }
-        Sleep(50);
+        Sleep(100);
     }
     return true;
 }

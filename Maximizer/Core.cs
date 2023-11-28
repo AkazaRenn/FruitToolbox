@@ -12,39 +12,46 @@ internal static class Core
 {
     const string CreatedDesktopNameFixes = " "; //"​";
     const string UnnamableWindowName = "Administrative Window";
+    const int WindowAnimationWaitMs = 300;
 
-    static VirtualDesktop HomeDesktop;
+    static Guid HomeDesktopId;
     static Guid TempCurrDesktopId;
     static readonly Dictionary<nint, Guid> HwndDesktopMap = [];
     static readonly System.Timers.Timer ReorderDesktopTimer = new(5000);
 
     public static string GetWindowDescription(nint hwnd)
     {
-        int proceddId = Utils.GetProcessId(hwnd);
-        if(proceddId <= 0)
+        try
+        {
+            int proceddId = Utils.GetProcessId(hwnd);
+            if(proceddId <= 0)
+            {
+                return UnnamableWindowName;
+            }
+
+            var process = Process.GetProcessById(proceddId);
+            if(process.MainWindowTitle.Length > 0 && process.MainWindowTitle.Length <= 30)
+            {
+                return process.MainWindowTitle;
+            }
+
+            var mainModule = process.MainModule;
+            if(mainModule == null)
+            {
+                return UnnamableWindowName;
+            }
+
+            string fileDescription = mainModule.FileVersionInfo.FileDescription;
+            if("Application Frame Host".Equals(fileDescription) || fileDescription == null || fileDescription.Length == 0)
+            {
+                return new DirectoryInfo(process.ProcessName).Name;
+            }
+
+            return fileDescription;
+        } catch
         {
             return UnnamableWindowName;
         }
-
-        var process = Process.GetProcessById(proceddId);
-        if(process.MainWindowTitle.Length > 0 && process.MainWindowTitle.Length <= 30)
-        {
-            return process.MainWindowTitle;
-        }
-
-        var mainModule = process.MainModule;
-        if(mainModule == null)
-        {
-            return UnnamableWindowName;
-        }
-
-        string fileDescription = mainModule.FileVersionInfo.FileDescription;
-        if("Application Frame Host".Equals(fileDescription) || fileDescription == null || fileDescription.Length == 0)
-        {
-            return new DirectoryInfo(process.ProcessName).Name;
-        }
-
-        return fileDescription;
     }
 
     static void OnFloatWindow(object _, WindowEvent e) =>
@@ -54,11 +61,11 @@ internal static class Core
     {
         var desktop = VirtualDesktop.Create();
         desktop.Name = CreatedDesktopNameFixes + GetWindowDescription(e.HWnd) + CreatedDesktopNameFixes;
-        Thread.Sleep(300);
+        Thread.Sleep(WindowAnimationWaitMs);
 
-        VirtualDesktop.UnpinWindow(e.HWnd);
+        VirtualDesktopHelper.TryUnpinWindow(e.HWnd);
 
-        VirtualDesktop.MoveToDesktop(e.HWnd, desktop);
+        VirtualDesktopHelper.TryMoveToDesktop(e.HWnd, desktop);
         desktop.Switch();
 
         HwndDesktopMap[e.HWnd] = desktop.Id;
@@ -66,28 +73,31 @@ internal static class Core
 
     static void OnUnmax(object _, WindowEvent e)
     {
-        Thread.Sleep(300);
+        Thread.Sleep(WindowAnimationWaitMs);
 
-        VirtualDesktop.PinWindow(e.HWnd);
-        if(VirtualDesktop.Current != HomeDesktop)
+        VirtualDesktopHelper.TryPinWindow(e.HWnd);
+
+        VirtualDesktop hwndDesktop = VirtualDesktop.FromId(HwndDesktopMap[e.HWnd]);
+        if(VirtualDesktop.Current == hwndDesktop)
         {
-            HomeDesktop.Switch();
+            VirtualDesktopHelper.TrySwitch(VirtualDesktop.FromId(HomeDesktopId));
         }
 
-        VirtualDesktop.FromId(HwndDesktopMap[e.HWnd])?.Remove();
+        hwndDesktop?.Remove();
         HwndDesktopMap.Remove(e.HWnd);
     }
 
     static void OnMinOrClose(object _, WindowEvent e)
     {
-        Thread.Sleep(300);
+        //Thread.Sleep(WindowAnimationWaitMs);
 
-        if(VirtualDesktop.Current != HomeDesktop)
+        VirtualDesktop hwndDesktop = VirtualDesktop.FromId(HwndDesktopMap[e.HWnd]);
+        if(VirtualDesktop.Current == hwndDesktop)
         {
-            HomeDesktop.Switch();
+            VirtualDesktopHelper.TrySwitch(VirtualDesktop.FromId(HomeDesktopId));
         }
 
-        VirtualDesktop.FromId(HwndDesktopMap[e.HWnd])?.Remove();
+        hwndDesktop?.Remove();
         HwndDesktopMap.Remove(e.HWnd);
     }
 
@@ -100,7 +110,7 @@ internal static class Core
         {
             curr = curr.GetRight();
         }
-        HomeDesktop = curr;
+        HomeDesktopId = curr.Id;
     }
 
     private static void ClearDesktops()
@@ -117,10 +127,11 @@ internal static class Core
 
     private static void OnHome(object _, EventArgs e)
     {
-        if(VirtualDesktop.Current != HomeDesktop)
+
+        if(VirtualDesktop.Current.Id != HomeDesktopId)
         {
             TempCurrDesktopId = VirtualDesktop.Current.Id;
-            HomeDesktop.Switch();
+            VirtualDesktopHelper.TrySwitch(VirtualDesktop.FromId(HomeDesktopId));
         } else
         {
             VirtualDesktop.FromId(TempCurrDesktopId)?.Switch();
@@ -130,7 +141,11 @@ internal static class Core
     private static void OnReorderDesktopTimer(object _, EventArgs e)
     {
         ReorderDesktopTimer.Stop();
-        VirtualDesktop.Current.Move(1);
+        if(VirtualDesktop.Current.Id != HomeDesktopId)
+        {
+            //VirtualDesktopHelper.TryMove(VirtualDesktop.FromId(HomeDesktop), 0);
+            VirtualDesktopHelper.TryMove(VirtualDesktop.Current, 1); 
+        }
     }
 
     public static bool Start()
@@ -146,7 +161,7 @@ internal static class Core
         Hotkey.Core.HomeEvent += OnHome;
 
         bool rc = WindowTracker.Start();
-        HomeDesktop.Switch();
+        VirtualDesktopHelper.TrySwitch(VirtualDesktop.FromId(HomeDesktopId));
         ReorderDesktopTimer.Elapsed += OnReorderDesktopTimer;
         VirtualDesktop.CurrentChanged += (_, _) => ReorderDesktopTimer.Start();
 

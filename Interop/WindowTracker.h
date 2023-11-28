@@ -22,6 +22,7 @@ namespace FruitToolbox {
                 static vector<HWINEVENTHOOK> hooks;
                 static set<HWND> maxWindows;
 
+                static bool isWindow(HWND hwnd, LONG idObject, LONG idChild);
                 static void resetFields();
                 static void sortCurrentWindows();
 

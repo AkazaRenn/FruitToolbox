@@ -1,75 +1,94 @@
-﻿using WindowsDesktop;
+﻿using System.Runtime.InteropServices;
+
+using Castle.Components.DictionaryAdapter.Xml;
+
+using WindowsDesktop;
 
 namespace FruitToolbox.Maximizer
 {
     internal static class VirtualDesktopHelper
     {
-        public static bool IsPinnedWindow(nint window)
-        {
-            try
-            { 
-                return VirtualDesktop.IsPinnedWindow(window); 
-            }
-            catch 
-            { 
-                return false; 
-            }
-        }
+        const int DefaultRetry = 10;
+        const int DefaultWait = 50;
 
-        public static void TryPinWindow(nint window)
+        public static void TryPinWindow(nint window, int maxRetry = DefaultRetry, int wait = DefaultWait)
         {
-            try
-            {
-                VirtualDesktop.PinWindow(window);
-            } catch { }
-        }
-
-        public static void PinWindow(nint window)
-        {
+            int retry = 0;
             do
             {
                 try
                 {
                     VirtualDesktop.PinWindow(window);
-                    Thread.Sleep(200);
-                } catch { }
-            } while(!VirtualDesktop.IsPinnedWindow(window));
+                    return;
+                } catch
+                {
+                    Thread.Sleep(wait);
+                }
+            } while(retry++ < maxRetry);
         }
 
-        public static void UnpinWindow(nint window)
+        public static void TryUnpinWindow(nint window, int maxRetry = DefaultRetry, int wait = DefaultWait)
         {
+            int retry = 0;
             do
             {
                 try
                 {
                     VirtualDesktop.UnpinWindow(window);
-                    Thread.Sleep(200);
-                } catch { }
-            } while(VirtualDesktop.IsPinnedWindow(window));
+                    return;
+                } catch
+                {
+                    Thread.Sleep(wait);
+                }
+            } while(retry++ < maxRetry);
         }
 
-        public static void MoveWindow(nint window, VirtualDesktop desktop)
+        public static void TryMoveToDesktop(nint window, VirtualDesktop desktop, int maxRetry = DefaultRetry, int wait = DefaultWait)
         {
+            int retry = 0;
             do
             {
                 try
                 {
                     VirtualDesktop.MoveToDesktop(window, desktop);
-                    Thread.Sleep(200);
-                } catch { }
-            } while(VirtualDesktop.FromHwnd(window) == desktop);
+                    return;
+                } catch
+                {
+                    Thread.Sleep(wait);
+                }
+            } while(retry++ < maxRetry);
         }
 
-        public static void Switch(VirtualDesktop desktop)
+        public static void TrySwitch(VirtualDesktop desktop, int maxRetry = DefaultRetry, int wait = DefaultWait)
         {
+            int retry = 0;
             do
             {
                 try
                 {
                     desktop.Switch();
-                    Thread.Sleep(200);
-                } catch { }
-            } while(VirtualDesktop.Current.Id != desktop.Id);
+                    return;
+                } catch
+                {
+                    Thread.Sleep(wait);
+                }
+            } while(retry++ < maxRetry);
+        }
+
+        public static void TryMove(VirtualDesktop desktop, int index, int maxRetry = DefaultRetry, int wait = DefaultWait)
+        {
+            int retry = 0;
+            do
+            {
+                try
+                {
+                    desktop.Move(index);
+                    return;
+                } catch  
+                {
+                    Thread.Sleep(wait);
+                }
+            } while(retry++ < maxRetry);
         }
     }       
 }
