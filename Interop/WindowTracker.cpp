@@ -88,6 +88,7 @@ bool WindowTracker::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
         {
             newFloatWindowHandler(hwnd);
         }
+        Sleep(50);
     }
     return true;
 }

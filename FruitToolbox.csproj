@@ -67,7 +67,7 @@
 		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
 		<ApplicationIcon>Assets\durian.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<AppxPackageDir>$(SolutionDir)\package</AppxPackageDir>
+		<AppxPackageDir>$(SolutionDir)\pkg</AppxPackageDir>
 	</PropertyGroup>
 
 	<!--

@@ -10,11 +10,13 @@ namespace FruitToolbox.Maximizer;
 
 internal static class Core
 {
-    const string ZeroWidthSpace = "​";
+    const string CreatedDesktopNameFixes = " "; //"​";
     const string UnnamableWindowName = "Administrative Window";
 
     static VirtualDesktop HomeDesktop;
-    static Dictionary<nint, Guid> HwndDesktopMap = new();
+    static Guid TempCurrDesktopId;
+    static readonly Dictionary<nint, Guid> HwndDesktopMap = [];
+    static readonly System.Timers.Timer ReorderDesktopTimer = new(5000);
 
     public static string GetWindowDescription(nint hwnd)
     {
@@ -51,8 +53,8 @@ internal static class Core
     static void OnMax(object _, WindowEvent e)
     {
         var desktop = VirtualDesktop.Create();
-        desktop.Name = ZeroWidthSpace + GetWindowDescription(e.HWnd);
-        Thread.Sleep(100);
+        desktop.Name = CreatedDesktopNameFixes + GetWindowDescription(e.HWnd) + CreatedDesktopNameFixes;
+        Thread.Sleep(300);
 
         VirtualDesktop.UnpinWindow(e.HWnd);
 
@@ -64,7 +66,7 @@ internal static class Core
 
     static void OnUnmax(object _, WindowEvent e)
     {
-        Thread.Sleep(200);
+        Thread.Sleep(300);
 
         VirtualDesktop.PinWindow(e.HWnd);
         if(VirtualDesktop.Current != HomeDesktop)
@@ -78,7 +80,7 @@ internal static class Core
 
     static void OnMinOrClose(object _, WindowEvent e)
     {
-        Thread.Sleep(200);
+        Thread.Sleep(300);
 
         if(VirtualDesktop.Current != HomeDesktop)
         {
@@ -105,21 +107,38 @@ internal static class Core
     {
         foreach(var d in VirtualDesktop.GetDesktops())
         {
-            if(d.Name.StartsWith(ZeroWidthSpace))
+            if(d.Name.StartsWith(CreatedDesktopNameFixes))
             {
+                Thread.Sleep(50);
                 d.Remove();
             }
         }
     }
 
-    private static void OnHome(object _, EventArgs e) => HomeDesktop.Switch();
+    private static void OnHome(object _, EventArgs e)
+    {
+        if(VirtualDesktop.Current != HomeDesktop)
+        {
+            TempCurrDesktopId = VirtualDesktop.Current.Id;
+            HomeDesktop.Switch();
+        } else
+        {
+            VirtualDesktop.FromId(TempCurrDesktopId)?.Switch();
+        }
+    }
+
+    private static void OnReorderDesktopTimer(object _, EventArgs e)
+    {
+        ReorderDesktopTimer.Stop();
+        VirtualDesktop.Current.Move(1);
+    }
 
     public static bool Start()
     {
         InitializeDesktops();
 
         WindowTracker.NewFloatWindowEvent += OnFloatWindow;
-        WindowTracker.MaxWindowEvent += OnMax;  
+        WindowTracker.MaxWindowEvent += OnMax;
         WindowTracker.UnmaxWindowEvent += OnUnmax;
         WindowTracker.MinWindowEvent += OnMinOrClose;
         WindowTracker.CloseWindowEvent += OnMinOrClose;
@@ -128,6 +147,9 @@ internal static class Core
 
         bool rc = WindowTracker.Start();
         HomeDesktop.Switch();
+        ReorderDesktopTimer.Elapsed += OnReorderDesktopTimer;
+        VirtualDesktop.CurrentChanged += (_, _) => ReorderDesktopTimer.Start();
+
         return rc;
     }
 
