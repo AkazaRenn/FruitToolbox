@@ -5,45 +5,45 @@
 using namespace std;
 
 namespace FruitToolbox {
-    namespace Interop {
-        namespace Unmanaged {
-            typedef void(__stdcall* onWindowChangeCallback)(HWND);
+namespace Interop {
+namespace Unmanaged {
+typedef void(__stdcall* onWindowChangeCallback)(HWND);
 
-            class WindowTracker
-            {
-            private:
-                static onWindowChangeCallback newFloatWindowHandler;
-                static onWindowChangeCallback maxWindowHandler;
-                static onWindowChangeCallback unmaxWindowHandler;
-                static onWindowChangeCallback minWindowHandler;
-                static onWindowChangeCallback closeWindowHandler;
-                static onWindowChangeCallback windowTitleChangeHandler;
+class WindowTracker
+{
+private:
+    static onWindowChangeCallback newFloatWindowHandler;
+    static onWindowChangeCallback maxWindowHandler;
+    static onWindowChangeCallback unmaxWindowHandler;
+    static onWindowChangeCallback minWindowHandler;
+    static onWindowChangeCallback closeWindowHandler;
+    static onWindowChangeCallback windowTitleChangeHandler;
 
-                static HWND shellWindow;
-                static vector<HWINEVENTHOOK> hooks;
-                static set<HWND> maxWindows;
+    static HWND shellWindow;
+    static vector<HWINEVENTHOOK> hooks;
+    static set<HWND> maxWindows;
 
-                static bool isWindow(HWND hwnd, LONG idObject, LONG idChild);
-                static void resetFields();
-                static void sortCurrentWindows();
+    static bool isWindow(HWND hwnd, LONG idObject, LONG idChild);
+    static void resetFields();
+    static void sortCurrentWindows();
 
-                static bool CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
+    static bool CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
 
-                static void CALLBACK onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-                static void CALLBACK onMaxUnmaxWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-                static void CALLBACK onMinWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-                static void CALLBACK onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-                static void CALLBACK onWindowTitleChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-            public:
-                static bool start(
-                    onWindowChangeCallback _onNewFloatWindowHandler,
-                    onWindowChangeCallback _onMaxWindowHandler,
-                    onWindowChangeCallback _onUnmaxWindowHandler,
-                    onWindowChangeCallback _onMinWindowHandler,
-                    onWindowChangeCallback _onCloseWindowHandler,
-                    onWindowChangeCallback _onWindowTitleChangeHandler);
-                static void stop();
-            };
-        }
-    }
+    static void CALLBACK onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+    static void CALLBACK onMaxUnmaxWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+    static void CALLBACK onMinWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+    static void CALLBACK onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+    static void CALLBACK onWindowTitleChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+public:
+    static bool start(
+        onWindowChangeCallback _onNewFloatWindowHandler,
+        onWindowChangeCallback _onMaxWindowHandler,
+        onWindowChangeCallback _onUnmaxWindowHandler,
+        onWindowChangeCallback _onMinWindowHandler,
+        onWindowChangeCallback _onCloseWindowHandler,
+        onWindowChangeCallback _onWindowTitleChangeHandler);
+    static void stop();
+};
+}
+}
 }

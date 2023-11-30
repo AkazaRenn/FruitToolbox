@@ -5,37 +5,37 @@
 #include "WindowTracker.h"
 
 namespace FruitToolbox {
-    namespace Interop {
-        public ref class LanguageSwitcher {
-        public:
-            delegate void OnLanguageChangeCallbackDelegate(int lcid);
+namespace Interop {
+public ref class LanguageSwitcher {
+public:
+    delegate void OnLanguageChangeCallbackDelegate(int lcid);
 
-            static bool Start(OnLanguageChangeCallbackDelegate^ handler);
-            static void Stop();
-            static void UpdateInputLanguage(bool doCallback);
-            static bool SwapCategory();
-            static bool GetCategory();
-            static void SetCurrentLanguage(int lcid);
-            static void OnRaltUp();
-        private:
-            static Unmanaged::onLanguageChangeCallback GetCallbackPtr(OnLanguageChangeCallbackDelegate^ delegate);
-        };
+    static bool Start(OnLanguageChangeCallbackDelegate^ handler);
+    static void Stop();
+    static void UpdateInputLanguage(bool doCallback);
+    static bool SwapCategory();
+    static bool GetCategory();
+    static void SetCurrentLanguage(int lcid);
+    static void OnRaltUp();
+private:
+    static Unmanaged::onLanguageChangeCallback GetCallbackPtr(OnLanguageChangeCallbackDelegate^ delegate);
+};
 
-        public ref class WindowTracker {
-        public:
-            delegate void WindowChangedCallbackDelegate(System::IntPtr hwnd);
+public ref class WindowTracker {
+public:
+    delegate void WindowChangedCallbackDelegate(System::IntPtr hwnd);
 
-            static bool Start(
-                WindowChangedCallbackDelegate^ _onNewFloatWindowHandler,
-                WindowChangedCallbackDelegate^ _onMaxWindowHandler,
-                WindowChangedCallbackDelegate^ _onUnmaxWindowHandler,
-                WindowChangedCallbackDelegate^ _onMinWindowHandler,
-                WindowChangedCallbackDelegate^ _onCloseWindowHandler,
-                WindowChangedCallbackDelegate^ _onWindowTitleChangeHandler);
-            static void Stop();
-        private:
-            static Unmanaged::onWindowChangeCallback GetCallbackPtr(WindowChangedCallbackDelegate^ delegate);
-        };
-    }
+    static bool Start(
+        WindowChangedCallbackDelegate^ _onNewFloatWindowHandler,
+        WindowChangedCallbackDelegate^ _onMaxWindowHandler,
+        WindowChangedCallbackDelegate^ _onUnmaxWindowHandler,
+        WindowChangedCallbackDelegate^ _onMinWindowHandler,
+        WindowChangedCallbackDelegate^ _onCloseWindowHandler,
+        WindowChangedCallbackDelegate^ _onWindowTitleChangeHandler);
+    static void Stop();
+private:
+    static Unmanaged::onWindowChangeCallback GetCallbackPtr(WindowChangedCallbackDelegate^ delegate);
+};
+}
 }
 

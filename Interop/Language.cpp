@@ -17,7 +17,7 @@ Language::Language(WCHAR* localeName)
     : Language(LocaleNameToLCID(localeName, LOCALE_ALLOW_NEUTRAL_NAMES)) {}
 
 Language::Language(LCID localeId) {
-    if(!IS_LOCALE(localeId)) {
+    if (!IS_LOCALE(localeId)) {
         LANGUAGE_TO_LOCALE(localeId);
     }
     this->localeId = localeId;
