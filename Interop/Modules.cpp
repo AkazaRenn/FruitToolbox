@@ -49,7 +49,8 @@ bool WindowTracker::Start(
     WindowChangedCallbackDelegate^ _onMaxWindowHandler,
     WindowChangedCallbackDelegate^ _onUnmaxWindowHandler,
     WindowChangedCallbackDelegate^ _onMinWindowHandler,
-    WindowChangedCallbackDelegate^ _onCloseWindowHandler) {
+    WindowChangedCallbackDelegate^ _onCloseWindowHandler,
+    WindowChangedCallbackDelegate^ _onWindowTitleChangeHandler) {
     static Unmanaged::onWindowChangeCallback onNewFloatWindowHandlerPtr = nullptr;
     static Unmanaged::onWindowChangeCallback onMaxWindowHandlerPtr = nullptr;
     static Unmanaged::onWindowChangeCallback onUnmaxWindowHandlerPtr = nullptr;
@@ -62,7 +63,8 @@ bool WindowTracker::Start(
         onMaxWindowHandlerPtr = GetCallbackPtr(_onMaxWindowHandler),
         onUnmaxWindowHandlerPtr = GetCallbackPtr(_onUnmaxWindowHandler),
         onMinWindowHandlerPtr = GetCallbackPtr(_onMinWindowHandler),
-        onCloseWindowHandlerPtr = GetCallbackPtr(_onCloseWindowHandler)
+        onCloseWindowHandlerPtr = GetCallbackPtr(_onCloseWindowHandler),
+        onWindowTitleChangeHandlerPtr = GetCallbackPtr(_onWindowTitleChangeHandler)
     );
 }
 

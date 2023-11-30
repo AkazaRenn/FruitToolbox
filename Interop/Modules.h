@@ -30,7 +30,8 @@ namespace FruitToolbox {
                 WindowChangedCallbackDelegate^ _onMaxWindowHandler,
                 WindowChangedCallbackDelegate^ _onUnmaxWindowHandler,
                 WindowChangedCallbackDelegate^ _onMinWindowHandler,
-                WindowChangedCallbackDelegate^ _onCloseWindowHandler);
+                WindowChangedCallbackDelegate^ _onCloseWindowHandler,
+                WindowChangedCallbackDelegate^ _onWindowTitleChangeHandler);
             static void Stop();
         private:
             static Unmanaged::onWindowChangeCallback GetCallbackPtr(WindowChangedCallbackDelegate^ delegate);

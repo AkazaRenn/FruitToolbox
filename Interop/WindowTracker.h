@@ -17,6 +17,7 @@ namespace FruitToolbox {
                 static onWindowChangeCallback unmaxWindowHandler;
                 static onWindowChangeCallback minWindowHandler;
                 static onWindowChangeCallback closeWindowHandler;
+                static onWindowChangeCallback windowTitleChangeHandler;
 
                 static HWND shellWindow;
                 static vector<HWINEVENTHOOK> hooks;
@@ -32,13 +33,15 @@ namespace FruitToolbox {
                 static void CALLBACK onMaxUnmaxWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
                 static void CALLBACK onMinWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
                 static void CALLBACK onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+                static void CALLBACK onWindowTitleChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
             public:
                 static bool start(
                     onWindowChangeCallback _onNewFloatWindowHandler,
                     onWindowChangeCallback _onMaxWindowHandler,
                     onWindowChangeCallback _onUnmaxWindowHandler,
                     onWindowChangeCallback _onMinWindowHandler,
-                    onWindowChangeCallback _onCloseWindowHandler);
+                    onWindowChangeCallback _onCloseWindowHandler,
+                    onWindowChangeCallback _onWindowTitleChangeHandler);
                 static void stop();
             };
         }

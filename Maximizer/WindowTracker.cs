@@ -36,12 +36,19 @@ internal static partial class WindowTracker
         CloseWindowEvent?.Invoke(null, new Constants.WindowEvent(hwnd));
     }
 
+    public static event EventHandler<Constants.WindowEvent> WindowTitleChangeEvent;
+    private static void InvokeWindowTitleChangeEvent(nint hwnd)
+    {
+        WindowTitleChangeEvent?.Invoke(null, new Constants.WindowEvent(hwnd));
+    }
+
     public static bool Start() => Interop.WindowTracker.Start(
         InvokeNewFloatWindowEvent, 
         InvokeMaxWindowEvent, 
         InvokeUnmaxWindowEvent, 
         InvokeMinWindowEvent, 
-        InvokeCloseWindowEvent);
+        InvokeCloseWindowEvent,
+        InvokeWindowTitleChangeEvent);
 
     public static void Stop() => Interop.WindowTracker.Stop();
 }
