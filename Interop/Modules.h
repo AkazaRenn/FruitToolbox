@@ -1,6 +1,8 @@
 #pragma once
 
 #include "pch.h"
+#include "LanguageSwitcher.h"
+#include "WindowTracker.h"
 
 namespace FruitToolbox {
     namespace Interop {
@@ -15,6 +17,8 @@ namespace FruitToolbox {
             static bool GetCategory();
             static void SetCurrentLanguage(int lcid);
             static void OnRaltUp();
+        private:
+            static Unmanaged::onLanguageChangeCallback GetCallbackPtr(OnLanguageChangeCallbackDelegate^ delegate);
         };
 
         public ref class WindowTracker {
@@ -28,6 +32,8 @@ namespace FruitToolbox {
                 WindowChangedCallbackDelegate^ _onMinWindowHandler,
                 WindowChangedCallbackDelegate^ _onCloseWindowHandler);
             static void Stop();
+        private:
+            static Unmanaged::onWindowChangeCallback GetCallbackPtr(WindowChangedCallbackDelegate^ delegate);
         };
     }
 }

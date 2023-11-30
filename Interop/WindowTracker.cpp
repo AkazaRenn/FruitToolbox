@@ -25,13 +25,13 @@ void CALLBACK WindowTracker::onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD
 
 void CALLBACK WindowTracker::onMaxUnmaxWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (isWindow(hwnd, idObject, idChild)) {
-        if (maxWindows.count(hwnd) <= 0 &&
+        if (!maxWindows.contains(hwnd) &&
             IsZoomed(hwnd)) {
             maxWindows.insert(hwnd);
             maxWindowHandler(hwnd);
         }
         else if (
-            maxWindows.count(hwnd) > 0 &&
+            maxWindows.contains(hwnd) &&
             !IsZoomed(hwnd) &&
             !IsIconic(hwnd)) {
             maxWindows.erase(hwnd);
@@ -41,7 +41,7 @@ void CALLBACK WindowTracker::onMaxUnmaxWindow(HWINEVENTHOOK hWinEventHook, DWORD
 }
 
 void CALLBACK WindowTracker::onMinWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    if (maxWindows.count(hwnd) > 0) {
+    if (maxWindows.contains(hwnd)) {
         maxWindows.erase(hwnd);
         minWindowHandler(hwnd);
     }
@@ -50,7 +50,7 @@ void CALLBACK WindowTracker::onMinWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEv
 void CALLBACK WindowTracker::onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (idObject == OBJID_WINDOW &&
         idChild == CHILDID_SELF &&
-        maxWindows.count(hwnd) > 0) {
+        maxWindows.contains(hwnd)) {
         Sleep(100);
         if (!IsWindow(hwnd))
         {
@@ -58,6 +58,20 @@ void CALLBACK WindowTracker::onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dw
             closeWindowHandler(hwnd);
         }
     }
+}
+
+bool WindowTracker::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
+    if (isWindow(hwnd, OBJID_WINDOW, CHILDID_SELF)) {
+        if (IsZoomed(hwnd)) {
+            maxWindows.insert(hwnd);
+            maxWindowHandler(hwnd);
+        }
+        else {
+            newFloatWindowHandler(hwnd);
+        }
+        Sleep(100);
+    }
+    return true;
 }
 
 // Need to match resetFields()
@@ -80,19 +94,6 @@ void WindowTracker::resetFields() {
     shellWindow = 0;
     hooks = {};
     maxWindows = {};
-}
-
-bool WindowTracker::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
-    if (isWindow(hwnd, OBJID_WINDOW, CHILDID_SELF)) {
-        if (IsZoomed(hwnd)) {
-            maxWindows.insert(hwnd);
-            maxWindowHandler(hwnd);
-        } else {
-            newFloatWindowHandler(hwnd);
-        }
-        Sleep(100);
-    }
-    return true;
 }
 
 void WindowTracker::sortCurrentWindows() {

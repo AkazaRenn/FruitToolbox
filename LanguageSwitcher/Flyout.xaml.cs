@@ -51,8 +51,14 @@ internal sealed partial class Flyout: WindowEx, IDisposable
             this.Hide();
         };
         UISettings.ColorValuesChanged += (_, _) => UpdateTheme();
+        Activated += (_, _) =>
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                this.Hide();
+            });
+        };
 
-        this.Hide();
         IsShownInSwitchers = false;
         IsMinimizable = false;
         IsMaximizable = false;
