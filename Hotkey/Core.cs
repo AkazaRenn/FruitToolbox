@@ -4,8 +4,7 @@ using AutoHotkey.Interop;
 
 namespace FruitToolbox.Hotkey;
 
-internal static class Core
-{
+internal static class Core {
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public delegate void AHKDelegate();
     public static event EventHandler<EventArgs> CapsLockSwitchLanguageEvent;
@@ -17,10 +16,8 @@ internal static class Core
     private static readonly AutoHotkeyEngine AHKEngine = AutoHotkeyEngine.Instance;
     private static bool Initialized = false;
 
-    public static void Start()
-    {
-        if (Initialized)
-        {
+    public static void Start() {
+        if (Initialized) {
             return;
         }
 
@@ -31,8 +28,7 @@ internal static class Core
         Initialized = true;
     }
 
-    private static void InitializeHandlers() 
-    { 
+    private static void InitializeHandlers() {
         AHKEngine.SetVar("onCapsLockLanguageSwitchPtr", GetActionDelegateStr(OnCapsLockSwitchLanguage));
         AHKEngine.SetVar("onCapsLockOnPtr", GetActionDelegateStr(OnCapsLockOn));
         AHKEngine.SetVar("onCapsLockOffPtr", GetActionDelegateStr(OnCapsLockOffEvent));
@@ -51,8 +47,7 @@ internal static class Core
         AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.ReverseMouseWheel));
     }
 
-    private static void SetVarOnSettings()
-    {
+    private static void SetVarOnSettings() {
         AHKEngine.SetVar("LanguageSwitcherEnabled", GetBoolStr(Settings.Core.LanguageSwitcherEnabled));
         AHKEngine.SetVar("RAltModifierEnabled", GetBoolStr(Settings.Core.RAltModifierEnabled));
         AHKEngine.SetVar("LGuiRemapEnabled", GetBoolStr(Settings.Core.LGuiRemapEnabled));
@@ -60,38 +55,31 @@ internal static class Core
         AHKEngine.SetVar("DesktopToHomeEnabled", GetBoolStr(Settings.Core.DesktopToHomeEnabled));
     }
 
-    private static void OnCapsLockSwitchLanguage()
-    {
+    private static void OnCapsLockSwitchLanguage() {
         CapsLockSwitchLanguageEvent?.Invoke(null, null);
     }
 
-    private static void OnCapsLockOn()
-    {
+    private static void OnCapsLockOn() {
         CapsLockOnEvent?.Invoke(null, null);
     }
 
-    private static void OnCapsLockOffEvent()
-    {
+    private static void OnCapsLockOffEvent() {
         CapsLockOffEvent?.Invoke(null, null);
     }
 
-    private static void OnLanguageChange()
-    {
+    private static void OnLanguageChange() {
         LanguageChangeEvent?.Invoke(null, null);
     }
 
-    private static void OnRAltUp()
-    {
+    private static void OnRAltUp() {
         RAltUpEvent?.Invoke(null, null);
     }
 
-    private static void OnHome()
-    {
+    private static void OnHome() {
         HomeEvent?.Invoke(null, null);
     }
 
-    private static void SettingsUpdateHandler(object sender, EventArgs e)
-    {
+    private static void SettingsUpdateHandler(object sender, EventArgs e) {
         SetVarOnSettings();
     }
 

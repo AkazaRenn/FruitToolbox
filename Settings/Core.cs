@@ -6,8 +6,7 @@ using YamlDotNet.Serialization.NamingConventions;
 namespace FruitToolbox.Settings;
 
 [Serializable]
-internal class Entries
-{
+internal class Entries {
     public bool LanguageSwitcherEnabled { get; set; } = true;
     public bool FlyoutEnabled { get; set; } = true;
     public bool RAltModifierEnabled { get; set; } = true;
@@ -17,8 +16,7 @@ internal class Entries
     public uint ReorgnizeDesktopDelaySec { get; set; } = 5;
 }
 
-public static class Core
-{
+public static class Core {
     private static readonly string SaveFileDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
     private static readonly string SaveFilePath = Path.Combine(SaveFileDir, "settings.yaml");
 
@@ -26,159 +24,127 @@ public static class Core
     private static Entries SettingsEntries;
     private static bool Loaded = false;
 
-    private static void EnsureLoaded()
-    {
+    private static void EnsureLoaded() {
         if (!Loaded)
             Load();
     }
 
-    public static bool StartUp
-    {
-        get
-        {
+    public static bool StartUp {
+        get {
             StartupTask startupTask = StartupTask.GetAsync("MyStartupId").GetAwaiter().GetResult();
             return startupTask.State == StartupTaskState.Enabled || startupTask.State == StartupTaskState.EnabledByPolicy;
         }
-        set
-        {
+        set {
             StartupTask startupTask = StartupTask.GetAsync("MyStartupId").GetAwaiter().GetResult();
-            if(value == true && startupTask.State == StartupTaskState.Disabled)
-            {
+            if (value == true && startupTask.State == StartupTaskState.Disabled) {
                 startupTask.RequestEnableAsync().GetAwaiter().GetResult();
-            } else if(value == false && startupTask.State == StartupTaskState.Enabled)
-            {
+            } else if (value == false && startupTask.State == StartupTaskState.Enabled) {
                 startupTask.Disable();
             }
         }
     }
 
-    public static bool LanguageSwitcherEnabled
-    {
-        get
-        {
+    public static bool LanguageSwitcherEnabled {
+        get {
             EnsureLoaded();
             return SettingsEntries.LanguageSwitcherEnabled;
         }
-        set
-        {
+        set {
             EnsureLoaded();
             SettingsEntries.LanguageSwitcherEnabled = value;
             OnSettingsUpdate();
         }
     }
 
-    public static bool FlyoutEnabled
-    {
-        get
-        {
+    public static bool FlyoutEnabled {
+        get {
             EnsureLoaded();
             return SettingsEntries.FlyoutEnabled;
         }
-        set
-        {
+        set {
             EnsureLoaded();
             SettingsEntries.FlyoutEnabled = value;
             OnSettingsUpdate();
         }
     }
-    public static bool RAltModifierEnabled
-    {
-        get
-        {
+    public static bool RAltModifierEnabled {
+        get {
             EnsureLoaded();
             return SettingsEntries.RAltModifierEnabled;
         }
-        set
-        {
+        set {
             EnsureLoaded();
             SettingsEntries.RAltModifierEnabled = value;
             OnSettingsUpdate();
         }
     }
-    public static bool LGuiRemapEnabled
-    {
-        get
-        {
+    public static bool LGuiRemapEnabled {
+        get {
             EnsureLoaded();
             return SettingsEntries.LGuiRemapEnabled;
         }
-        set
-        {
+        set {
             EnsureLoaded();
             SettingsEntries.LGuiRemapEnabled = value;
             OnSettingsUpdate();
         }
     }
-    public static bool ReverseMouseWheelEnabled
-    {
-        get
-        {
+    public static bool ReverseMouseWheelEnabled {
+        get {
             EnsureLoaded();
             return SettingsEntries.ReverseMouseWheelEnabled;
         }
-        set
-        {
+        set {
             EnsureLoaded();
             SettingsEntries.ReverseMouseWheelEnabled = value;
             OnSettingsUpdate();
         }
     }
 
-    public static bool DesktopToHomeEnabled
-    {
-        get
-        {
+    public static bool DesktopToHomeEnabled {
+        get {
             EnsureLoaded();
             return SettingsEntries.DesktopToHomeEnabled;
         }
-        set
-        { 
+        set {
             EnsureLoaded();
             SettingsEntries.DesktopToHomeEnabled = value;
             OnSettingsUpdate();
         }
     }
 
-    public static uint ReorgnizeDesktopDelaySec
-    {
-        get
-        {
+    public static uint ReorgnizeDesktopDelaySec {
+        get {
             EnsureLoaded();
             return SettingsEntries.ReorgnizeDesktopDelaySec;
         }
-        set { 
+        set {
             EnsureLoaded();
             SettingsEntries.ReorgnizeDesktopDelaySec = value;
             OnSettingsUpdate();
         }
     }
 
-    public static void OnSettingsUpdate()
-    {
+    public static void OnSettingsUpdate() {
         SettingsChangedEventHandler.Invoke(null, EventArgs.Empty);
         Save();
     }
 
-    private static void Load()
-    {
-        try
-        {
+    private static void Load() {
+        try {
             var yaml = File.ReadAllText(SaveFilePath);
             var deserializer = new DeserializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
             .Build();
             SettingsEntries = deserializer.Deserialize<Entries>(yaml);
-        }
-        catch
-        {
+        } catch {
             SettingsEntries = new();
         }
 
         Loaded = true;
     }
 
-    private static async void Save()
-    {
+    private static async void Save() {
         var serializer = new SerializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
             .Build();

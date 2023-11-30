@@ -25,8 +25,7 @@ namespace FruitToolbox.LanguageSwitcher;
 /// <summary>
 /// An empty window that can be used on its own or navigated to within a Frame.
 /// </summary>
-internal sealed partial class Flyout: WindowEx, IDisposable
-{
+internal sealed partial class Flyout: WindowEx, IDisposable {
     private const double WindowMarginFromBottom = 38;
     private static double ScaleFactor = 1;
     private static Point MainDisplay = new(0, 0);
@@ -36,8 +35,7 @@ internal sealed partial class Flyout: WindowEx, IDisposable
     private static readonly UISettings UISettings = new();
 
 
-    public Flyout()
-    {
+    public Flyout() {
         InitializeComponent();
         UpdateScaleFactor();
         UpdateTheme();
@@ -45,16 +43,13 @@ internal sealed partial class Flyout: WindowEx, IDisposable
         HideFlyoutTimer = DispatcherQueue.CreateTimer();
         HideFlyoutTimer.Interval = TimeSpan.FromSeconds(2);
         HideFlyoutTimer.Tick += HideFlyout;
-        FlyoutControl.Closed += (_, e) =>
-        {
+        FlyoutControl.Closed += (_, e) => {
             Thread.Sleep(100);
             this.Hide();
         };
         UISettings.ColorValuesChanged += (_, _) => UpdateTheme();
-        Activated += (_, _) =>
-        {
-            DispatcherQueue.TryEnqueue(() =>
-            {
+        Activated += (_, _) => {
+            DispatcherQueue.TryEnqueue(() => {
                 this.Hide();
             });
         };
@@ -74,58 +69,47 @@ internal sealed partial class Flyout: WindowEx, IDisposable
         ToggleExternalHooks(true);
     }
 
-    ~Flyout()
-    {
+    ~Flyout() {
         Dispose();
     }
 
-    private void ToggleExternalHooks(bool enable)
-    {
-        if(enable)
-        {
+    private void ToggleExternalHooks(bool enable) {
+        if (enable) {
             Core.NewLanguageEvent += OnNewLanguage;
             Hotkey.Core.CapsLockOnEvent += OnCapsLockOn;
             Hotkey.Core.CapsLockOffEvent += OnCapsLockOff;
-        } else
-        {
+        } else {
             Core.NewLanguageEvent -= OnNewLanguage;
             Hotkey.Core.CapsLockOnEvent -= OnCapsLockOn;
             Hotkey.Core.CapsLockOffEvent -= OnCapsLockOff;
         }
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
         ToggleExternalHooks(false);
         Close();
         GC.SuppressFinalize(this);
     }
 
-    void HideFlyout(object t, object s)
-    {
+    void HideFlyout(object t, object s) {
         FlyoutControl.Hide();
         HideFlyoutTimer.Stop();
     }
 
-    public void OnNewLanguage(object sender, Constants.LanguageEvent e)
-    {
+    public void OnNewLanguage(object sender, Constants.LanguageEvent e) {
         UpdateFlyout(new CultureInfo(e.LCID).NativeName);
     }
 
-    public void OnCapsLockOn(object sender, EventArgs e)
-    {
+    public void OnCapsLockOn(object sender, EventArgs e) {
         UpdateFlyout("Caps Lock ON");
     }
 
-    public void OnCapsLockOff(object sender, EventArgs e)
-    {
+    public void OnCapsLockOff(object sender, EventArgs e) {
         UpdateFlyout("Caps Lock OFF");
     }
 
-    private void UpdateFlyout(string newText)
-    {
-        DispatcherQueue.TryEnqueue(() =>
-        {
+    private void UpdateFlyout(string newText) {
+        DispatcherQueue.TryEnqueue(() => {
             FlyoutText.Text = newText;
 
             this.Show();
@@ -134,17 +118,13 @@ internal sealed partial class Flyout: WindowEx, IDisposable
         });
     }
 
-    public void Reload()
-    {
+    public void Reload() {
         MoveToDestination();
     }
 
-    private void MoveToDestination()
-    {
-        foreach(var display in Display.GetDisplays())
-        {
-            if(display.IsGDIPrimary)
-            {
+    private void MoveToDestination() {
+        foreach (var display in Display.GetDisplays()) {
+            if (display.IsGDIPrimary) {
                 MainDisplayOffset = new(display.CurrentSetting.Position.X, display.CurrentSetting.Position.Y);
                 MainDisplay = new(display.CurrentSetting.Resolution.Width, display.CurrentSetting.Resolution.Height);
                 break;
@@ -155,25 +135,20 @@ internal sealed partial class Flyout: WindowEx, IDisposable
              (int)(MainDisplayOffset.Y + MainDisplay.Y - AppWindow.Size.Height - ScaleFactor * WindowMarginFromBottom));
     }
 
-    private void UpdateScaleFactor()
-    {
+    private void UpdateScaleFactor() {
         var currentWidth = Width;
         Width = 1000;
         ScaleFactor = AppWindow.Size.Width / Width;
         Width = currentWidth;
     }
 
-    private void UpdateTheme()
-    {
+    private void UpdateTheme() {
         var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
-        if(key != null)
-        {
+        if (key != null) {
             bool useLightTheme = (int)key.GetValue("SystemUsesLightTheme") != 0;
-            if(useLightTheme)
-            {
+            if (useLightTheme) {
                 DispatcherQueue.TryEnqueue(() => ((FrameworkElement)Content).RequestedTheme = ElementTheme.Light);
-            } else
-            {
+            } else {
                 DispatcherQueue.TryEnqueue(() => ((FrameworkElement)Content).RequestedTheme = ElementTheme.Dark);
             }
         }
