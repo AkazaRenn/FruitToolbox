@@ -8,7 +8,7 @@ bool WindowTracker::isWindow(HWND hwnd, LONG idObject, LONG idChild) {
     return
         (idObject == OBJID_WINDOW) &&
         (idChild == CHILDID_SELF) &&
-        (hwnd != shellWindow) &&
+        (hwnd != GetShellWindow()) &&
         (IsWindow(hwnd)) &&
         (IsWindowVisible(hwnd)) &&
         (GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_OVERLAPPEDWINDOW) &&
@@ -86,7 +86,6 @@ onWindowChangeCallback WindowTracker::minWindowHandler = nullptr;
 onWindowChangeCallback WindowTracker::closeWindowHandler = nullptr;
 onWindowChangeCallback WindowTracker::windowTitleChangeHandler = nullptr;
 
-HWND WindowTracker::shellWindow = 0;
 vector<HWINEVENTHOOK> WindowTracker::hooks = {};
 set<HWND> WindowTracker::maxWindows = {};
 void WindowTracker::resetFields() {
@@ -97,13 +96,11 @@ void WindowTracker::resetFields() {
     closeWindowHandler = nullptr;
     windowTitleChangeHandler = nullptr;
 
-    shellWindow = 0;
     hooks = {};
     maxWindows = {};
 }
 
 void WindowTracker::sortCurrentWindows() {
-    shellWindow = GetShellWindow();
     EnumWindows((WNDENUMPROC)EnumWindowsProc, 0);
 }
 

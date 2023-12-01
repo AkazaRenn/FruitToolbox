@@ -19,7 +19,6 @@ private:
     static onWindowChangeCallback closeWindowHandler;
     static onWindowChangeCallback windowTitleChangeHandler;
 
-    static HWND shellWindow;
     static vector<HWINEVENTHOOK> hooks;
     static set<HWND> maxWindows;
 
