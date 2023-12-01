@@ -17,3 +17,7 @@ int Utils::GetProcessId(System::IntPtr hwnd) {
     GetWindowThreadProcessId(static_cast<HWND>(hwnd.ToPointer()), &processId);
     return processId;
 }
+
+void Utils::Unfocus() {
+    SetForegroundWindow(GetShellWindow());
+}

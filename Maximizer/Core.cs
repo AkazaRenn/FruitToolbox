@@ -1,4 +1,6 @@
-﻿using WindowsDesktop;
+﻿using FruitToolbox.Interop;
+
+using WindowsDesktop;
 
 using static FruitToolbox.Constants;
 
@@ -11,7 +13,7 @@ internal static class Core {
     static readonly Dictionary<nint, Guid> HwndDesktopMap = [];
     static readonly System.Timers.Timer ReorderDesktopTimer = new(5000);
     static Guid HomeDesktopId;
-    static Guid MostRecentDesktopId;
+    static Guid CurrentDesktopId;
 
     public static bool Start() {
         InitializeDesktops();
@@ -51,8 +53,8 @@ internal static class Core {
     }
 
     private static void OnDesktopDestroy(object _, VirtualDesktopDestroyEventArgs e) {
-        if (e.Destroyed.Id == MostRecentDesktopId) {
-            MostRecentDesktopId = SafeVirtualDesktop.CurrentRight.Id;
+        if (e.Destroyed.Id == CurrentDesktopId) {
+            CurrentDesktopId = SafeVirtualDesktop.CurrentRight.Id;
         }
     }
 
@@ -64,9 +66,9 @@ internal static class Core {
     }
 
     private static void OnDesktopSwitched(object _, VirtualDesktopChangedEventArgs e) {
-        MostRecentDesktopId = e.NewDesktop.Id;
+        CurrentDesktopId = e.NewDesktop.Id;
 
-        if (MostRecentDesktopId == HomeDesktopId) {
+        if (CurrentDesktopId == HomeDesktopId) {
             ReorderDesktopTimer.Stop();
             Thread.Sleep(100);
             // No effect if OldDesktop no longer exists
@@ -76,8 +78,10 @@ internal static class Core {
         }
     }
 
-    public static void GoHome() =>
+    public static void GoHome() {
         SafeVirtualDesktop.Switch(HomeDesktopId);
+        Utils.Unfocus();
+    }
 
     public static void OnFloatWindow(object _, WindowEvent e) =>
         SafeVirtualDesktop.PinWindow(e.HWnd);
@@ -105,6 +109,9 @@ internal static class Core {
     public static void OnMinOrClose(object _, WindowEvent e) {
         if (HwndDesktopMap.TryGetValue(e.HWnd, out Guid desktopId) &&
             SafeVirtualDesktop.Current.Id == desktopId) {
+            //SafeVirtualDesktop.Switch(CurrentDesktopId);
+            // Logically should switch to CurrentDesktopId
+            // but the there's no animation in that case
             SafeVirtualDesktop.Switch(HomeDesktopId);
         }
 

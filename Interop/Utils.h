@@ -8,6 +8,7 @@ public:
     constexpr static int DWMWCP_DONOTROUND = 1;
     static void SetBorderlessWindow(System::IntPtr hwnd);
     static int GetProcessId(System::IntPtr hwnd);
+    static void Unfocus();
 };
 }
 }
