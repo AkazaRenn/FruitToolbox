@@ -8,7 +8,7 @@ namespace FruitToolbox.Maximizer;
 
 internal static class Core {
     const int UserCreatedDesktopCount = 1;
-    const int WindowAnimationWaitMs = 300;
+    const int WindowAnimationWaitMs = 250;
 
     static readonly Dictionary<nint, Guid> HwndDesktopMap = [];
     static readonly System.Timers.Timer ReorderDesktopTimer = new(5000);
@@ -89,13 +89,13 @@ internal static class Core {
     public static void OnMax(object _, WindowEvent e) {
         var desktop = SafeVirtualDesktop.Create();
         desktop.Rename(e.HWnd);
-        desktop.MoveWindow(e.HWnd);
-        desktop.Switch();
-
         Thread.Sleep(WindowAnimationWaitMs);
-        SafeVirtualDesktop.UnpinWindow(e.HWnd);
 
+        desktop.Switch();
+        desktop.MoveWindow(e.HWnd);
         HwndDesktopMap[e.HWnd] = desktop.Id;
+
+        SafeVirtualDesktop.UnpinWindow(e.HWnd);
     }
 
     public static void OnUnmax(object _, WindowEvent e) {
