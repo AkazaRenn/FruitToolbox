@@ -144,11 +144,14 @@ internal class SafeVirtualDesktop {
     }
 
     public void Rename(nint hwnd) =>
-        Name = GetWindowDescription(hwnd) + CreatedDesktopNamePostfix;
+        Name = GetWindowTitle(hwnd) + CreatedDesktopNamePostfix;
 
-    private static string GetWindowDescription(nint hwnd) {
+    public static void Rename(Guid id, nint hwnd) =>
+        new SafeVirtualDesktop(id).Rename(hwnd);
+
+    private static string GetWindowTitle(nint hwnd) {
         try {
-            return Process.GetProcessById(Utils.GetProcessId(hwnd)).MainWindowTitle;
+            return Utils.GetWindowTitle(hwnd);
         } catch {
             return UnnamableWindowName;
         }

@@ -88,11 +88,11 @@ internal static class Core {
 
     public static void OnMax(object _, WindowEvent e) {
         var desktop = SafeVirtualDesktop.Create();
-        Thread.Sleep(WindowAnimationWaitMs);
-
         desktop.Rename(e.HWnd);
         desktop.MoveWindow(e.HWnd);
         desktop.Switch();
+
+        Thread.Sleep(WindowAnimationWaitMs);
         SafeVirtualDesktop.UnpinWindow(e.HWnd);
 
         HwndDesktopMap[e.HWnd] = desktop.Id;
