@@ -10,6 +10,7 @@ internal class Entries {
     public bool LanguageSwitcherEnabled { get; set; } = false;
     public bool FlyoutEnabled { get; set; } = true;
     public bool ScrollLockForImeLanguage { get; set; } = true;
+    public bool DisableCapsLockOnLanguageChange { get; set; } = false;
     public bool RAltModifierEnabled { get; set; } = true;
 
     public bool MaximizerEnabled { get; set; } = false;
@@ -81,6 +82,18 @@ public static class Core {
         set {
             EnsureLoaded();
             SettingsEntries.ScrollLockForImeLanguage = value;
+            OnSettingsUpdate();
+        }
+    }
+
+    public static bool DisableCapsLockOnLanguageChange {
+        get {
+            return LanguageSwitcherEnabled &&
+                SettingsEntries.DisableCapsLockOnLanguageChange;
+        }
+        set {
+            EnsureLoaded();
+            SettingsEntries.DisableCapsLockOnLanguageChange = value;
             OnSettingsUpdate();
         }
     }
@@ -170,7 +183,7 @@ public static class Core {
     }
 
     public static void OnSettingsUpdate() {
-        SettingsChangedEventHandler.Invoke(null, EventArgs.Empty);
+        SettingsChangedEventHandler?.Invoke(null, EventArgs.Empty);
         Save();
     }
 

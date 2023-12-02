@@ -32,7 +32,7 @@ private:
     // Windows hook related
     static vector<HWINEVENTHOOK> hooks;
     static void CALLBACK onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-    static void updateInputLanguage(HWND hwnd);
+    static void updateWindowInputLanguage(HWND hwnd);
 
     static inline bool isLockOn(int vkCode) {
         return (GetKeyState(vkCode) & 0x1);

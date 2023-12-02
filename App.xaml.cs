@@ -1,6 +1,5 @@
 using H.NotifyIcon;
 
-using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
 
@@ -39,7 +38,7 @@ public sealed partial class App: Application {
     /// </summary>
     /// <param name="args">Details about the launch request and process.</param>
     protected override void OnLaunched(LaunchActivatedEventArgs args) {
-        InitializeFunction();
+        InitializeModules();
         InitializeTrayIcon();
     }
 
@@ -54,11 +53,10 @@ public sealed partial class App: Application {
         TrayIcon.ForceCreate();
     }
 
-    private static void InitializeFunction() {
+    private static void InitializeModules() {
         LanguageSwitcher.Core.Start();
         Maximizer.Core.Start();
         Hotkey.Core.Start();
-
     }
 
     private void OpenSettingsCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {

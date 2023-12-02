@@ -23,20 +23,14 @@ internal static class Core {
         }
 
         ToggleStartedState(true);
-
-        Settings.Core.SettingsChangedEventHandler += OnSettingsUpdate;
-        Hotkey.Core.HomeEvent += OnHome;
-        Hotkey.Core.GuiDownEvent += OnHome;
-
-        ReorderDesktopTimer.Elapsed += OnReorderDesktopTimer;
-        VirtualDesktop.CurrentChanged += OnDesktopSwitched;
-        VirtualDesktop.Destroyed += OnDesktopDestroy;
-
+        ToggleExternalHooks(true);
+        Settings.Core.MaximizerEnabled = Started;
         return Started;
     }
 
     public static void Stop() {
         if (Started) {
+            ToggleExternalHooks(false);
             ToggleStartedState(false);
         }
     }
@@ -45,16 +39,10 @@ internal static class Core {
         if (enable && !Started) {
             if (Settings.Core.MaximizerEnabled) {
                 InitializeDesktops();
-
-                WindowTracker.NewFloatWindowEvent += OnFloatWindow;
-                WindowTracker.MaxWindowEvent += OnMax;
-                WindowTracker.UnmaxWindowEvent += OnUnmax;
-                WindowTracker.MinWindowEvent += OnMinOrClose;
-                WindowTracker.CloseWindowEvent += OnMinOrClose;
-                WindowTracker.WindowTitleChangeEvent += OnWindowTitleChange;
-
+                ToggleWindowTrackerHooks(true);
                 Started = WindowTracker.Start();
                 GoHome();
+                ToggleInternalHooks(true);
 
                 if (!Started) {
                     new ToastContentBuilder()
@@ -63,13 +51,55 @@ internal static class Core {
                 }
             }
         } else if (!enable && Started) {
+            ToggleWindowTrackerHooks(false);
+            ToggleInternalHooks(false);
             ClearAutoDesktops();
             ReorderDesktopTimer.Stop();
             WindowTracker.Stop();
             Started = false;
         }
+    }
 
-        Settings.Core.MaximizerEnabled = Started;
+    private static void ToggleWindowTrackerHooks(bool enable) {
+        if (enable) {
+            WindowTracker.NewFloatWindowEvent += OnFloatWindow;
+            WindowTracker.MaxWindowEvent += OnMax;
+            WindowTracker.UnmaxWindowEvent += OnUnmax;
+            WindowTracker.MinWindowEvent += OnMinOrClose;
+            WindowTracker.CloseWindowEvent += OnMinOrClose;
+            WindowTracker.WindowTitleChangeEvent += OnWindowTitleChange;
+        } else {
+            WindowTracker.NewFloatWindowEvent -= OnFloatWindow;
+            WindowTracker.MaxWindowEvent -= OnMax;
+            WindowTracker.UnmaxWindowEvent -= OnUnmax;
+            WindowTracker.MinWindowEvent -= OnMinOrClose;
+            WindowTracker.CloseWindowEvent -= OnMinOrClose;
+            WindowTracker.WindowTitleChangeEvent -= OnWindowTitleChange;
+        }
+    }
+
+    private static void ToggleExternalHooks(bool enable) {
+        if (enable) {
+            Settings.Core.SettingsChangedEventHandler += OnSettingsUpdate;
+            Hotkey.Core.HomeEvent += OnHome;
+            Hotkey.Core.GuiDownEvent += OnHome;
+        } else {
+            Settings.Core.SettingsChangedEventHandler -= OnSettingsUpdate;
+            Hotkey.Core.HomeEvent -= OnHome;
+            Hotkey.Core.GuiDownEvent -= OnHome;
+        }
+    }
+
+    private static void ToggleInternalHooks(bool enable) {
+        if (enable) {
+            ReorderDesktopTimer.Elapsed += OnReorderDesktopTimer;
+            VirtualDesktop.CurrentChanged += OnDesktopSwitched;
+            VirtualDesktop.Destroyed += OnDesktopDestroy;
+        } else {
+            ReorderDesktopTimer.Elapsed -= OnReorderDesktopTimer;
+            VirtualDesktop.CurrentChanged -= OnDesktopSwitched;
+            VirtualDesktop.Destroyed -= OnDesktopDestroy;
+        }
     }
 
     private static void OnSettingsUpdate(object sender, EventArgs e) {
@@ -79,6 +109,7 @@ internal static class Core {
 
         if (Started != Settings.Core.MaximizerEnabled) {
             ToggleStartedState(Settings.Core.MaximizerEnabled);
+            Settings.Core.MaximizerEnabled = Started;
         }
     }
 

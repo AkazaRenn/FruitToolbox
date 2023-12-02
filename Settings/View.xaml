@@ -37,6 +37,16 @@
                                           Description="When using IME languages, right Alt key will become a useful function">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.RAltModifierEnabled, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
+                        <wuc:SettingsCard x:Name="ScrollLockOnImeLanguageCard"
+                                          Header="Turn on Scroll Lock on IME Language"
+                                          Description="As an indication">
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.ScrollLockForImeLanguage, Mode=TwoWay}"/>
+                        </wuc:SettingsCard>
+                        <wuc:SettingsCard x:Name="DisableCapsLockOnLanguageChangeCard"
+                                          Header="Turn off Caps Lock on language change"
+                                          Description="In case you forget">
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.DisableCapsLockOnLanguageChange, Mode=TwoWay}"/>
+                        </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
                     <wuc:SimpleSettingsGroup Header="Maximizer"
                                              Visibility="Visible">
@@ -59,7 +69,7 @@
                             <NumberBox Width="120"
                                        HorizontalAlignment="Left"
                                        Header="Milliseconds"
-                                       Minimum="0"
+                                       Minimum="1"
                                        Maximum="99999"
                                        SmallChange="100"
                                        SpinButtonPlacementMode="Compact"

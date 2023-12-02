@@ -33,4 +33,8 @@ internal static class Utils {
     public static void SetScrollLock(bool enable) {
         AutoHotkey.ExecRaw($"SetScrollLockState, {(enable ? "On" : "Off")}");
     }
+
+    public static void DisableCapsLock() {
+        AutoHotkey.ExecRaw("SetCapsLockState, Off");
+    }
 }

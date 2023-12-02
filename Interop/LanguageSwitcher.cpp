@@ -21,10 +21,10 @@ void LanguageSwitcher::applyInputLanguage() {
 }
 
 void LanguageSwitcher::updateInputLanguage() {
-    updateInputLanguage(GetForegroundWindow());
+    updateWindowInputLanguage(GetForegroundWindow());
 }
 
-void LanguageSwitcher::updateInputLanguage(HWND hwnd) {
+void LanguageSwitcher::updateWindowInputLanguage(HWND hwnd) {
     setCurrentLanguage(hklToLcid(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))));
     fixImeConversionMode(hwnd);
     newLanguageHandler(getCurrentLanguage(), inImeMode);
@@ -123,7 +123,7 @@ bool LanguageSwitcher::start(
         stop();
         return false;
     }
-    updateInputLanguage();
+    updateWindowInputLanguage(GetForegroundWindow());
 
     hooks.push_back(SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, onActiveWindowChange, 0, 0, WINEVENT_OUTOFCONTEXT));
     for (const auto hook : hooks) {
@@ -146,6 +146,6 @@ void LanguageSwitcher::stop() {
 
 void CALLBACK LanguageSwitcher::onActiveWindowChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (hwnd == GetForegroundWindow()) {
-        updateInputLanguage(hwnd);
+        thread(updateWindowInputLanguage, hwnd).detach();
     }
 }

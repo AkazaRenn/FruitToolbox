@@ -1,4 +1,5 @@
 #include "pch.h"
+
 #include "WindowTracker.h"
 
 using namespace std;
@@ -7,7 +8,7 @@ using namespace FruitToolbox::Interop::Unmanaged;
 void CALLBACK WindowTracker::onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (isWindow(hwnd, idObject, idChild) &&
         !IsZoomed(hwnd)) {
-        newFloatWindowHandler(hwnd);
+        thread(newFloatWindowHandler, hwnd).detach();
     }
 }
 
@@ -16,13 +17,13 @@ void CALLBACK WindowTracker::onMaxUnmaxWindow(HWINEVENTHOOK hWinEventHook, DWORD
         if (!maxWindows.contains(hwnd) &&
             IsZoomed(hwnd)) {
             maxWindows.insert(hwnd);
-            maxWindowHandler(hwnd);
+            thread(maxWindowHandler, hwnd).detach();
         } else if (
             maxWindows.contains(hwnd) &&
             !IsZoomed(hwnd) &&
             !IsIconic(hwnd)) {
             maxWindows.erase(hwnd);
-            unmaxWindowHandler(hwnd);
+            thread(unmaxWindowHandler, hwnd).detach();
         }
     }
 }
@@ -30,7 +31,7 @@ void CALLBACK WindowTracker::onMaxUnmaxWindow(HWINEVENTHOOK hWinEventHook, DWORD
 void CALLBACK WindowTracker::onMinWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (maxWindows.contains(hwnd)) {
         maxWindows.erase(hwnd);
-        minWindowHandler(hwnd);
+        thread(minWindowHandler, hwnd).detach();
     }
 }
 
@@ -41,7 +42,7 @@ void CALLBACK WindowTracker::onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dw
         Sleep(100);
         if (!IsWindow(hwnd)) {
             maxWindows.erase(hwnd);
-            closeWindowHandler(hwnd);
+            thread(closeWindowHandler, hwnd).detach();
         }
     }
 }
@@ -49,7 +50,7 @@ void CALLBACK WindowTracker::onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dw
 void CALLBACK WindowTracker::onWindowTitleChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (isWindow(hwnd, OBJID_WINDOW, CHILDID_SELF) &&
         maxWindows.contains(hwnd)) {
-        windowTitleChangeHandler(hwnd);
+        thread(windowTitleChangeHandler, hwnd).detach();
     }
 }
 

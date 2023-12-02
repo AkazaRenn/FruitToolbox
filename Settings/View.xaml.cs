@@ -25,6 +25,8 @@ internal sealed partial class View: WindowEx {
     private void ToggleEnabledStatesBySettings() {
         ShowFlyoutCard.IsEnabled = Core.LanguageSwitcherEnabled;
         RAltModifierCard.IsEnabled = Core.LanguageSwitcherEnabled;
+        ScrollLockOnImeLanguageCard.IsEnabled = Core.LanguageSwitcherEnabled;
+        DisableCapsLockOnLanguageChangeCard.IsEnabled = Core.LanguageSwitcherEnabled;
 
         DesktopToHomeCard.IsEnabled = Core.MaximizerEnabled;
         SwapVirtualDesktopHotkeysCard.IsEnabled = Core.MaximizerEnabled;

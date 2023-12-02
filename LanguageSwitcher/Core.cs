@@ -16,17 +16,15 @@ internal static partial class Core {
             return false;
         }
 
-        Settings.Core.SettingsChangedEventHandler += OnSettingsUpdate;
-        Hotkey.Core.CapsLockSwitchLanguageEvent += OnCapsLockSwitch;
-        Hotkey.Core.LanguageChangeEvent += OnLanguageChange;
-        Hotkey.Core.RAltUpEvent += OnRaltUp;
-
+        ToggleExternalHooks(true);
         ToggleStartedState(true);
+        Settings.Core.LanguageSwitcherEnabled = Started;
         return Started;
     }
 
     public static void Stop() {
         if (Started) {
+            ToggleExternalHooks(false);
             ToggleStartedState(false);
         }
     }
@@ -48,8 +46,18 @@ internal static partial class Core {
             Interop.LanguageSwitcher.Stop();
             Started = false;
         }
+    }
 
-        Settings.Core.LanguageSwitcherEnabled = Started;
+    private static void ToggleExternalHooks(bool enable) {
+        if (enable) {
+            Hotkey.Core.CapsLockSwitchLanguageEvent += OnCapsLockSwitch;
+            Hotkey.Core.LanguageChangeEvent += OnLanguageChange;
+            Hotkey.Core.RAltUpEvent += OnRaltUp;
+        } else {
+            Hotkey.Core.CapsLockSwitchLanguageEvent -= OnCapsLockSwitch;
+            Hotkey.Core.LanguageChangeEvent -= OnLanguageChange;
+            Hotkey.Core.RAltUpEvent -= OnRaltUp;
+        }
     }
 
     private static void OnSettingsUpdate(object sender, EventArgs e) {
@@ -59,6 +67,7 @@ internal static partial class Core {
 
         if (Started != Settings.Core.LanguageSwitcherEnabled) {
             ToggleStartedState(Settings.Core.LanguageSwitcherEnabled);
+            Settings.Core.LanguageSwitcherEnabled = Started;
         }
     }
 
@@ -73,12 +82,23 @@ internal static partial class Core {
             NewLangFlyout = null;
         }
     }
-    private static void InvokeSwapCategoryEvent(int lcid, bool imeMode) =>
+    private static void InvokeSwapCategoryEvent(int lcid, bool imeMode) {
+        SetScrollLock(imeMode);
         SwapCategoryEvent?.Invoke(null, new Constants.LanguageEvent(lcid, imeMode));
+    }
 
     private static void InvokeNewLanguageEvent(int lcid, bool imeMode) {
-        Utils.SetScrollLock(imeMode);
+        SetScrollLock(imeMode);
         NewLanguageEvent?.Invoke(null, new Constants.LanguageEvent(lcid, imeMode));
+        if(Settings.Core.DisableCapsLockOnLanguageChange) {
+            Utils.DisableCapsLock();
+        }
+    }
+
+    private static void SetScrollLock(bool enable) {
+        if (Settings.Core.ScrollLockForImeLanguage) {
+            Utils.SetScrollLock(enable);
+        }
     }
 
     public static void OnLanguageChange(object _, EventArgs e) {
