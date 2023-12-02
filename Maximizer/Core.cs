@@ -46,7 +46,6 @@ internal static class Core {
     private static void OnHome(object _, EventArgs e) {
 
         if (SafeVirtualDesktop.Current.Id == HomeDesktopId) {
-            //SafeVirtualDesktop.CurrentRight.Switch();
             SafeVirtualDesktop.SwitchRight();
         } else {
             GoHome();
@@ -78,7 +77,6 @@ internal static class Core {
 
     public static void GoHome() {
         SafeVirtualDesktop.Current.Move(UserCreatedDesktopCount);
-        //SafeVirtualDesktop.Switch(HomeDesktopId);
         SafeVirtualDesktop.SwitchLeft();
         Utils.Unfocus();
     }
