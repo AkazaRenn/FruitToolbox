@@ -47,24 +47,31 @@
                                           IsOn="{x:Bind settings:Core.MaximizerEnabled}"/>
                         </wuc:SettingsCard>
                         <wuc:SettingsCard Margin="0,-6,0,0"
-                                          x:Name="TakeOverGuiDCard"
-                                          Description="Gui + D now goes to the first desktop without minimizing any window"
-                                          Header="Take over Gui + D">
+                                          x:Name="DesktopToHomeCard"
+                                          Header="Take over Gui + D"
+                                          Description="Gui + D now goes to the first desktop without minimizing any window">
                             <ToggleSwitch Toggled="DesktopToHome_Toggle"
+                                          IsOn="{x:Bind settings:Core.DesktopToHomeEnabled}" />
+                        </wuc:SettingsCard>
+                        <wuc:SettingsCard Margin="0,-6,0,0"
+                                          x:Name="SwapVirtualDesktopHotkeysCard"
+                                          Header="Swap GUI + Arrow and GUI + Ctrl + Arrow"
+                                          Description="If you perfer having virtual desktops more accessible">
+                            <ToggleSwitch Toggled="SwapVirtualDesktopHotkeys_Toggle"
                                           IsOn="{x:Bind settings:Core.DesktopToHomeEnabled}" />
                         </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
                     <wuc:SimpleSettingsGroup Header="Additional Tools"
                                              Visibility="Visible">
                         <wuc:SettingsCard Margin="0,-6,0,0"
-                                          Description="It will send super + alt + ctrl + shift + S instead, key combinations will not be affected"
-                                          Header="Remap left Super/GUI/Win key">
+                                          Header="Remap left Super/GUI/Win key"
+                                          Description="It will send super + alt + ctrl + shift + S instead, key combinations will not be affected">
                             <ToggleSwitch Toggled="RemapLGui_Toggle"
                                           IsOn="{x:Bind settings:Core.LGuiRemapEnabled}" />
                         </wuc:SettingsCard>
                         <wuc:SettingsCard Margin="0,-6,0,0"
-                                          Description="Note that it may make the trackpad hard to scroll, disable it in that case"
-                                          Header="Reverse scrolling direction">
+                                          Header="Reverse scrolling direction"
+                                          Description="Note that it may make the trackpad hard to scroll, disable it in that case">
                             <ToggleSwitch Toggled="ReverseScroll_Toggle"
                                           IsOn="{x:Bind settings:Core.ReverseMouseWheelEnabled}" />
                         </wuc:SettingsCard>

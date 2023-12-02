@@ -11,13 +11,16 @@ internal sealed partial class View: WindowEx {
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
+        AppWindow.Title = "Fruit Toolbox Settings";
+        AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/durian.ico"));
 
         Core.SettingsChangedEventHandler += SettingsUpdateHandler;
     }
 
     public void SettingsUpdateHandler(object sender, EventArgs e) {
         ShowFlyoutCard.IsEnabled = Core.LanguageSwitcherEnabled;
-        TakeOverGuiDCard.IsEnabled = Core.MaximizerEnabled;
+        DesktopToHomeCard.IsEnabled = Core.MaximizerEnabled;
+        SwapVirtualDesktopHotkeysCard.IsEnabled = Core.MaximizerEnabled;
     }
 
     private void StartUp_Toggle(object sender, RoutedEventArgs e) {
@@ -41,6 +44,10 @@ internal sealed partial class View: WindowEx {
 
     private void DesktopToHome_Toggle(object sender, RoutedEventArgs e) {
         Core.DesktopToHomeEnabled = (sender as ToggleSwitch).IsOn;
+    }
+
+    private void SwapVirtualDesktopHotkeys_Toggle(object sender, RoutedEventArgs e) {
+        Core.SwapVirtualDesktopHotkeysEnabled = (sender as ToggleSwitch).IsOn;
     }
 
 
