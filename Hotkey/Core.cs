@@ -13,6 +13,8 @@ internal static class Core {
     public static event EventHandler<EventArgs> LanguageChangeEvent;
     public static event EventHandler<EventArgs> RAltUpEvent;
     public static event EventHandler<EventArgs> HomeEvent;
+    public static event EventHandler<EventArgs> GuiUpEvent;
+    public static event EventHandler<EventArgs> GuiDownEvent;
     private static readonly AutoHotkeyEngine AHKEngine = AutoHotkeyEngine.Instance;
     private static bool Started = false;
 
@@ -38,10 +40,13 @@ internal static class Core {
         AHKEngine.SetVar("onRaltUpPtr", GetActionDelegateStr(OnRAltUp));
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.RAltModifier));
 
-        AHKEngine.SetVar("onHomePtr", GetActionDelegateStr(OnHome));
+        AHKEngine.SetVar("onDesktopPtr", GetActionDelegateStr(OnDesktop));
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.DesktopToHome));
 
-        AHKEngine.SetVar("onGuiDownPtr", GetActionDelegateStr(OnHome));
+        AHKEngine.SetVar("onGuiUpPtr", GetActionDelegateStr(OnGuiUp));
+        AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.SwapVirtualDesktopHotkeys));
+
+        AHKEngine.SetVar("onGuiDownPtr", GetActionDelegateStr(OnGuiDown));
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.SwapVirtualDesktopHotkeys));
 
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.LGuiRemap));
@@ -77,8 +82,16 @@ internal static class Core {
         RAltUpEvent?.Invoke(null, null);
     }
 
-    private static void OnHome() {
+    private static void OnDesktop() {
         HomeEvent?.Invoke(null, null);
+    }
+
+    private static void OnGuiUp() {
+        GuiUpEvent?.Invoke(null, null);
+    }
+
+    private static void OnGuiDown() {
+        GuiDownEvent?.Invoke(null, null);
     }
 
     private static void SettingsUpdateHandler(object sender, EventArgs e) {

@@ -75,11 +75,11 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
 
     private void ToggleExternalHooks(bool enable) {
         if (enable) {
-            Core.NewLanguageEvent += OnNewLanguage;
+            Core.SwapCategoryEvent += OnSwapCategory;
             Hotkey.Core.CapsLockOnEvent += OnCapsLockOn;
             Hotkey.Core.CapsLockOffEvent += OnCapsLockOff;
         } else {
-            Core.NewLanguageEvent -= OnNewLanguage;
+            Core.SwapCategoryEvent -= OnSwapCategory;
             Hotkey.Core.CapsLockOnEvent -= OnCapsLockOn;
             Hotkey.Core.CapsLockOffEvent -= OnCapsLockOff;
         }
@@ -96,7 +96,7 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
         HideFlyoutTimer.Stop();
     }
 
-    public void OnNewLanguage(object sender, Constants.LanguageEvent e) {
+    public void OnSwapCategory(object sender, Constants.LanguageEvent e) {
         UpdateFlyout(new CultureInfo(e.LCID).NativeName);
     }
 

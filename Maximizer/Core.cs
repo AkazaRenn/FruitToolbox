@@ -1,6 +1,4 @@
-﻿using FruitToolbox.Interop;
-
-using Microsoft.Toolkit.Uwp.Notifications;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
 
 using WindowsDesktop;
 
@@ -28,6 +26,7 @@ internal static class Core {
 
         Settings.Core.SettingsChangedEventHandler += OnSettingsUpdate;
         Hotkey.Core.HomeEvent += OnHome;
+        Hotkey.Core.GuiDownEvent += OnHome;
 
         ReorderDesktopTimer.Elapsed += OnReorderDesktopTimer;
         VirtualDesktop.CurrentChanged += OnDesktopSwitched;
@@ -92,6 +91,11 @@ internal static class Core {
         }
     }
 
+    private static void OnTaskView(object _, EventArgs e) {
+        ReorderDesktopTimer.Stop();
+        Utils.TaskView();
+    }
+
     private static void OnDesktopDestroy(object _, VirtualDesktopDestroyEventArgs e) {
         if (e.Destroyed.Id == CurrentDesktopId) {
             CurrentDesktopId = SafeVirtualDesktop.CurrentRight.Id;
@@ -118,7 +122,7 @@ internal static class Core {
     public static void GoHome() {
         SafeVirtualDesktop.Current.Move(UserCreatedDesktopCount);
         SafeVirtualDesktop.SwitchLeft();
-        Utils.Unfocus();
+        Interop.Utils.Unfocus();
     }
 
     public static void OnFloatWindow(object _, WindowEvent e) =>

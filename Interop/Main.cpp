@@ -10,10 +10,15 @@ using namespace FruitToolbox::Interop;
 
 
 // class LanguageSwitcher
-bool LanguageSwitcher::Start(OnLanguageChangeCallbackDelegate^ handler) {
-    static Unmanaged::onLanguageChangeCallback delegatePtr = nullptr;
+bool LanguageSwitcher::Start(
+        OnLanguageChangeCallbackDelegate^ _categorySwapHandler,
+        OnLanguageChangeCallbackDelegate^ _newLanguageHandler) {
+    static Unmanaged::onLanguageChangeCallback categorySwapHandler = nullptr;
+    static Unmanaged::onLanguageChangeCallback newLanguageHandler = nullptr;
+
     return Unmanaged::LanguageSwitcher::start(
-        delegatePtr = GetCallbackPtr(handler)
+        categorySwapHandler = GetCallbackPtr(_categorySwapHandler),
+        newLanguageHandler = GetCallbackPtr(_newLanguageHandler)
     );
 }
 
@@ -48,26 +53,26 @@ Unmanaged::onLanguageChangeCallback LanguageSwitcher::GetCallbackPtr(OnLanguageC
 
 // class WindowTracker
 bool WindowTracker::Start(
-    WindowChangedCallbackDelegate^ _onNewFloatWindowHandler,
-    WindowChangedCallbackDelegate^ _onMaxWindowHandler,
-    WindowChangedCallbackDelegate^ _onUnmaxWindowHandler,
-    WindowChangedCallbackDelegate^ _onMinWindowHandler,
-    WindowChangedCallbackDelegate^ _onCloseWindowHandler,
-    WindowChangedCallbackDelegate^ _onWindowTitleChangeHandler) {
-    static Unmanaged::onWindowChangeCallback onNewFloatWindowHandlerPtr = nullptr;
-    static Unmanaged::onWindowChangeCallback onMaxWindowHandlerPtr = nullptr;
-    static Unmanaged::onWindowChangeCallback onUnmaxWindowHandlerPtr = nullptr;
-    static Unmanaged::onWindowChangeCallback onMinWindowHandlerPtr = nullptr;
-    static Unmanaged::onWindowChangeCallback onCloseWindowHandlerPtr = nullptr;
-    static Unmanaged::onWindowChangeCallback onWindowTitleChangeHandlerPtr = nullptr;
+    WindowChangedCallbackDelegate^ _newFloatWindowHandler,
+    WindowChangedCallbackDelegate^ _maxWindowHandler,
+    WindowChangedCallbackDelegate^ _unmaxWindowHandler,
+    WindowChangedCallbackDelegate^ _minWindowHandler,
+    WindowChangedCallbackDelegate^ _closeWindowHandler,
+    WindowChangedCallbackDelegate^ _windowTitleChangeHandler) {
+    static Unmanaged::onWindowChangeCallback newFloatWindowHandlerPtr = nullptr;
+    static Unmanaged::onWindowChangeCallback maxWindowHandlerPtr = nullptr;
+    static Unmanaged::onWindowChangeCallback unmaxWindowHandlerPtr = nullptr;
+    static Unmanaged::onWindowChangeCallback minWindowHandlerPtr = nullptr;
+    static Unmanaged::onWindowChangeCallback closeWindowHandlerPtr = nullptr;
+    static Unmanaged::onWindowChangeCallback windowTitleChangeHandlerPtr = nullptr;
 
     return Unmanaged::WindowTracker::start(
-        onNewFloatWindowHandlerPtr = GetCallbackPtr(_onNewFloatWindowHandler),
-        onMaxWindowHandlerPtr = GetCallbackPtr(_onMaxWindowHandler),
-        onUnmaxWindowHandlerPtr = GetCallbackPtr(_onUnmaxWindowHandler),
-        onMinWindowHandlerPtr = GetCallbackPtr(_onMinWindowHandler),
-        onCloseWindowHandlerPtr = GetCallbackPtr(_onCloseWindowHandler),
-        onWindowTitleChangeHandlerPtr = GetCallbackPtr(_onWindowTitleChangeHandler)
+        newFloatWindowHandlerPtr = GetCallbackPtr(_newFloatWindowHandler),
+        maxWindowHandlerPtr = GetCallbackPtr(_maxWindowHandler),
+        unmaxWindowHandlerPtr = GetCallbackPtr(_unmaxWindowHandler),
+        minWindowHandlerPtr = GetCallbackPtr(_minWindowHandler),
+        closeWindowHandlerPtr = GetCallbackPtr(_closeWindowHandler),
+        windowTitleChangeHandlerPtr = GetCallbackPtr(_windowTitleChangeHandler)
     );
 }
 

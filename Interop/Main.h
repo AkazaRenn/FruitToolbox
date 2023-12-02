@@ -8,9 +8,11 @@ namespace FruitToolbox {
 namespace Interop {
 public ref class LanguageSwitcher {
 public:
-    delegate void OnLanguageChangeCallbackDelegate(int lcid);
+    delegate void OnLanguageChangeCallbackDelegate(int lcid, bool imeMode);
 
-    static bool Start(OnLanguageChangeCallbackDelegate^ handler);
+    static bool Start(
+        OnLanguageChangeCallbackDelegate^ _categorySwapHandler,
+        OnLanguageChangeCallbackDelegate^ _newLanguageHandler);
     static void Stop();
     static void UpdateInputLanguage();
     static bool SwapCategory();
@@ -26,12 +28,12 @@ public:
     delegate void WindowChangedCallbackDelegate(System::IntPtr hwnd);
 
     static bool Start(
-        WindowChangedCallbackDelegate^ _onNewFloatWindowHandler,
-        WindowChangedCallbackDelegate^ _onMaxWindowHandler,
-        WindowChangedCallbackDelegate^ _onUnmaxWindowHandler,
-        WindowChangedCallbackDelegate^ _onMinWindowHandler,
-        WindowChangedCallbackDelegate^ _onCloseWindowHandler,
-        WindowChangedCallbackDelegate^ _onWindowTitleChangeHandler);
+        WindowChangedCallbackDelegate^ _newFloatWindowHandler,
+        WindowChangedCallbackDelegate^ _maxWindowHandler,
+        WindowChangedCallbackDelegate^ _unmaxWindowHandler,
+        WindowChangedCallbackDelegate^ _minWindowHandler,
+        WindowChangedCallbackDelegate^ _closeWindowHandler,
+        WindowChangedCallbackDelegate^ _windowTitleChangeHandler);
     static void Stop();
 private:
     static Unmanaged::onWindowChangeCallback GetCallbackPtr(WindowChangedCallbackDelegate^ delegate);

@@ -45,12 +45,12 @@ private:
     static void CALLBACK onWindowTitleChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
 public:
     static bool start(
-        onWindowChangeCallback _onNewFloatWindowHandler,
-        onWindowChangeCallback _onMaxWindowHandler,
-        onWindowChangeCallback _onUnmaxWindowHandler,
-        onWindowChangeCallback _onMinWindowHandler,
-        onWindowChangeCallback _onCloseWindowHandler,
-        onWindowChangeCallback _onWindowTitleChangeHandler);
+        onWindowChangeCallback _newFloatWindowHandler,
+        onWindowChangeCallback _maxWindowHandler,
+        onWindowChangeCallback _unmaxWindowHandler,
+        onWindowChangeCallback _minWindowHandler,
+        onWindowChangeCallback _closeWindowHandler,
+        onWindowChangeCallback _windowTitleChangeHandler);
     static void stop();
 };
 }

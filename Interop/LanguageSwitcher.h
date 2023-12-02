@@ -9,7 +9,7 @@ using namespace System;
 namespace FruitToolbox {
 namespace Interop {
 namespace Unmanaged {
-typedef void(__stdcall* onLanguageChangeCallback)(int lcid);
+typedef void(__stdcall* onLanguageChangeCallback)(int lcid, bool imeMode);
 
 class LanguageSwitcher {
 private:
@@ -21,6 +21,7 @@ private:
     static LCID activeLanguages[2];
     static bool inImeMode;
     static onLanguageChangeCallback categorySwapHandler;
+    static onLanguageChangeCallback newLanguageHandler;
 
     static void resetFields();
     static void buildLanguageList();
@@ -38,7 +39,9 @@ private:
     }
 
 public:
-    static bool start(onLanguageChangeCallback handler);
+    static bool start(
+        onLanguageChangeCallback _categorySwapHandler, 
+        onLanguageChangeCallback _newLanguageHandler);
     static void stop();
 
     static void updateInputLanguage();
@@ -52,13 +55,6 @@ public:
 
     static inline bool getCategory() {
         return inImeMode;
-    }
-
-    static inline void setScrollLock(bool state) {
-         if (state != isLockOn(VK_SCROLL)) {
-            keybd_event(VK_SCROLL, 0, KEYEVENTF_KEYDOWN, 0);
-            keybd_event(VK_SCROLL, 0, KEYEVENTF_KEYUP, 0);
-         }
     }
 };
 }

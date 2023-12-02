@@ -8,7 +8,7 @@
     Return
 
     $#Up::
-        Send #{Tab}
+        DllCall(onGuiUpPtr)
     Return
 
     $#Down::

@@ -1,5 +1,5 @@
 #if (DesktopToHomeEnabled)
     $#D::
-        DllCall(onHomePtr)
+        DllCall(onDesktopPtr)
     Return
 #if

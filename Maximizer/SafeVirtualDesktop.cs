@@ -1,8 +1,4 @@
-﻿using System.Diagnostics;
-
-using AutoHotkey.Interop;
-
-using FruitToolbox.Interop;
+﻿using AutoHotkey.Interop;
 
 using WindowsDesktop;
 
@@ -147,11 +143,11 @@ internal class SafeVirtualDesktop {
     }
 
     public static void SwitchLeft() {
-        AHKEngine.ExecRaw("Send ^#{Left}");
+        Utils.SwitchLeftDesktop();
     }
 
     public static void SwitchRight() {
-        AHKEngine.ExecRaw("Send ^#{Right}");
+        Utils.SwitchRightDesktop();
     }
 
     public void Rename(nint hwnd) =>
@@ -162,7 +158,7 @@ internal class SafeVirtualDesktop {
 
     private static string GetWindowTitle(nint hwnd) {
         try {
-            return Utils.GetWindowTitle(hwnd);
+            return Interop.Utils.GetWindowTitle(hwnd);
         } catch {
             return UnnamableWindowName;
         }

@@ -27,15 +27,14 @@ void LanguageSwitcher::updateInputLanguage() {
 void LanguageSwitcher::updateInputLanguage(HWND hwnd) {
     setCurrentLanguage(hklToLcid(GetKeyboardLayout(GetWindowThreadProcessId(hwnd, nullptr))));
     fixImeConversionMode(hwnd);
-    setScrollLock(inImeMode);
+    newLanguageHandler(getCurrentLanguage(), inImeMode);
 }
 
 bool LanguageSwitcher::swapCategory() {
     inImeMode = !inImeMode;
     applyInputLanguage();
 
-    categorySwapHandler(getCurrentLanguage());
-    setScrollLock(inImeMode);
+    categorySwapHandler(getCurrentLanguage(), inImeMode);
     return inImeMode;
 }
 
@@ -75,6 +74,7 @@ bool LanguageSwitcher::inImeMode = false;
 
 vector<HWINEVENTHOOK> LanguageSwitcher::hooks = {};
 onLanguageChangeCallback LanguageSwitcher::categorySwapHandler = nullptr;
+onLanguageChangeCallback LanguageSwitcher::newLanguageHandler = nullptr;
 void LanguageSwitcher::resetFields() {
     languageList = {};
     fill_n(activeLanguages, sizeof(activeLanguages), 0);
@@ -82,6 +82,7 @@ void LanguageSwitcher::resetFields() {
 
     hooks = {};
     categorySwapHandler = nullptr;
+    newLanguageHandler = nullptr;
 }
 
 void LanguageSwitcher::buildLanguageList() {
@@ -105,11 +106,14 @@ void LanguageSwitcher::buildLanguageList() {
     }
 }
 
-bool LanguageSwitcher::start(onLanguageChangeCallback handler) {
+bool LanguageSwitcher::start(
+    onLanguageChangeCallback _categorySwapHandler, 
+    onLanguageChangeCallback _newLanguageHandler) {
     // Initialized before, don't do it again
     if (!hooks.empty()) return false;
 
-    if ((categorySwapHandler = handler) == nullptr) {
+    if ((categorySwapHandler = _categorySwapHandler) == nullptr ||
+        (newLanguageHandler = _newLanguageHandler) == nullptr) {
         stop();
         return false;
     }

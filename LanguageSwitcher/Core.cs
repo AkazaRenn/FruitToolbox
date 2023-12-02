@@ -9,8 +9,7 @@ internal static partial class Core {
 
     private static Flyout NewLangFlyout = null;
     public static event EventHandler<Constants.LanguageEvent> NewLanguageEvent;
-    private static void InvokeNewLanguageEvent(int lcid) =>
-        NewLanguageEvent?.Invoke(null, new Constants.LanguageEvent(lcid));
+    public static event EventHandler<Constants.LanguageEvent> SwapCategoryEvent;
 
     public static bool Start() {
         if (Started) {
@@ -35,7 +34,7 @@ internal static partial class Core {
     private static void ToggleStartedState(bool enable) {
         if (enable && !Started) {
             if (Settings.Core.LanguageSwitcherEnabled) {
-                Started = Interop.LanguageSwitcher.Start(InvokeNewLanguageEvent);
+                Started = Interop.LanguageSwitcher.Start(InvokeSwapCategoryEvent, InvokeNewLanguageEvent);
 
                 if (!Started) {
                     new ToastContentBuilder()
@@ -73,6 +72,13 @@ internal static partial class Core {
             NewLangFlyout.Dispose();
             NewLangFlyout = null;
         }
+    }
+    private static void InvokeSwapCategoryEvent(int lcid, bool imeMode) =>
+        SwapCategoryEvent?.Invoke(null, new Constants.LanguageEvent(lcid, imeMode));
+
+    private static void InvokeNewLanguageEvent(int lcid, bool imeMode) {
+        Utils.SetScrollLock(imeMode);
+        NewLanguageEvent?.Invoke(null, new Constants.LanguageEvent(lcid, imeMode));
     }
 
     public static void OnLanguageChange(object _, EventArgs e) {
