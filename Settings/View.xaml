@@ -19,7 +19,6 @@
                     <wuc:SimpleSettingsGroup Header="General"
                                              Visibility="Visible">
                         <wuc:SettingsCard Margin="0,-6,0,0"
-                                          Description="Start with system launch"
                                           Header="Start up">
                             <ToggleSwitch Toggled="StartUp_Toggle"
                                           IsOn="{x:Bind settings:Core.StartUp}" />
@@ -28,15 +27,27 @@
                     <wuc:SimpleSettingsGroup Header="Language Switcher"
                                              Visibility="Visible">
                         <wuc:SettingsCard Margin="0,-6,0,0"
-                                          Description="A flyout will be shown to indicate the new language"
-                                          Header="Show flyout">
+                                          Header="Enable">
+                            <ToggleSwitch Toggled="LanguageSwitcherEnabled_Toggle"
+                                          IsOn="{x:Bind settings:Core.LanguageSwitcherEnabled}"/>
+                        </wuc:SettingsCard>
+                        <wuc:SettingsCard Margin="0,-6,0,0"
+                                          x:Name="ShowFlyoutCard"
+                                          Header="Show flyout"
+                                          Description="A flyout will be shown to indicate the new language">
                             <ToggleSwitch Toggled="ShowFlyout_Toggle"
-                                          IsOn="{x:Bind settings:Core.FlyoutEnabled}" />
+                                          IsOn="{x:Bind settings:Core.FlyoutEnabled}"/>
                         </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
                     <wuc:SimpleSettingsGroup Header="Maximizer"
                                              Visibility="Visible">
                         <wuc:SettingsCard Margin="0,-6,0,0"
+                                          Header="Enable">
+                            <ToggleSwitch Toggled="MaximizerEnabled_Toggle"
+                                          IsOn="{x:Bind settings:Core.MaximizerEnabled}"/>
+                        </wuc:SettingsCard>
+                        <wuc:SettingsCard Margin="0,-6,0,0"
+                                          x:Name="TakeOverGuiDCard"
                                           Description="Gui + D now goes to the first desktop without minimizing any window"
                                           Header="Take over Gui + D">
                             <ToggleSwitch Toggled="DesktopToHome_Toggle"

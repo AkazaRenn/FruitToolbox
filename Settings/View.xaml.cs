@@ -11,27 +11,45 @@ internal sealed partial class View: WindowEx {
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
+
+        Core.SettingsChangedEventHandler += SettingsUpdateHandler;
+    }
+
+    public void SettingsUpdateHandler(object sender, EventArgs e) {
+        ShowFlyoutCard.IsEnabled = Core.LanguageSwitcherEnabled;
+        TakeOverGuiDCard.IsEnabled = Core.MaximizerEnabled;
     }
 
     private void StartUp_Toggle(object sender, RoutedEventArgs e) {
-        FruitToolbox.Settings.Core.StartUp = (sender as ToggleSwitch).IsOn;
-        (sender as ToggleSwitch).IsOn = FruitToolbox.Settings.Core.StartUp;
+        Core.StartUp = (sender as ToggleSwitch).IsOn;
+        (sender as ToggleSwitch).IsOn = Core.StartUp;
+    }
+
+
+    private void LanguageSwitcherEnabled_Toggle(object sender, RoutedEventArgs e) {
+        Core.LanguageSwitcherEnabled = (sender as ToggleSwitch).IsOn;
     }
 
     private void ShowFlyout_Toggle(object sender, RoutedEventArgs e) {
-        FruitToolbox.Settings.Core.FlyoutEnabled = (sender as ToggleSwitch).IsOn;
+        Core.FlyoutEnabled = (sender as ToggleSwitch).IsOn;
     }
 
-    private void RemapLGui_Toggle(object sender, RoutedEventArgs e) {
-        FruitToolbox.Settings.Core.LGuiRemapEnabled = (sender as ToggleSwitch).IsOn;
+
+    private void MaximizerEnabled_Toggle(object sender, RoutedEventArgs e) {
+        Core.MaximizerEnabled = (sender as ToggleSwitch).IsOn;
     }
 
     private void DesktopToHome_Toggle(object sender, RoutedEventArgs e) {
-        FruitToolbox.Settings.Core.DesktopToHomeEnabled = (sender as ToggleSwitch).IsOn;
+        Core.DesktopToHomeEnabled = (sender as ToggleSwitch).IsOn;
+    }
+
+
+    private void RemapLGui_Toggle(object sender, RoutedEventArgs e) {
+        Core.LGuiRemapEnabled = (sender as ToggleSwitch).IsOn;
     }
 
     private void ReverseScroll_Toggle(object sender, RoutedEventArgs e) {
-        FruitToolbox.Settings.Core.ReverseMouseWheelEnabled = (sender as ToggleSwitch).IsOn;
+        Core.ReverseMouseWheelEnabled = (sender as ToggleSwitch).IsOn;
     }
 
 }

@@ -7,15 +7,18 @@ namespace FruitToolbox.Settings;
 
 [Serializable]
 internal class Entries {
-    public bool LanguageSwitcherEnabled { get; set; } = true;
+    public bool LanguageSwitcherEnabled { get; set; } = false;
     public bool FlyoutEnabled { get; set; } = true;
     public bool ScrollLockForImeLanguage { get; set; } = true;
     public bool RAltModifierEnabled { get; set; } = true;
-    public bool LGuiRemapEnabled { get; set; } = false;
-    public bool ReverseMouseWheelEnabled { get; set; } = false;
+
+    public bool MaximizerEnabled { get; set; } = false;
     public bool DesktopToHomeEnabled { get; set; } = false;
     public bool SwapVirtualDesktopHotkeysEnabled { get; set; } = false;
     public uint ReorgnizeDesktopDelaySec { get; set; } = 5;
+
+    public bool LGuiRemapEnabled { get; set; } = false;
+    public bool ReverseMouseWheelEnabled { get; set; } = false;
 }
 
 public static class Core {
@@ -60,8 +63,8 @@ public static class Core {
 
     public static bool FlyoutEnabled {
         get {
-            EnsureLoaded();
-            return SettingsEntries.FlyoutEnabled;
+            return LanguageSwitcherEnabled && 
+                SettingsEntries.FlyoutEnabled;
         }
         set {
             EnsureLoaded();
@@ -72,8 +75,8 @@ public static class Core {
 
     public static bool ScrollLockForImeLanguage {
         get {
-            EnsureLoaded();
-            return SettingsEntries.ScrollLockForImeLanguage;
+            return LanguageSwitcherEnabled &&
+                SettingsEntries.ScrollLockForImeLanguage;
         }
         set {
             EnsureLoaded();
@@ -84,8 +87,8 @@ public static class Core {
 
     public static bool RAltModifierEnabled {
         get {
-            EnsureLoaded();
-            return SettingsEntries.RAltModifierEnabled;
+            return LanguageSwitcherEnabled &&
+                SettingsEntries.RAltModifierEnabled;
         }
         set {
             EnsureLoaded();
@@ -118,10 +121,22 @@ public static class Core {
         }
     }
 
-    public static bool DesktopToHomeEnabled {
+    public static bool MaximizerEnabled {
         get {
             EnsureLoaded();
-            return SettingsEntries.DesktopToHomeEnabled;
+            return SettingsEntries.MaximizerEnabled;
+        }
+        set {
+            EnsureLoaded();
+            SettingsEntries.MaximizerEnabled = value;
+            OnSettingsUpdate();
+        }
+    }
+
+    public static bool DesktopToHomeEnabled {
+        get {
+            return MaximizerEnabled &&
+                SettingsEntries.DesktopToHomeEnabled;
         }
         set {
             EnsureLoaded();
@@ -132,8 +147,8 @@ public static class Core {
 
     public static bool SwapVirtualDesktopHotkeysEnabled {
         get {
-            EnsureLoaded();
-            return SettingsEntries.SwapVirtualDesktopHotkeysEnabled;
+            return MaximizerEnabled &&
+                SettingsEntries.SwapVirtualDesktopHotkeysEnabled;
         }
         set {
             EnsureLoaded();
