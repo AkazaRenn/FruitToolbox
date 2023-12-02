@@ -44,8 +44,6 @@ internal static class Core {
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.DesktopToHome));
 
         AHKEngine.SetVar("onGuiUpPtr", GetActionDelegateStr(OnGuiUp));
-        AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.SwapVirtualDesktopHotkeys));
-
         AHKEngine.SetVar("onGuiDownPtr", GetActionDelegateStr(OnGuiDown));
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.SwapVirtualDesktopHotkeys));
 
