@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 using WinUIEx;
@@ -14,49 +15,31 @@ internal sealed partial class View: WindowEx {
         AppWindow.Title = "Fruit Toolbox Settings";
         AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/durian.ico"));
 
-        Core.SettingsChangedEventHandler += SettingsUpdateHandler;
+        ToggleEnabledStatesBySettings();
+        Core.SettingsChangedEventHandler += OnSettingsUpdate;
     }
 
-    public void SettingsUpdateHandler(object sender, EventArgs e) {
+    private void OnSettingsUpdate(object sender, EventArgs e) =>
+        ToggleEnabledStatesBySettings();
+
+    private void ToggleEnabledStatesBySettings() {
         ShowFlyoutCard.IsEnabled = Core.LanguageSwitcherEnabled;
+        RAltModifierCard.IsEnabled = Core.LanguageSwitcherEnabled;
+
         DesktopToHomeCard.IsEnabled = Core.MaximizerEnabled;
         SwapVirtualDesktopHotkeysCard.IsEnabled = Core.MaximizerEnabled;
+        ReorderIntervalCard.IsEnabled = Core.MaximizerEnabled;
     }
 
-    private void StartUp_Toggle(object sender, RoutedEventArgs e) {
-        Core.StartUp = (sender as ToggleSwitch).IsOn;
-        (sender as ToggleSwitch).IsOn = Core.StartUp;
+    private void StartUp_Toggle(ToggleSwitch sender, RoutedEventArgs e) {
+        Core.StartUp = sender.IsOn;
+        if (sender.IsOn == true &&
+            Core.StartUp == false) {
+            sender.IsOn = false;
+            new ToastContentBuilder()
+                .AddText("Failed enabling startup")
+                .AddText("Please check if it is disabled by Windows Settings or Group Policy")
+                .Show();
+        }
     }
-
-
-    private void LanguageSwitcherEnabled_Toggle(object sender, RoutedEventArgs e) {
-        Core.LanguageSwitcherEnabled = (sender as ToggleSwitch).IsOn;
-    }
-
-    private void ShowFlyout_Toggle(object sender, RoutedEventArgs e) {
-        Core.FlyoutEnabled = (sender as ToggleSwitch).IsOn;
-    }
-
-
-    private void MaximizerEnabled_Toggle(object sender, RoutedEventArgs e) {
-        Core.MaximizerEnabled = (sender as ToggleSwitch).IsOn;
-    }
-
-    private void DesktopToHome_Toggle(object sender, RoutedEventArgs e) {
-        Core.DesktopToHomeEnabled = (sender as ToggleSwitch).IsOn;
-    }
-
-    private void SwapVirtualDesktopHotkeys_Toggle(object sender, RoutedEventArgs e) {
-        Core.SwapVirtualDesktopHotkeysEnabled = (sender as ToggleSwitch).IsOn;
-    }
-
-
-    private void RemapLGui_Toggle(object sender, RoutedEventArgs e) {
-        Core.LGuiRemapEnabled = (sender as ToggleSwitch).IsOn;
-    }
-
-    private void ReverseScroll_Toggle(object sender, RoutedEventArgs e) {
-        Core.ReverseMouseWheelEnabled = (sender as ToggleSwitch).IsOn;
-    }
-
 }

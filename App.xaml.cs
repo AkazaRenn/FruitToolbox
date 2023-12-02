@@ -55,14 +55,7 @@ public sealed partial class App: Application {
     }
 
     private static void InitializeFunction() {
-        if (!LanguageSwitcher.Core.Start()) {
-            Settings.Core.LanguageSwitcherEnabled = false;
-            new ToastContentBuilder()
-                .AddText("Unable to enable language switcher")
-                .AddText("Please make sure you have both keyboard languages and IME languages installed")
-                .Show();
-        }
-
+        LanguageSwitcher.Core.Start();
         Maximizer.Core.Start();
         Hotkey.Core.Start();
 

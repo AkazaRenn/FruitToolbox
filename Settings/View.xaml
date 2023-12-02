@@ -18,62 +18,63 @@
                             Orientation="Vertical" Margin="0, -100, 0, -20">
                     <wuc:SimpleSettingsGroup Header="General"
                                              Visibility="Visible">
-                        <wuc:SettingsCard Margin="0,-6,0,0"
-                                          Header="Start up">
-                            <ToggleSwitch Toggled="StartUp_Toggle"
-                                          IsOn="{x:Bind settings:Core.StartUp}" />
+                        <wuc:SettingsCard Header="Start up">
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.StartUp}" />
                         </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
                     <wuc:SimpleSettingsGroup Header="Language Switcher"
                                              Visibility="Visible">
-                        <wuc:SettingsCard Margin="0,-6,0,0"
-                                          Header="Enable">
-                            <ToggleSwitch Toggled="LanguageSwitcherEnabled_Toggle"
-                                          IsOn="{x:Bind settings:Core.LanguageSwitcherEnabled}"/>
+                        <wuc:SettingsCard Header="Enable">
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.LanguageSwitcherEnabled, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard Margin="0,-6,0,0"
-                                          x:Name="ShowFlyoutCard"
+                        <wuc:SettingsCard x:Name="ShowFlyoutCard"
                                           Header="Show flyout"
                                           Description="A flyout will be shown to indicate the new language">
-                            <ToggleSwitch Toggled="ShowFlyout_Toggle"
-                                          IsOn="{x:Bind settings:Core.FlyoutEnabled}"/>
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.FlyoutEnabled, Mode=TwoWay}"/>
+                        </wuc:SettingsCard>
+                        <wuc:SettingsCard x:Name="RAltModifierCard"
+                                          Header="Right Alt enhancement"
+                                          Description="When using IME languages, right Alt key will become a useful function">
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.RAltModifierEnabled, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
                     <wuc:SimpleSettingsGroup Header="Maximizer"
                                              Visibility="Visible">
-                        <wuc:SettingsCard Margin="0,-6,0,0"
-                                          Header="Enable">
-                            <ToggleSwitch Toggled="MaximizerEnabled_Toggle"
-                                          IsOn="{x:Bind settings:Core.MaximizerEnabled}"/>
+                        <wuc:SettingsCard Header="Enable">
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.MaximizerEnabled, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard Margin="0,-6,0,0"
-                                          x:Name="DesktopToHomeCard"
+                        <wuc:SettingsCard x:Name="DesktopToHomeCard"
                                           Header="Take over Gui + D"
                                           Description="Gui + D now goes to the first desktop without minimizing any window">
-                            <ToggleSwitch Toggled="DesktopToHome_Toggle"
-                                          IsOn="{x:Bind settings:Core.DesktopToHomeEnabled}" />
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.DesktopToHomeEnabled, Mode=TwoWay}" />
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard Margin="0,-6,0,0"
-                                          x:Name="SwapVirtualDesktopHotkeysCard"
+                        <wuc:SettingsCard x:Name="SwapVirtualDesktopHotkeysCard"
                                           Header="Swap GUI + Arrow and GUI + Ctrl + Arrow"
                                           Description="If you perfer having virtual desktops more accessible">
-                            <ToggleSwitch Toggled="SwapVirtualDesktopHotkeys_Toggle"
-                                          IsOn="{x:Bind settings:Core.DesktopToHomeEnabled}" />
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.SwapVirtualDesktopHotkeysEnabled, Mode=TwoWay}" />
+                        </wuc:SettingsCard>
+                        <wuc:SettingsCard x:Name="ReorderIntervalCard"
+                                          Header="Interval before reordering desktops"
+                                          Description="How long to move current desktop after switching desktops">
+                            <NumberBox Width="120"
+                                       HorizontalAlignment="Left"
+                                       Header="Milliseconds"
+                                       Minimum="0"
+                                       Maximum="99999"
+                                       SmallChange="100"
+                                       SpinButtonPlacementMode="Compact"
+                                       Value="{x:Bind settings:Core.ReorgnizeDesktopIntervalMs, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
                     <wuc:SimpleSettingsGroup Header="Additional Tools"
                                              Visibility="Visible">
-                        <wuc:SettingsCard Margin="0,-6,0,0"
-                                          Header="Remap left Super/GUI/Win key"
-                                          Description="It will send super + alt + ctrl + shift + S instead, key combinations will not be affected">
-                            <ToggleSwitch Toggled="RemapLGui_Toggle"
-                                          IsOn="{x:Bind settings:Core.LGuiRemapEnabled}" />
+                        <wuc:SettingsCard Header="Remap left Super/GUI/Win key"
+                                          Description="Sends super + alt + ctrl + shift + S instead when clicked alone">
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.LGuiRemapEnabled, Mode=TwoWay}" />
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard Margin="0,-6,0,0"
-                                          Header="Reverse scrolling direction"
+                        <wuc:SettingsCard Header="Reverse scrolling direction"
                                           Description="Note that it may make the trackpad hard to scroll, disable it in that case">
-                            <ToggleSwitch Toggled="ReverseScroll_Toggle"
-                                          IsOn="{x:Bind settings:Core.ReverseMouseWheelEnabled}" />
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.ReverseMouseWheelEnabled, Mode=TwoWay}" />
                         </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
                 </StackPanel>

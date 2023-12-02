@@ -15,7 +15,7 @@ internal class Entries {
     public bool MaximizerEnabled { get; set; } = false;
     public bool DesktopToHomeEnabled { get; set; } = false;
     public bool SwapVirtualDesktopHotkeysEnabled { get; set; } = false;
-    public uint ReorgnizeDesktopDelaySec { get; set; } = 5;
+    public uint ReorgnizeDesktopIntervalMs { get; set; } = 5000;
 
     public bool LGuiRemapEnabled { get; set; } = false;
     public bool ReverseMouseWheelEnabled { get; set; } = false;
@@ -63,7 +63,7 @@ public static class Core {
 
     public static bool FlyoutEnabled {
         get {
-            return LanguageSwitcherEnabled && 
+            return LanguageSwitcherEnabled &&
                 SettingsEntries.FlyoutEnabled;
         }
         set {
@@ -157,14 +157,14 @@ public static class Core {
         }
     }
 
-    public static uint ReorgnizeDesktopDelaySec {
+    public static uint ReorgnizeDesktopIntervalMs {
         get {
             EnsureLoaded();
-            return SettingsEntries.ReorgnizeDesktopDelaySec;
+            return SettingsEntries.ReorgnizeDesktopIntervalMs;
         }
         set {
             EnsureLoaded();
-            SettingsEntries.ReorgnizeDesktopDelaySec = value;
+            SettingsEntries.ReorgnizeDesktopIntervalMs = value;
             OnSettingsUpdate();
         }
     }

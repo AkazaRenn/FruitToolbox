@@ -1,5 +1,7 @@
 ﻿using FruitToolbox.Interop;
 
+using Microsoft.Toolkit.Uwp.Notifications;
+
 using WindowsDesktop;
 
 using static FruitToolbox.Constants;
@@ -7,40 +9,78 @@ using static FruitToolbox.Constants;
 namespace FruitToolbox.Maximizer;
 
 internal static class Core {
+    private static bool Started = false;
+
     const int UserCreatedDesktopCount = 1;
     const int WindowAnimationWaitMs = 250;
 
     static readonly Dictionary<nint, Guid> HwndDesktopMap = [];
-    static readonly System.Timers.Timer ReorderDesktopTimer = new(5000);
+    static readonly System.Timers.Timer ReorderDesktopTimer = new(Settings.Core.ReorgnizeDesktopIntervalMs);
     static Guid HomeDesktopId;
     static Guid CurrentDesktopId;
 
     public static bool Start() {
-        InitializeDesktops();
+        if (Started) {
+            return false;
+        }
 
-        WindowTracker.NewFloatWindowEvent += OnFloatWindow;
-        WindowTracker.MaxWindowEvent += OnMax;
-        WindowTracker.UnmaxWindowEvent += OnUnmax;
-        WindowTracker.MinWindowEvent += OnMinOrClose;
-        WindowTracker.CloseWindowEvent += OnMinOrClose;
-        WindowTracker.WindowTitleChangeEvent += OnWindowTitleChange;
+        ToggleStartedState(true);
 
+        Settings.Core.SettingsChangedEventHandler += OnSettingsUpdate;
         Hotkey.Core.HomeEvent += OnHome;
-
-        bool rc = WindowTracker.Start();
-        GoHome();
 
         ReorderDesktopTimer.Elapsed += OnReorderDesktopTimer;
         VirtualDesktop.CurrentChanged += OnDesktopSwitched;
         VirtualDesktop.Destroyed += OnDesktopDestroy;
 
-        return rc;
+        return Started;
     }
 
     public static void Stop() {
-        ClearAutoDesktops();
+        if (Started) {
+            ToggleStartedState(false);
+        }
+    }
 
-        WindowTracker.Stop();
+    private static void ToggleStartedState(bool enable) {
+        if (enable && !Started) {
+            if (Settings.Core.MaximizerEnabled) {
+                InitializeDesktops();
+
+                WindowTracker.NewFloatWindowEvent += OnFloatWindow;
+                WindowTracker.MaxWindowEvent += OnMax;
+                WindowTracker.UnmaxWindowEvent += OnUnmax;
+                WindowTracker.MinWindowEvent += OnMinOrClose;
+                WindowTracker.CloseWindowEvent += OnMinOrClose;
+                WindowTracker.WindowTitleChangeEvent += OnWindowTitleChange;
+
+                Started = WindowTracker.Start();
+                GoHome();
+
+                if (!Started) {
+                    new ToastContentBuilder()
+                        .AddText("Unable to enable maximizer")
+                        .Show();
+                }
+            }
+        } else if (!enable && Started) {
+            ClearAutoDesktops();
+            ReorderDesktopTimer.Stop();
+            WindowTracker.Stop();
+            Started = false;
+        }
+
+        Settings.Core.MaximizerEnabled = Started;
+    }
+
+    private static void OnSettingsUpdate(object sender, EventArgs e) {
+        if (Started) {
+            ReorderDesktopTimer.Interval = Settings.Core.ReorgnizeDesktopIntervalMs;
+        }
+
+        if (Started != Settings.Core.MaximizerEnabled) {
+            ToggleStartedState(Settings.Core.MaximizerEnabled);
+        }
     }
 
     private static void OnHome(object _, EventArgs e) {

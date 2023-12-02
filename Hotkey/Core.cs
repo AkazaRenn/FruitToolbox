@@ -14,10 +14,10 @@ internal static class Core {
     public static event EventHandler<EventArgs> RAltUpEvent;
     public static event EventHandler<EventArgs> HomeEvent;
     private static readonly AutoHotkeyEngine AHKEngine = AutoHotkeyEngine.Instance;
-    private static bool Initialized = false;
+    private static bool Started = false;
 
     public static void Start() {
-        if (Initialized) {
+        if (Started) {
             return;
         }
 
@@ -25,7 +25,7 @@ internal static class Core {
         SetVarOnSettings();
 
         Settings.Core.SettingsChangedEventHandler += SettingsUpdateHandler;
-        Initialized = true;
+        Started = true;
     }
 
     private static void InitializeHandlers() {
