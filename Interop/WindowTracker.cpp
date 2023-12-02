@@ -4,18 +4,6 @@
 using namespace std;
 using namespace FruitToolbox::Interop::Unmanaged;
 
-bool WindowTracker::isWindow(HWND hwnd, LONG idObject, LONG idChild) {
-    return
-        (idObject == OBJID_WINDOW) &&
-        (idChild == CHILDID_SELF) &&
-        (hwnd != GetShellWindow()) &&
-        (IsWindow(hwnd)) &&
-        (IsWindowVisible(hwnd)) &&
-        (GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_OVERLAPPEDWINDOW) &&
-        !(GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_MDICHILD) &&
-        (GetWindowTextLengthW(hwnd) > 0);
-}
-
 void CALLBACK WindowTracker::onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (isWindow(hwnd, idObject, idChild) &&
         !IsZoomed(hwnd)) {
@@ -66,7 +54,9 @@ void CALLBACK WindowTracker::onWindowTitleChange(HWINEVENTHOOK hWinEventHook, DW
 }
 
 bool WindowTracker::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
-    if (isWindow(hwnd, OBJID_WINDOW, CHILDID_SELF)) {
+    if (hwnd != GetShellWindow() &&
+        hwnd != GetDesktopWindow() &&
+        isWindow(hwnd, OBJID_WINDOW, CHILDID_SELF)) {
         if (IsZoomed(hwnd)) {
             maxWindows.insert(hwnd);
             maxWindowHandler(hwnd);
@@ -111,12 +101,16 @@ bool WindowTracker::start(
     onWindowChangeCallback _minWindowHandler,
     onWindowChangeCallback _closeWindowHandler,
     onWindowChangeCallback _onWindowTitleChangeHandler) {
+    // Initialized before, don't do it again
+    if (!hooks.empty()) return false;
+
     if (((newFloatWindowHandler = _newFloatWindowHandler) == nullptr) ||
         ((maxWindowHandler = _maxWindowHandler) == nullptr) ||
         ((unmaxWindowHandler = _unmaxWindowHandler) == nullptr) ||
         ((minWindowHandler = _minWindowHandler) == nullptr) ||
         ((closeWindowHandler = _closeWindowHandler) == nullptr) ||
         ((windowTitleChangeHandler = _onWindowTitleChangeHandler) == nullptr)) {
+        stop();
         return false;
     }
 

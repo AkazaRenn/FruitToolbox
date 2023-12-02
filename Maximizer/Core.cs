@@ -46,7 +46,8 @@ internal static class Core {
     private static void OnHome(object _, EventArgs e) {
 
         if (SafeVirtualDesktop.Current.Id == HomeDesktopId) {
-            SafeVirtualDesktop.CurrentRight.Switch();
+            //SafeVirtualDesktop.CurrentRight.Switch();
+            SafeVirtualDesktop.SwitchRight();
         } else {
             GoHome();
         }
@@ -70,16 +71,15 @@ internal static class Core {
 
         if (CurrentDesktopId == HomeDesktopId) {
             ReorderDesktopTimer.Stop();
-            Thread.Sleep(100);
-            // No effect if OldDesktop no longer exists
-            SafeVirtualDesktop.Move(e.OldDesktop.Id, UserCreatedDesktopCount);
         } else {
             ReorderDesktopTimer.Start();
         }
     }
 
     public static void GoHome() {
-        SafeVirtualDesktop.Switch(HomeDesktopId);
+        SafeVirtualDesktop.Current.Move(UserCreatedDesktopCount);
+        //SafeVirtualDesktop.Switch(HomeDesktopId);
+        SafeVirtualDesktop.SwitchLeft();
         Utils.Unfocus();
     }
 

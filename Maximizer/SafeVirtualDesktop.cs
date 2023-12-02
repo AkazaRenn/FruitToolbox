@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 
+using AutoHotkey.Interop;
+
 using FruitToolbox.Interop;
 
 using WindowsDesktop;
@@ -8,10 +10,11 @@ namespace FruitToolbox.Maximizer;
 
 internal class SafeVirtualDesktop {
     const int DefaultRetry = 10;
-    const int DefaultWait = 50;
+    const int DefaultWait = 25;
     const string CreatedDesktopNamePostfix = " "; //"​";
     const string UnnamableWindowName = "Administrative Window";
 
+    private static readonly AutoHotkeyEngine AHKEngine = AutoHotkeyEngine.Instance;
     private readonly Guid WrappedDesktopId;
 
     public SafeVirtualDesktop(Guid id) {
@@ -141,6 +144,14 @@ internal class SafeVirtualDesktop {
 
     public static void Move(Guid id, int index) {
         new SafeVirtualDesktop(id).Move(index);
+    }
+
+    public static void SwitchLeft() {
+        AHKEngine.ExecRaw("Send ^#{Left}");
+    }
+
+    public static void SwitchRight() {
+        AHKEngine.ExecRaw("Send ^#{Right}");
     }
 
     public void Rename(nint hwnd) =>

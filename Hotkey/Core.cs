@@ -32,19 +32,20 @@ internal static class Core {
         AHKEngine.SetVar("onCapsLockLanguageSwitchPtr", GetActionDelegateStr(OnCapsLockSwitchLanguage));
         AHKEngine.SetVar("onCapsLockOnPtr", GetActionDelegateStr(OnCapsLockOn));
         AHKEngine.SetVar("onCapsLockOffPtr", GetActionDelegateStr(OnCapsLockOffEvent));
-        AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.CapsLock));
-
         AHKEngine.SetVar("onLanguageChangePtr", GetActionDelegateStr(OnLanguageChange));
-        AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.LanguageChangeMonitor));
+        AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.LanguageSwitcher));
 
         AHKEngine.SetVar("onRaltUpPtr", GetActionDelegateStr(OnRAltUp));
-        AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.RAltModifier));
+        AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.RAltModifier));
 
         AHKEngine.SetVar("onHomePtr", GetActionDelegateStr(OnHome));
-        AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.DesktopToHome));
+        AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.DesktopToHome));
 
-        AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.RGuiToPTRun));
-        AHKEngine.ExecRaw(System.Text.Encoding.Default.GetString(Properties.Resources.ReverseMouseWheel));
+        AHKEngine.SetVar("onGuiDownPtr", GetActionDelegateStr(OnHome));
+        AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.SwapVirtualDesktopHotkeys));
+
+        AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.LGuiRemap));
+        AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.ReverseMouseWheel));
     }
 
     private static void SetVarOnSettings() {
@@ -53,6 +54,7 @@ internal static class Core {
         AHKEngine.SetVar("LGuiRemapEnabled", GetBoolStr(Settings.Core.LGuiRemapEnabled));
         AHKEngine.SetVar("ReverseMouseWheelEnabled", GetBoolStr(Settings.Core.ReverseMouseWheelEnabled));
         AHKEngine.SetVar("DesktopToHomeEnabled", GetBoolStr(Settings.Core.DesktopToHomeEnabled));
+        AHKEngine.SetVar("SwapVirtualDesktopHotkeysEnabled", GetBoolStr(Settings.Core.SwapVirtualDesktopHotkeysEnabled));
     }
 
     private static void OnCapsLockSwitchLanguage() {

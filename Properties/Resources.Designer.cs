@@ -63,16 +63,6 @@ namespace FruitToolbox.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] CapsLock {
-            get {
-                object obj = ResourceManager.GetObject("CapsLock", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] DesktopToHome {
             get {
                 object obj = ResourceManager.GetObject("DesktopToHome", resourceCulture);
@@ -83,9 +73,19 @@ namespace FruitToolbox.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] LanguageChangeMonitor {
+        internal static byte[] LanguageSwitcher {
             get {
-                object obj = ResourceManager.GetObject("LanguageChangeMonitor", resourceCulture);
+                object obj = ResourceManager.GetObject("LanguageSwitcher", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] LGuiRemap {
+            get {
+                object obj = ResourceManager.GetObject("LGuiRemap", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -113,9 +113,9 @@ namespace FruitToolbox.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] RGuiToPTRun {
+        internal static byte[] SwapVirtualDesktopHotkeys {
             get {
-                object obj = ResourceManager.GetObject("RGuiToPTRun", resourceCulture);
+                object obj = ResourceManager.GetObject("SwapVirtualDesktopHotkeys", resourceCulture);
                 return ((byte[])(obj));
             }
         }

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Language.h"
 #include <functional>
+#include "Language.hpp"
 
 #define isKeyDown(nVirtKey) (GetKeyState(nVirtKey) & 0x8000)
 
@@ -57,7 +57,7 @@ static PerLanguageMethods ChineseMethods{
     },
 };
 
-inline static PerLanguageMethods& getPerLanguageMethods(LCID lcid) {
+static inline PerLanguageMethods& getPerLanguageMethods(LCID lcid) {
     switch (lcid) {
     case zh_TW:
     case zh_CN:

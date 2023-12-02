@@ -1,13 +1,15 @@
 #pragma once
 
 #include "pch.h"
-#include "Modules.h"
+#include "Main.h"
 #include "LanguageSwitcher.h"
 #include "WindowTracker.h"
 
 using namespace System::Runtime::InteropServices;
 using namespace FruitToolbox::Interop;
 
+
+// class LanguageSwitcher
 bool LanguageSwitcher::Start(OnLanguageChangeCallbackDelegate^ handler) {
     static Unmanaged::onLanguageChangeCallback delegatePtr = nullptr;
     return Unmanaged::LanguageSwitcher::start(
@@ -19,8 +21,8 @@ void LanguageSwitcher::Stop() {
     Unmanaged::LanguageSwitcher::stop();
 }
 
-void LanguageSwitcher::UpdateInputLanguage(bool doCallback) {
-    Unmanaged::LanguageSwitcher::updateInputLanguage(doCallback);
+void LanguageSwitcher::UpdateInputLanguage() {
+    Unmanaged::LanguageSwitcher::updateInputLanguage();
 }
 
 bool LanguageSwitcher::SwapCategory() {
@@ -44,6 +46,7 @@ Unmanaged::onLanguageChangeCallback LanguageSwitcher::GetCallbackPtr(OnLanguageC
 }
 
 
+// class WindowTracker
 bool WindowTracker::Start(
     WindowChangedCallbackDelegate^ _onNewFloatWindowHandler,
     WindowChangedCallbackDelegate^ _onMaxWindowHandler,
@@ -74,4 +77,25 @@ void WindowTracker::Stop() {
 
 Unmanaged::onWindowChangeCallback WindowTracker::GetCallbackPtr(WindowChangedCallbackDelegate^ delegate) {
     return (Unmanaged::onWindowChangeCallback)(Marshal::GetFunctionPointerForDelegate(delegate).ToPointer());
+}
+
+
+// class Utils
+void Utils::SetBorderlessWindow(IntPtr hwnd) {
+    int cornerPreference = DWMWCP_DONOTROUND;
+    DwmSetWindowAttribute(
+        static_cast<HWND>(hwnd.ToPointer()),
+        DWMWA_WINDOW_CORNER_PREFERENCE,
+        &cornerPreference,
+        sizeof(cornerPreference));
+}
+
+String^ Utils::GetWindowTitle(IntPtr hwnd) {
+    wchar_t title[MAX_PATH];
+    GetWindowTextW(static_cast<HWND>(hwnd.ToPointer()), title, ARRAYSIZE(title));
+    return Marshal::PtrToStringUni(static_cast<IntPtr>(title));
+}
+
+void Utils::Unfocus() {
+    SetForegroundWindow(GetShellWindow());
 }

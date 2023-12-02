@@ -64,11 +64,7 @@ public sealed partial class App: Application {
         }
 
         Maximizer.Core.Start();
-
         Hotkey.Core.Start();
-        Hotkey.Core.CapsLockSwitchLanguageEvent += LanguageSwitcher.Core.SwapCategoryNoReturn;
-        Hotkey.Core.LanguageChangeEvent += LanguageSwitcher.Core.UpdateInputLanguageByKeyboard;
-        Hotkey.Core.RAltUpEvent += LanguageSwitcher.Core.OnRaltUp;
 
     }
 

@@ -22,7 +22,17 @@ private:
     static vector<HWINEVENTHOOK> hooks;
     static set<HWND> maxWindows;
 
-    static bool isWindow(HWND hwnd, LONG idObject, LONG idChild);
+    static inline bool isWindow(HWND hwnd, LONG idObject, LONG idChild) {
+        return
+            (idObject == OBJID_WINDOW) &&
+            (idChild == CHILDID_SELF) &&
+            (IsWindow(hwnd)) &&
+            (IsWindowVisible(hwnd)) &&
+            (GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_OVERLAPPEDWINDOW) &&
+            !(GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_MDICHILD) &&
+            (GetWindowTextLengthW(hwnd) > 0);
+    }
+
     static void resetFields();
     static void sortCurrentWindows();
 

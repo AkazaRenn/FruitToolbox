@@ -9,10 +9,12 @@ namespace FruitToolbox.Settings;
 internal class Entries {
     public bool LanguageSwitcherEnabled { get; set; } = true;
     public bool FlyoutEnabled { get; set; } = true;
+    public bool ScrollLockForImeLanguage { get; set; } = true;
     public bool RAltModifierEnabled { get; set; } = true;
     public bool LGuiRemapEnabled { get; set; } = false;
     public bool ReverseMouseWheelEnabled { get; set; } = false;
     public bool DesktopToHomeEnabled { get; set; } = false;
+    public bool SwapVirtualDesktopHotkeysEnabled { get; set; } = false;
     public uint ReorgnizeDesktopDelaySec { get; set; } = 5;
 }
 
@@ -67,6 +69,19 @@ public static class Core {
             OnSettingsUpdate();
         }
     }
+
+    public static bool ScrollLockForImeLanguage {
+        get {
+            EnsureLoaded();
+            return SettingsEntries.ScrollLockForImeLanguage;
+        }
+        set {
+            EnsureLoaded();
+            SettingsEntries.ScrollLockForImeLanguage = value;
+            OnSettingsUpdate();
+        }
+    }
+
     public static bool RAltModifierEnabled {
         get {
             EnsureLoaded();
@@ -78,6 +93,7 @@ public static class Core {
             OnSettingsUpdate();
         }
     }
+
     public static bool LGuiRemapEnabled {
         get {
             EnsureLoaded();
@@ -89,6 +105,7 @@ public static class Core {
             OnSettingsUpdate();
         }
     }
+
     public static bool ReverseMouseWheelEnabled {
         get {
             EnsureLoaded();
@@ -109,6 +126,18 @@ public static class Core {
         set {
             EnsureLoaded();
             SettingsEntries.DesktopToHomeEnabled = value;
+            OnSettingsUpdate();
+        }
+    }
+
+    public static bool SwapVirtualDesktopHotkeysEnabled {
+        get {
+            EnsureLoaded();
+            return SettingsEntries.SwapVirtualDesktopHotkeysEnabled;
+        }
+        set {
+            EnsureLoaded();
+            SettingsEntries.SwapVirtualDesktopHotkeysEnabled = value;
             OnSettingsUpdate();
         }
     }

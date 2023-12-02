@@ -12,7 +12,7 @@ public:
 
     static bool Start(OnLanguageChangeCallbackDelegate^ handler);
     static void Stop();
-    static void UpdateInputLanguage(bool doCallback);
+    static void UpdateInputLanguage();
     static bool SwapCategory();
     static bool GetCategory();
     static void SetCurrentLanguage(int lcid);
@@ -35,6 +35,14 @@ public:
     static void Stop();
 private:
     static Unmanaged::onWindowChangeCallback GetCallbackPtr(WindowChangedCallbackDelegate^ delegate);
+};
+
+
+public ref class Utils {
+public:
+    static void SetBorderlessWindow(System::IntPtr hwnd);
+    static System::String^ GetWindowTitle(System::IntPtr hwnd);
+    static void Unfocus();
 };
 }
 }

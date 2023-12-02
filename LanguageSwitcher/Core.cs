@@ -30,8 +30,14 @@ internal static partial class Core {
     private static void ToggleExternalHooks(bool enable) {
         if (enable) {
             Settings.Core.SettingsChangedEventHandler += SettingsUpdateHandler;
+            Hotkey.Core.CapsLockSwitchLanguageEvent += SwapCategory;
+            Hotkey.Core.LanguageChangeEvent += UpdateInputLanguageByKeyboard;
+            Hotkey.Core.RAltUpEvent += OnRaltUp;
         } else {
             Settings.Core.SettingsChangedEventHandler -= SettingsUpdateHandler;
+            Hotkey.Core.CapsLockSwitchLanguageEvent -= SwapCategory;
+            Hotkey.Core.LanguageChangeEvent -= UpdateInputLanguageByKeyboard;
+            Hotkey.Core.RAltUpEvent -= OnRaltUp;
         }
     }
 
@@ -47,21 +53,13 @@ internal static partial class Core {
         }
     }
 
-    public static void UpdateInputLanguage() =>
-        Interop.LanguageSwitcher.UpdateInputLanguage(true);
     public static void UpdateInputLanguageByKeyboard(object _, EventArgs e) {
         Thread.Sleep(WindowActivateWaitMs);
-        Interop.LanguageSwitcher.UpdateInputLanguage(false);
+        Interop.LanguageSwitcher.UpdateInputLanguage();
     }
 
-    public static bool SwapCategory() =>
+    public static void SwapCategory(object _, EventArgs e) =>
         Interop.LanguageSwitcher.SwapCategory();
-
-    public static void SwapCategoryNoReturn(object _, EventArgs e) =>
-        Interop.LanguageSwitcher.SwapCategory();
-
-    public static bool GetCategory() =>
-        Interop.LanguageSwitcher.GetCategory();
 
     public static void OnRaltUp(object _, EventArgs e) =>
         Interop.LanguageSwitcher.OnRaltUp();

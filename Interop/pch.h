@@ -14,5 +14,6 @@
 #include <iostream>
 #include <set>
 #include <map>
+#include <vector>
 #include <functional>
 #endif //PCH_H
