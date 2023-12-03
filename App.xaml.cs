@@ -75,8 +75,9 @@ public sealed partial class App: Application {
     }
 
     private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
-        //LanguageSwitcher?.Dispose();
-        //Maximizer.Core.Stop();
+        LanguageSwitcher?.Dispose();
+        Maximizer?.Dispose();
+        Hotkey?.Dispose();
         TrayIcon?.Dispose();
         Environment.Exit(0);
     }

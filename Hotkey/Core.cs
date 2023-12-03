@@ -4,7 +4,7 @@ using AutoHotkey.Interop;
 
 namespace FruitToolbox.Hotkey;
 
-internal class Core {
+internal class Core : IDisposable {
     private static bool Started = false;
     static Core _Instance = null;
     public static Core Instance {
@@ -39,7 +39,12 @@ internal class Core {
     }
 
     ~Core() {
+        Dispose();
+    }
+
+    public void Dispose() {
         _Instance = null;
+        GC.SuppressFinalize(this);
     }
 
     private static void InitializeHandlers() {

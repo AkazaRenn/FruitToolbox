@@ -6,7 +6,7 @@ using static FruitToolbox.Constants;
 
 namespace FruitToolbox.Maximizer;
 
-internal class Core {
+internal class Core : IDisposable {
     private static bool Started = false;
     static Core _Instance = null;
     public static Core Instance {
@@ -46,11 +46,16 @@ internal class Core {
     }
 
     ~Core() {
+        Dispose();
+    }
+
+    public void Dispose() {
         if (Started) {
             ToggleExternalHooks(false);
             ToggleStartedState(false);
         }
         _Instance = null;
+        GC.SuppressFinalize(this);
     }
 
     private static void ToggleStartedState(bool enable) {
