@@ -34,7 +34,7 @@
         Visibility="Visible"
         IconSource="/Assets/durian.ico"
         ContextMenuMode="PopupMenu"
-        NoLeftClickDelay="True"
+        DoubleClickCommand="{StaticResource OpenSettingsCommand}"
         MenuActivation="RightClick"
         ToolTipText="Fruit Toolbox"
         >

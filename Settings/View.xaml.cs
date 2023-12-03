@@ -22,7 +22,7 @@ internal sealed partial class View: WindowEx {
     ~View() {
         ToggleExternalHooks(false);
     }
-        
+
     private void ToggleExternalHooks(bool enable) {
         if(enable) {
             Core.SettingsChangedEventHandler += OnSettingsUpdate;

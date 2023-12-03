@@ -13,16 +13,16 @@ namespace FruitToolbox;
 public sealed partial class App: Application {
     #region Properties
 
-    private static readonly LanguageSwitcher.Core LanguageSwitcher = 
+    private static readonly LanguageSwitcher.Core LanguageSwitcher =
         FruitToolbox.LanguageSwitcher.Core.Instance;
-    private static readonly Maximizer.Core Maximizer = 
+    private static readonly Maximizer.Core Maximizer =
         FruitToolbox.Maximizer.Core.Instance;
-    private static readonly Hotkey.Core Hotkey = 
+    private static readonly Hotkey.Core Hotkey =
         FruitToolbox.Hotkey.Core.Instance;
 
     private static TaskbarIcon TrayIcon;
     private static Settings.View SettingsWindow = null;
-    
+
 
     #endregion
 
@@ -63,10 +63,15 @@ public sealed partial class App: Application {
     private void OpenSettingsCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
         if (SettingsWindow == null) {
             SettingsWindow = new();
-            SettingsWindow.Closed += (e, s) => SettingsWindow = null;
+            SettingsWindow.Closed += (e, s) => {
+                s.Handled = true;
+                SettingsWindow.Hide();
+                SettingsWindow = null;
+            };
+            SettingsWindow.Activate();
         }
 
-        SettingsWindow.Activate();
+        SettingsWindow.Show();
     }
 
     private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
