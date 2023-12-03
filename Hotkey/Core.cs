@@ -16,15 +16,31 @@ internal class Core : IDisposable {
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public delegate void AHKDelegate();
-    public static event EventHandler<EventArgs> CapsLockSwitchLanguageEvent;
-    public static event EventHandler<EventArgs> CapsLockOnEvent;
-    public static event EventHandler<EventArgs> CapsLockOffEvent;
-    public static event EventHandler<EventArgs> LanguageChangeEvent;
-    public static event EventHandler<EventArgs> RAltUpEvent;
-    public static event EventHandler<EventArgs> HomeEvent;
-    public static event EventHandler<EventArgs> GuiUpEvent;
-    public static event EventHandler<EventArgs> GuiDownEvent;
     private static readonly AutoHotkeyEngine AHKEngine = AutoHotkeyEngine.Instance;
+
+    public static event EventHandler<EventArgs> CapsLockSwitchLanguageEvent;
+    private static void OnCapsLockSwitchLanguage() => CapsLockSwitchLanguageEvent?.Invoke(null, null);
+
+    public static event EventHandler<EventArgs> CapsLockOnEvent;
+    private static void OnCapsLockOn() => CapsLockOnEvent?.Invoke(null, null);
+
+    public static event EventHandler<EventArgs> CapsLockOffEvent;
+    private static void OnCapsLockOffEvent() => CapsLockOffEvent?.Invoke(null, null);
+
+    public static event EventHandler<EventArgs> LanguageChangeEvent;
+    private static void OnLanguageChange() => LanguageChangeEvent?.Invoke(null, null);
+
+    public static event EventHandler<EventArgs> RAltUpEvent;
+    private static void OnRAltUp() => RAltUpEvent?.Invoke(null, null);
+
+    public static event EventHandler<EventArgs> HomeEvent;
+    private static void OnDesktop() => HomeEvent?.Invoke(null, null);
+
+    public static event EventHandler<EventArgs> GuiUpEvent;
+    private static void OnGuiUp() => GuiUpEvent?.Invoke(null, null);
+
+    public static event EventHandler<EventArgs> GuiDownEvent;
+    private static void OnGuiDown() => GuiDownEvent?.Invoke(null, null);
 
     private Core() {
         if (Started) {
@@ -34,7 +50,7 @@ internal class Core : IDisposable {
         InitializeHandlers();
         SetVarOnSettings();
 
-        Settings.Core.SettingsChangedEventHandler += SettingsUpdateHandler;
+        Settings.Core.SettingsChangedEventHandler += OnSettingsUpdate;
         Started = true;
     }
 
@@ -44,6 +60,9 @@ internal class Core : IDisposable {
 
     public void Dispose() {
         _Instance = null;
+        Settings.Core.SettingsChangedEventHandler -= OnSettingsUpdate;
+        AHKEngine.Reset();
+        Started = false;
         GC.SuppressFinalize(this);
     }
 
@@ -77,39 +96,7 @@ internal class Core : IDisposable {
         AHKEngine.SetVar("SwapVirtualDesktopHotkeysEnabled", GetBoolStr(Settings.Core.SwapVirtualDesktopHotkeysEnabled));
     }
 
-    private static void OnCapsLockSwitchLanguage() {
-        CapsLockSwitchLanguageEvent?.Invoke(null, null);
-    }
-
-    private static void OnCapsLockOn() {
-        CapsLockOnEvent?.Invoke(null, null);
-    }
-
-    private static void OnCapsLockOffEvent() {
-        CapsLockOffEvent?.Invoke(null, null);
-    }
-
-    private static void OnLanguageChange() {
-        LanguageChangeEvent?.Invoke(null, null);
-    }
-
-    private static void OnRAltUp() {
-        RAltUpEvent?.Invoke(null, null);
-    }
-
-    private static void OnDesktop() {
-        HomeEvent?.Invoke(null, null);
-    }
-
-    private static void OnGuiUp() {
-        GuiUpEvent?.Invoke(null, null);
-    }
-
-    private static void OnGuiDown() {
-        GuiDownEvent?.Invoke(null, null);
-    }
-
-    private static void SettingsUpdateHandler(object sender, EventArgs e) {
+    private static void OnSettingsUpdate(object sender, EventArgs e) {
         SetVarOnSettings();
     }
 

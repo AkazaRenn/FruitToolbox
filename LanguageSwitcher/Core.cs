@@ -23,8 +23,8 @@ internal class Core : IDisposable {
             return;
         }
 
-        ToggleExternalHooks(true);
         ToggleStartedState(true);
+        Settings.Core.SettingsChangedEventHandler += OnSettingsUpdate;
         Settings.Core.LanguageSwitcherEnabled = Started;
     }
 
@@ -34,9 +34,9 @@ internal class Core : IDisposable {
 
     public void Dispose() {
         if (Started) {
-            ToggleExternalHooks(false);
             ToggleStartedState(false);
         }
+        Settings.Core.SettingsChangedEventHandler -= OnSettingsUpdate;
         _Instance = null;
         GC.SuppressFinalize(this);
     }
@@ -51,9 +51,12 @@ internal class Core : IDisposable {
                         .AddText("Unable to enable language switcher")
                         .AddText("Please make sure you have both keyboard languages and IME languages installed")
                         .Show();
+                } else {
+                    ToggleExternalHooks(true);
                 }
             }
         } else if (!enable && Started) {
+            ToggleExternalHooks(false);
             ToggleFlyoutEnabled(false);
             Interop.LanguageSwitcher.Stop();
             Started = false;

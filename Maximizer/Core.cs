@@ -41,7 +41,7 @@ internal class Core : IDisposable {
         }
 
         ToggleStartedState(true);
-        ToggleExternalHooks(true);
+        Settings.Core.SettingsChangedEventHandler += OnSettingsUpdate;
         Settings.Core.MaximizerEnabled = Started;
     }
 
@@ -51,9 +51,9 @@ internal class Core : IDisposable {
 
     public void Dispose() {
         if (Started) {
-            ToggleExternalHooks(false);
             ToggleStartedState(false);
         }
+        Settings.Core.SettingsChangedEventHandler -= OnSettingsUpdate;
         _Instance = null;
         GC.SuppressFinalize(this);
     }
@@ -74,9 +74,12 @@ internal class Core : IDisposable {
                     new ToastContentBuilder()
                         .AddText("Unable to enable maximizer")
                         .Show();
+                } else {
+                    ToggleExternalHooks(true);
                 }
             }
         } else if (!enable && Started) {
+            ToggleExternalHooks(false);
             ToggleWindowTrackerHooks(false);
             ToggleInternalHooks(false);
             ClearAutoDesktops();
@@ -106,12 +109,10 @@ internal class Core : IDisposable {
 
     private static void ToggleExternalHooks(bool enable) {
         if (enable) {
-            Settings.Core.SettingsChangedEventHandler += OnSettingsUpdate;
             Hotkey.Core.HomeEvent += OnHome;
             Hotkey.Core.GuiDownEvent += OnHome;
             Hotkey.Core.GuiUpEvent += OnTaskView;
         } else {
-            Settings.Core.SettingsChangedEventHandler -= OnSettingsUpdate;
             Hotkey.Core.HomeEvent -= OnHome;
             Hotkey.Core.GuiDownEvent -= OnHome;
             Hotkey.Core.GuiUpEvent -= OnTaskView;
