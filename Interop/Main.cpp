@@ -104,3 +104,12 @@ String^ Utils::GetWindowTitle(IntPtr hwnd) {
 void Utils::Unfocus() {
     SetForegroundWindow(GetShellWindow());
 }
+
+bool Utils::InFullScreen() {
+    QUERY_USER_NOTIFICATION_STATE state;
+    SHQueryUserNotificationState(&state);
+    return
+        (state == QUNS_BUSY) ||
+        (state == QUNS_RUNNING_D3D_FULL_SCREEN) ||
+        (state == QUNS_PRESENTATION_MODE);
+}

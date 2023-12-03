@@ -14,42 +14,15 @@ internal sealed partial class View: WindowEx {
         SetTitleBar(AppTitleBar);
         AppWindow.Title = "Fruit Toolbox Settings";
         AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/durian.ico"));
-
-        ToggleEnabledStatesBySettings();
-        ToggleExternalHooks(true);
     }
 
-    ~View() {
-        ToggleExternalHooks(false);
-    }
+    private void StartUp_Toggle(object sender, RoutedEventArgs e) {
+        ToggleSwitch toggle = (ToggleSwitch)sender;
 
-    private void ToggleExternalHooks(bool enable) {
-        if(enable) {
-            Core.SettingsChangedEventHandler += OnSettingsUpdate;
-        } else {
-            Core.SettingsChangedEventHandler -= OnSettingsUpdate;
-        }
-    }
-
-    private void OnSettingsUpdate(object sender, EventArgs e) =>
-        ToggleEnabledStatesBySettings();
-
-    private void ToggleEnabledStatesBySettings() {
-        ShowFlyoutCard.IsEnabled = Core.LanguageSwitcherEnabled;
-        RAltModifierCard.IsEnabled = Core.LanguageSwitcherEnabled;
-        ScrollLockOnImeLanguageCard.IsEnabled = Core.LanguageSwitcherEnabled;
-        DisableCapsLockOnLanguageChangeCard.IsEnabled = Core.LanguageSwitcherEnabled;
-
-        DesktopToHomeCard.IsEnabled = Core.MaximizerEnabled;
-        SwapVirtualDesktopHotkeysCard.IsEnabled = Core.MaximizerEnabled;
-        ReorderIntervalCard.IsEnabled = Core.MaximizerEnabled;
-    }
-
-    private void StartUp_Toggle(ToggleSwitch sender, RoutedEventArgs e) {
-        Core.StartUp = sender.IsOn;
-        if (sender.IsOn == true &&
+        Core.StartUp = toggle.IsOn;
+        if (toggle.IsOn == true &&
             Core.StartUp == false) {
-            sender.IsOn = false;
+            toggle.IsOn = false;
             new ToastContentBuilder()
                 .AddText("Failed enabling startup")
                 .AddText("Please check if it is disabled by Windows Settings or Group Policy")

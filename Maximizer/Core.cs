@@ -21,8 +21,19 @@ internal class Core {
 
     static readonly Dictionary<nint, Guid> HwndDesktopMap = [];
     static readonly System.Timers.Timer ReorderDesktopTimer = new(Settings.Core.ReorgnizeDesktopIntervalMs);
+
     static Guid HomeDesktopId;
     static Guid CurrentDesktopId;
+
+    static bool EnableSwitchingDesktop = false;
+    static bool CanSwitchDesktop {
+        get {
+            return EnableSwitchingDesktop &&
+                !(Settings.Core.DisableSwapInFullscreen &&
+                Interop.Utils.InFullScreen());
+        }
+    }
+
 
     private Core() {
         if (Started) {
@@ -45,11 +56,14 @@ internal class Core {
     private static void ToggleStartedState(bool enable) {
         if (enable && !Started) {
             if (Settings.Core.MaximizerEnabled) {
+                EnableSwitchingDesktop = false;
+
                 InitializeDesktops();
                 ToggleWindowTrackerHooks(true);
                 Started = WindowTracker.Start();
-                GoHome();
                 ToggleInternalHooks(true);
+
+                EnableSwitchingDesktop = true;
 
                 if (!Started) {
                     new ToastContentBuilder()
@@ -173,7 +187,9 @@ internal class Core {
         desktop.Rename(e.HWnd);
         Thread.Sleep(WindowAnimationWaitMs);
 
-        desktop.Switch();
+        if (CanSwitchDesktop) {
+            desktop.Switch();
+        }
         desktop.MoveWindow(e.HWnd);
         HwndDesktopMap[e.HWnd] = desktop.Id;
 

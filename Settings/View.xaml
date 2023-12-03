@@ -19,53 +19,66 @@
                     <wuc:SimpleSettingsGroup Header="General"
                                              Visibility="Visible">
                         <wuc:SettingsCard Header="Start up">
-                            <ToggleSwitch IsOn="{x:Bind settings:Core.StartUp}" />
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.StartUp}"
+                                          Toggled="StartUp_Toggle"/>
                         </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
                     <wuc:SimpleSettingsGroup Header="Language Switcher"
                                              Visibility="Visible">
                         <wuc:SettingsCard Header="Enable">
-                            <ToggleSwitch IsOn="{x:Bind settings:Core.LanguageSwitcherEnabled, Mode=TwoWay}"/>
+                            <ToggleSwitch x:Name="LanguageSwitcherEnableToggle"
+                                          IsOn="{x:Bind settings:Core.LanguageSwitcherEnabled, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard x:Name="ShowFlyoutCard"
-                                          Header="Show flyout"
-                                          Description="A flyout will be shown to indicate the new language">
+                        <wuc:SettingsCard Header="Show flyout"
+                                          Description="A flyout will be shown to indicate the new language"
+                                          IsEnabled="{x:Bind LanguageSwitcherEnableToggle.IsOn, Mode=OneWay}">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.FlyoutEnabled, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard x:Name="RAltModifierCard"
-                                          Header="Right Alt enhancement"
-                                          Description="When using IME languages, right Alt key will become a useful function">
+                        <wuc:SettingsCard Header="Don't show flyout when in fullscreen"
+                                          Description="Including games, presentations, videos, etc."
+                                          IsEnabled="{x:Bind LanguageSwitcherEnableToggle.IsOn, Mode=OneWay}">
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.DisableFlyoutInFullscreen, Mode=TwoWay}"/>
+                        </wuc:SettingsCard>
+                        <wuc:SettingsCard Header="Right Alt enhancement"
+                                          Description="When using IME languages, right Alt key will become a useful function"
+                                          IsEnabled="{x:Bind LanguageSwitcherEnableToggle.IsOn, Mode=OneWay}">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.RAltModifierEnabled, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard x:Name="ScrollLockOnImeLanguageCard"
-                                          Header="Turn on Scroll Lock on IME Language"
-                                          Description="As an indication">
+                        <wuc:SettingsCard Header="Turn on Scroll Lock on IME Language"
+                                          Description="As an indication"
+                                          IsEnabled="{x:Bind LanguageSwitcherEnableToggle.IsOn, Mode=OneWay}">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.ScrollLockForImeLanguage, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard x:Name="DisableCapsLockOnLanguageChangeCard"
-                                          Header="Turn off Caps Lock on language change"
-                                          Description="In case you forget">
+                        <wuc:SettingsCard Header="Turn off Caps Lock on language change"
+                                          Description="In case you forget"
+                                          IsEnabled="{x:Bind LanguageSwitcherEnableToggle.IsOn, Mode=OneWay}">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.DisableCapsLockOnLanguageChange, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
                     <wuc:SimpleSettingsGroup Header="Maximizer"
                                              Visibility="Visible">
                         <wuc:SettingsCard Header="Enable">
-                            <ToggleSwitch IsOn="{x:Bind settings:Core.MaximizerEnabled, Mode=TwoWay}"/>
+                            <ToggleSwitch x:Name="MaximizerEnableToggle"
+                                          IsOn="{x:Bind settings:Core.MaximizerEnabled, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard x:Name="DesktopToHomeCard"
-                                          Header="Take over Gui + D"
-                                          Description="Gui + D now goes to the first desktop without minimizing any window">
+                        <wuc:SettingsCard Header="Don't switch desktops when in fullscreen"
+                                          Description="Including games, presentations, videos, etc."
+                                          IsEnabled="{x:Bind MaximizerEnableToggle.IsOn, Mode=OneWay}">
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.DisableSwapInFullscreen, Mode=TwoWay}"/>
+                        </wuc:SettingsCard>
+                        <wuc:SettingsCard Header="Take over Gui + D"
+                                          Description="Gui + D now goes to the first desktop without minimizing any window"
+                                          IsEnabled="{x:Bind MaximizerEnableToggle.IsOn, Mode=OneWay}">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.DesktopToHomeEnabled, Mode=TwoWay}" />
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard x:Name="SwapVirtualDesktopHotkeysCard"
-                                          Header="Swap GUI + Arrow and GUI + Ctrl + Arrow"
-                                          Description="If you perfer having virtual desktops more accessible">
+                        <wuc:SettingsCard Header="Swap GUI + Arrow and GUI + Ctrl + Arrow"
+                                          Description="If you perfer having virtual desktops more accessible"
+                                          IsEnabled="{x:Bind MaximizerEnableToggle.IsOn, Mode=OneWay}">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.SwapVirtualDesktopHotkeysEnabled, Mode=TwoWay}" />
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard x:Name="ReorderIntervalCard"
-                                          Header="Interval before reordering desktops"
-                                          Description="How long to move current desktop after switching desktops">
+                        <wuc:SettingsCard Header="Interval before reordering desktops"
+                                          Description="How long to move current desktop after switching desktops"
+                                          IsEnabled="{x:Bind MaximizerEnableToggle.IsOn, Mode=OneWay}">
                             <NumberBox Width="120"
                                        HorizontalAlignment="Left"
                                        Header="Milliseconds"

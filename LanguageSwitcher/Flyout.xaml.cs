@@ -27,13 +27,13 @@ namespace FruitToolbox.LanguageSwitcher;
 /// </summary>
 internal sealed partial class Flyout: WindowEx, IDisposable {
     private const double WindowMarginFromBottom = 38;
-    private static double ScaleFactor = 1;
-    private static Point MainDisplay = new(0, 0);
-    private static Point MainDisplayOffset = new(0, 0);
 
     private readonly DispatcherQueueTimer HideFlyoutTimer;
     private static readonly UISettings UISettings = new();
 
+    private static double ScaleFactor = 1;
+    private static Point MainDisplay = new(0, 0);
+    private static Point MainDisplayOffset = new(0, 0);
 
     public Flyout() {
         InitializeComponent();
@@ -97,18 +97,23 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
     }
 
     public void OnSwapCategory(object sender, Constants.LanguageEvent e) {
-        UpdateFlyout(new CultureInfo(e.LCID).NativeName);
+        ShowFlyout(new CultureInfo(e.LCID).NativeName);
     }
 
     public void OnCapsLockOn(object sender, EventArgs e) {
-        UpdateFlyout("Caps Lock ON");
+        ShowFlyout("Caps Lock ON");
     }
 
     public void OnCapsLockOff(object sender, EventArgs e) {
-        UpdateFlyout("Caps Lock OFF");
+        ShowFlyout("Caps Lock OFF");
     }
 
-    private void UpdateFlyout(string newText) {
+    private void ShowFlyout(string newText) {
+        if (Settings.Core.DisableFlyoutInFullscreen &&
+            Interop.Utils.InFullScreen()) {
+            return;
+        }
+
         DispatcherQueue.TryEnqueue(() => {
             FlyoutText.Text = newText;
 

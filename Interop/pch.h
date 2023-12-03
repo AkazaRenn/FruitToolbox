@@ -9,7 +9,9 @@
 
 // add headers that you want to pre-compile here
 #include <Windows.h>
+#include <WinUser.h>
 #include <dwmapi.h>
+#include <shellapi.h>
 
 #include <iostream>
 #include <set>

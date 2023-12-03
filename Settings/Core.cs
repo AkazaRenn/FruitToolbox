@@ -9,11 +9,13 @@ namespace FruitToolbox.Settings;
 internal class Entries {
     public bool LanguageSwitcherEnabled { get; set; } = false;
     public bool FlyoutEnabled { get; set; } = true;
+    public bool DisableFlyoutInFullscreen { get; set; } = true;
     public bool ScrollLockForImeLanguage { get; set; } = true;
     public bool DisableCapsLockOnLanguageChange { get; set; } = false;
     public bool RAltModifierEnabled { get; set; } = true;
 
     public bool MaximizerEnabled { get; set; } = false;
+    public bool DisableSwapInFullscreen { get; set; } = true;
     public bool DesktopToHomeEnabled { get; set; } = false;
     public bool SwapVirtualDesktopHotkeysEnabled { get; set; } = false;
     public uint ReorgnizeDesktopIntervalMs { get; set; } = 5000;
@@ -70,6 +72,19 @@ public static class Core {
         set {
             EnsureLoaded();
             SettingsEntries.FlyoutEnabled = value;
+            OnSettingsUpdate();
+        }
+    }
+
+    public static bool DisableFlyoutInFullscreen {
+        get {
+            return LanguageSwitcherEnabled &&
+                FlyoutEnabled &&
+                SettingsEntries.DisableFlyoutInFullscreen;
+        }
+        set {
+            EnsureLoaded();
+            SettingsEntries.DisableFlyoutInFullscreen = value;
             OnSettingsUpdate();
         }
     }
@@ -142,6 +157,18 @@ public static class Core {
         set {
             EnsureLoaded();
             SettingsEntries.MaximizerEnabled = value;
+            OnSettingsUpdate();
+        }
+    }
+
+    public static bool DisableSwapInFullscreen {
+        get {
+            return MaximizerEnabled &&
+                SettingsEntries.DisableSwapInFullscreen;
+        }
+        set {
+            EnsureLoaded();
+            SettingsEntries.DisableSwapInFullscreen = value;
             OnSettingsUpdate();
         }
     }

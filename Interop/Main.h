@@ -45,6 +45,7 @@ public:
     static void SetBorderlessWindow(System::IntPtr hwnd);
     static System::String^ GetWindowTitle(System::IntPtr hwnd);
     static void Unfocus();
+    static bool InFullScreen();
 };
 }
 }
