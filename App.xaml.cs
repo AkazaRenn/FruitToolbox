@@ -13,8 +13,16 @@ namespace FruitToolbox;
 public sealed partial class App: Application {
     #region Properties
 
-    public static TaskbarIcon TrayIcon { get; private set; }
+    private static readonly LanguageSwitcher.Core LanguageSwitcher = 
+        FruitToolbox.LanguageSwitcher.Core.Instance;
+    private static readonly Maximizer.Core Maximizer = 
+        FruitToolbox.Maximizer.Core.Instance;
+    private static readonly Hotkey.Core Hotkey = 
+        FruitToolbox.Hotkey.Core.Instance;
+
+    private static TaskbarIcon TrayIcon;
     private static Settings.View SettingsWindow = null;
+    
 
     #endregion
 
@@ -38,7 +46,6 @@ public sealed partial class App: Application {
     /// </summary>
     /// <param name="args">Details about the launch request and process.</param>
     protected override void OnLaunched(LaunchActivatedEventArgs args) {
-        InitializeModules();
         InitializeTrayIcon();
     }
 
@@ -53,12 +60,6 @@ public sealed partial class App: Application {
         TrayIcon.ForceCreate();
     }
 
-    private static void InitializeModules() {
-        LanguageSwitcher.Core.Start();
-        Maximizer.Core.Start();
-        Hotkey.Core.Start();
-    }
-
     private void OpenSettingsCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
         if (SettingsWindow == null) {
             SettingsWindow = new();
@@ -69,8 +70,8 @@ public sealed partial class App: Application {
     }
 
     private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
-        LanguageSwitcher.Core.Stop();
-        Maximizer.Core.Stop();
+        //LanguageSwitcher?.Dispose();
+        //Maximizer.Core.Stop();
         TrayIcon?.Dispose();
         Environment.Exit(0);
     }

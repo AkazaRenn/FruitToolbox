@@ -16,7 +16,19 @@ internal sealed partial class View: WindowEx {
         AppWindow.SetIcon(Path.Combine(AppContext.BaseDirectory, "Assets/durian.ico"));
 
         ToggleEnabledStatesBySettings();
-        Core.SettingsChangedEventHandler += OnSettingsUpdate;
+        ToggleExternalHooks(true);
+    }
+
+    ~View() {
+        ToggleExternalHooks(false);
+    }
+        
+    private void ToggleExternalHooks(bool enable) {
+        if(enable) {
+            Core.SettingsChangedEventHandler += OnSettingsUpdate;
+        } else {
+            Core.SettingsChangedEventHandler -= OnSettingsUpdate;
+        }
     }
 
     private void OnSettingsUpdate(object sender, EventArgs e) =>

@@ -2,31 +2,38 @@
 
 namespace FruitToolbox.LanguageSwitcher;
 
-internal static partial class Core {
-    private static bool Started = false;
+internal class Core {
+    static bool Started = false;
+    static Core _Instance = null;
+    public static Core Instance {
+        get {
+            _Instance ??= new();
+            return _Instance;
+        }
+    }
 
     public const int WindowActivateWaitMs = 500;
 
-    private static Flyout NewLangFlyout = null;
+    static Flyout NewLangFlyout = null;
     public static event EventHandler<Constants.LanguageEvent> NewLanguageEvent;
     public static event EventHandler<Constants.LanguageEvent> SwapCategoryEvent;
 
-    public static bool Start() {
+    private Core() {
         if (Started) {
-            return false;
+            return;
         }
 
         ToggleExternalHooks(true);
         ToggleStartedState(true);
         Settings.Core.LanguageSwitcherEnabled = Started;
-        return Started;
     }
 
-    public static void Stop() {
+    ~Core() {
         if (Started) {
             ToggleExternalHooks(false);
             ToggleStartedState(false);
         }
+        _Instance = null;
     }
 
     private static void ToggleStartedState(bool enable) {

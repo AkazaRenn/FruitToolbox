@@ -6,8 +6,15 @@ using static FruitToolbox.Constants;
 
 namespace FruitToolbox.Maximizer;
 
-internal static class Core {
+internal class Core {
     private static bool Started = false;
+    static Core _Instance = null;
+    public static Core Instance {
+        get {
+            _Instance ??= new();
+            return _Instance;
+        }
+    }
 
     const int UserCreatedDesktopCount = 1;
     const int WindowAnimationWaitMs = 250;
@@ -17,22 +24,22 @@ internal static class Core {
     static Guid HomeDesktopId;
     static Guid CurrentDesktopId;
 
-    public static bool Start() {
+    private Core() {
         if (Started) {
-            return false;
+            return;
         }
 
         ToggleStartedState(true);
         ToggleExternalHooks(true);
         Settings.Core.MaximizerEnabled = Started;
-        return Started;
     }
 
-    public static void Stop() {
+    ~Core() {
         if (Started) {
             ToggleExternalHooks(false);
             ToggleStartedState(false);
         }
+        _Instance = null;
     }
 
     private static void ToggleStartedState(bool enable) {
@@ -83,10 +90,12 @@ internal static class Core {
             Settings.Core.SettingsChangedEventHandler += OnSettingsUpdate;
             Hotkey.Core.HomeEvent += OnHome;
             Hotkey.Core.GuiDownEvent += OnHome;
+            Hotkey.Core.GuiUpEvent += OnTaskView;
         } else {
             Settings.Core.SettingsChangedEventHandler -= OnSettingsUpdate;
             Hotkey.Core.HomeEvent -= OnHome;
             Hotkey.Core.GuiDownEvent -= OnHome;
+            Hotkey.Core.GuiUpEvent -= OnTaskView;
         }
     }
 

@@ -4,7 +4,16 @@ using AutoHotkey.Interop;
 
 namespace FruitToolbox.Hotkey;
 
-internal static class Core {
+internal class Core {
+    private static bool Started = false;
+    static Core _Instance = null;
+    public static Core Instance {
+        get {
+            _Instance ??= new();
+            return _Instance;
+        }
+    }
+
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
     public delegate void AHKDelegate();
     public static event EventHandler<EventArgs> CapsLockSwitchLanguageEvent;
@@ -16,9 +25,8 @@ internal static class Core {
     public static event EventHandler<EventArgs> GuiUpEvent;
     public static event EventHandler<EventArgs> GuiDownEvent;
     private static readonly AutoHotkeyEngine AHKEngine = AutoHotkeyEngine.Instance;
-    private static bool Started = false;
 
-    public static void Start() {
+    private Core() {
         if (Started) {
             return;
         }
@@ -28,6 +36,10 @@ internal static class Core {
 
         Settings.Core.SettingsChangedEventHandler += SettingsUpdateHandler;
         Started = true;
+    }
+
+    ~Core() {
+        _Instance = null;
     }
 
     private static void InitializeHandlers() {
