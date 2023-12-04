@@ -39,7 +39,7 @@ void CALLBACK WindowTracker::onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dw
     if (idObject == OBJID_WINDOW &&
         idChild == CHILDID_SELF &&
         maxWindows.contains(hwnd)) {
-        Sleep(10);
+        Sleep(100);
         if (!IsWindow(hwnd)) {
             maxWindows.erase(hwnd);
             thread(closeWindowHandler, hwnd).detach();
