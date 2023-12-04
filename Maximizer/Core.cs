@@ -108,10 +108,8 @@ internal class Core : IDisposable {
 
     private static void ToggleExternalHooks(bool enable) {
         if (enable) {
-            Hotkey.Core.GuiDownEvent += OnHome;
             Hotkey.Core.GuiUpEvent += OnTaskView;
         } else {
-            Hotkey.Core.GuiDownEvent -= OnHome;
             Hotkey.Core.GuiUpEvent -= OnTaskView;
         }
     }
@@ -136,15 +134,6 @@ internal class Core : IDisposable {
         if (Started != Settings.Core.MaximizerEnabled) {
             ToggleStartedState(Settings.Core.MaximizerEnabled);
             Settings.Core.MaximizerEnabled = Started;
-        }
-    }
-
-    private static void OnHome(object _, EventArgs e) {
-
-        if (SafeVirtualDesktop.Current.Id == HomeDesktopId) {
-            SafeVirtualDesktop.SwitchRight();
-        } else {
-            GoHome();
         }
     }
 

@@ -12,7 +12,7 @@
     Return
 
     $#Down::
-        DllCall(onGuiDownPtr)
+        Send #d
     Return
 
 

@@ -36,9 +36,6 @@ internal class Core : IDisposable {
     public static event EventHandler<EventArgs> GuiUpEvent;
     private static void OnGuiUp() => GuiUpEvent?.Invoke(null, null);
 
-    public static event EventHandler<EventArgs> GuiDownEvent;
-    private static void OnGuiDown() => GuiDownEvent?.Invoke(null, null);
-
     private Core() {
         if (Started) {
             return;
@@ -74,7 +71,6 @@ internal class Core : IDisposable {
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.RAltModifier));
 
         AHKEngine.SetVar("onGuiUpPtr", GetActionDelegateStr(OnGuiUp));
-        AHKEngine.SetVar("onGuiDownPtr", GetActionDelegateStr(OnGuiDown));
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.SwapVirtualDesktopHotkeys));
 
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.LGuiRemap));
