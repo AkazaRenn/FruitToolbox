@@ -66,11 +66,6 @@
                                           IsEnabled="{x:Bind MaximizerEnableToggle.IsOn, Mode=OneWay}">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.DisableSwapInFullscreen, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard Header="Take over Gui + D"
-                                          Description="Gui + D now goes to the first desktop without minimizing any window"
-                                          IsEnabled="{x:Bind MaximizerEnableToggle.IsOn, Mode=OneWay}">
-                            <ToggleSwitch IsOn="{x:Bind settings:Core.DesktopToHomeEnabled, Mode=TwoWay}" />
-                        </wuc:SettingsCard>
                         <wuc:SettingsCard Header="Swap GUI + Arrow and GUI + Ctrl + Arrow"
                                           Description="If you perfer having virtual desktops more accessible"
                                           IsEnabled="{x:Bind MaximizerEnableToggle.IsOn, Mode=OneWay}">

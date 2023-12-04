@@ -7,7 +7,8 @@ using namespace FruitToolbox::Interop::Unmanaged;
 
 void CALLBACK WindowTracker::onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (isWindow(hwnd, idObject, idChild) &&
-        !IsZoomed(hwnd)) {
+        !IsZoomed(hwnd) &&
+        !maxWindows.contains(hwnd)) {
         thread(newFloatWindowHandler, hwnd).detach();
     }
 }
@@ -30,7 +31,6 @@ void CALLBACK WindowTracker::onMaxUnmaxWindow(HWINEVENTHOOK hWinEventHook, DWORD
 
 void CALLBACK WindowTracker::onMinWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (maxWindows.contains(hwnd)) {
-        maxWindows.erase(hwnd);
         thread(minWindowHandler, hwnd).detach();
     }
 }
@@ -39,7 +39,7 @@ void CALLBACK WindowTracker::onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dw
     if (idObject == OBJID_WINDOW &&
         idChild == CHILDID_SELF &&
         maxWindows.contains(hwnd)) {
-        Sleep(100);
+        Sleep(10);
         if (!IsWindow(hwnd)) {
             maxWindows.erase(hwnd);
             thread(closeWindowHandler, hwnd).detach();

@@ -95,6 +95,10 @@ void Utils::SetBorderlessWindow(IntPtr hwnd) {
         sizeof(cornerPreference));
 }
 
+void Utils::UnminimizeInBackground(IntPtr hwnd) {
+    ShowWindow(static_cast<HWND>(hwnd.ToPointer()), SW_SHOWNOACTIVATE);
+}   
+
 String^ Utils::GetWindowTitle(IntPtr hwnd) {
     wchar_t title[MAX_PATH];
     GetWindowTextW(static_cast<HWND>(hwnd.ToPointer()), title, ARRAYSIZE(title));

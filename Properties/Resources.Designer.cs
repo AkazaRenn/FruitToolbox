@@ -63,16 +63,6 @@ namespace FruitToolbox.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] DesktopToHome {
-            get {
-                object obj = ResourceManager.GetObject("DesktopToHome", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] LanguageSwitcher {
             get {
                 object obj = ResourceManager.GetObject("LanguageSwitcher", resourceCulture);

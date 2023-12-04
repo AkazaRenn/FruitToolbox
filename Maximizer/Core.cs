@@ -17,7 +17,6 @@ internal class Core : IDisposable {
     }
 
     const int UserCreatedDesktopCount = 1;
-    const int WindowAnimationWaitMs = 250;
 
     static readonly Dictionary<nint, Guid> HwndDesktopMap = [];
     static readonly System.Timers.Timer ReorderDesktopTimer = new(Settings.Core.ReorgnizeDesktopIntervalMs);
@@ -94,26 +93,24 @@ internal class Core : IDisposable {
             WindowTracker.NewFloatWindowEvent += OnFloatWindow;
             WindowTracker.MaxWindowEvent += OnMax;
             WindowTracker.UnmaxWindowEvent += OnUnmax;
-            WindowTracker.MinWindowEvent += OnMinOrClose;
-            WindowTracker.CloseWindowEvent += OnMinOrClose;
+            WindowTracker.MinWindowEvent += OnMin;
+            WindowTracker.CloseWindowEvent += OnClose;
             WindowTracker.WindowTitleChangeEvent += OnWindowTitleChange;
         } else {
             WindowTracker.NewFloatWindowEvent -= OnFloatWindow;
             WindowTracker.MaxWindowEvent -= OnMax;
             WindowTracker.UnmaxWindowEvent -= OnUnmax;
-            WindowTracker.MinWindowEvent -= OnMinOrClose;
-            WindowTracker.CloseWindowEvent -= OnMinOrClose;
+            WindowTracker.MinWindowEvent -= OnMin;
+            WindowTracker.CloseWindowEvent -= OnClose;
             WindowTracker.WindowTitleChangeEvent -= OnWindowTitleChange;
         }
     }
 
     private static void ToggleExternalHooks(bool enable) {
         if (enable) {
-            Hotkey.Core.HomeEvent += OnHome;
             Hotkey.Core.GuiDownEvent += OnHome;
             Hotkey.Core.GuiUpEvent += OnTaskView;
         } else {
-            Hotkey.Core.HomeEvent -= OnHome;
             Hotkey.Core.GuiDownEvent -= OnHome;
             Hotkey.Core.GuiUpEvent -= OnTaskView;
         }
@@ -191,7 +188,6 @@ internal class Core : IDisposable {
     public static void OnMax(object _, WindowEvent e) {
         var desktop = SafeVirtualDesktop.Create();
         desktop.Rename(e.HWnd);
-        Thread.Sleep(WindowAnimationWaitMs);
 
         if (CanSwitchDesktop) {
             desktop.Switch();
@@ -204,12 +200,21 @@ internal class Core : IDisposable {
 
     public static void OnUnmax(object _, WindowEvent e) {
         SafeVirtualDesktop.PinWindow(e.HWnd);
-        Thread.Sleep(WindowAnimationWaitMs);
 
-        OnMinOrClose(_, e);
+        OnClose(_, e);
     }
 
-    public static void OnMinOrClose(object _, WindowEvent e) {
+    public static void OnMin(object _, WindowEvent e) {
+        if (HwndDesktopMap.TryGetValue(e.HWnd, out Guid desktopId) &&
+            SafeVirtualDesktop.Current.Id == desktopId) {
+            SafeVirtualDesktop.Switch(HomeDesktopId);
+
+            Thread.Sleep(100);
+            Interop.Utils.UnminimizeInBackground(e.HWnd);
+        }
+    }
+
+    public static void OnClose(object _, WindowEvent e) {
         if (HwndDesktopMap.TryGetValue(e.HWnd, out Guid desktopId) &&
             SafeVirtualDesktop.Current.Id == desktopId) {
             //SafeVirtualDesktop.Switch(CurrentDesktopId);

@@ -33,9 +33,6 @@ internal class Core : IDisposable {
     public static event EventHandler<EventArgs> RAltUpEvent;
     private static void OnRAltUp() => RAltUpEvent?.Invoke(null, null);
 
-    public static event EventHandler<EventArgs> HomeEvent;
-    private static void OnDesktop() => HomeEvent?.Invoke(null, null);
-
     public static event EventHandler<EventArgs> GuiUpEvent;
     private static void OnGuiUp() => GuiUpEvent?.Invoke(null, null);
 
@@ -76,9 +73,6 @@ internal class Core : IDisposable {
         AHKEngine.SetVar("onRaltUpPtr", GetActionDelegateStr(OnRAltUp));
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.RAltModifier));
 
-        AHKEngine.SetVar("onDesktopPtr", GetActionDelegateStr(OnDesktop));
-        AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.DesktopToHome));
-
         AHKEngine.SetVar("onGuiUpPtr", GetActionDelegateStr(OnGuiUp));
         AHKEngine.SetVar("onGuiDownPtr", GetActionDelegateStr(OnGuiDown));
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.SwapVirtualDesktopHotkeys));
@@ -92,7 +86,6 @@ internal class Core : IDisposable {
         AHKEngine.SetVar("RAltModifierEnabled", GetBoolStr(Settings.Core.RAltModifierEnabled));
         AHKEngine.SetVar("LGuiRemapEnabled", GetBoolStr(Settings.Core.LGuiRemapEnabled));
         AHKEngine.SetVar("ReverseMouseWheelEnabled", GetBoolStr(Settings.Core.ReverseMouseWheelEnabled));
-        AHKEngine.SetVar("DesktopToHomeEnabled", GetBoolStr(Settings.Core.DesktopToHomeEnabled));
         AHKEngine.SetVar("SwapVirtualDesktopHotkeysEnabled", GetBoolStr(Settings.Core.SwapVirtualDesktopHotkeysEnabled));
     }
 

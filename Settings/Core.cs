@@ -16,7 +16,6 @@ internal class Entries {
 
     public bool MaximizerEnabled { get; set; } = false;
     public bool DisableSwapInFullscreen { get; set; } = true;
-    public bool DesktopToHomeEnabled { get; set; } = false;
     public bool SwapVirtualDesktopHotkeysEnabled { get; set; } = false;
     public uint ReorgnizeDesktopIntervalMs { get; set; } = 5000;
 
@@ -169,18 +168,6 @@ public static class Core {
         set {
             EnsureLoaded();
             SettingsEntries.DisableSwapInFullscreen = value;
-            OnSettingsUpdate();
-        }
-    }
-
-    public static bool DesktopToHomeEnabled {
-        get {
-            return MaximizerEnabled &&
-                SettingsEntries.DesktopToHomeEnabled;
-        }
-        set {
-            EnsureLoaded();
-            SettingsEntries.DesktopToHomeEnabled = value;
             OnSettingsUpdate();
         }
     }
