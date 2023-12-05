@@ -54,12 +54,14 @@ Unmanaged::onLanguageChangeCallback LanguageSwitcher::GetCallbackPtr(OnLanguageC
 // class WindowTracker
 bool WindowTracker::Start(
     WindowChangedCallbackDelegate^ _newFloatWindowHandler,
+    WindowChangedCallbackDelegate^ _taskViewHandler,
     WindowChangedCallbackDelegate^ _maxWindowHandler,
     WindowChangedCallbackDelegate^ _unmaxWindowHandler,
     WindowChangedCallbackDelegate^ _minWindowHandler,
     WindowChangedCallbackDelegate^ _closeWindowHandler,
     WindowChangedCallbackDelegate^ _windowTitleChangeHandler) {
     static Unmanaged::onWindowChangeCallback newFloatWindowHandlerPtr = nullptr;
+    static Unmanaged::onWindowChangeCallback taskViewHandlerPtr = nullptr;
     static Unmanaged::onWindowChangeCallback maxWindowHandlerPtr = nullptr;
     static Unmanaged::onWindowChangeCallback unmaxWindowHandlerPtr = nullptr;
     static Unmanaged::onWindowChangeCallback minWindowHandlerPtr = nullptr;
@@ -68,6 +70,7 @@ bool WindowTracker::Start(
 
     return Unmanaged::WindowTracker::start(
         newFloatWindowHandlerPtr = GetCallbackPtr(_newFloatWindowHandler),
+        taskViewHandlerPtr = GetCallbackPtr(_taskViewHandler),
         maxWindowHandlerPtr = GetCallbackPtr(_maxWindowHandler),
         unmaxWindowHandlerPtr = GetCallbackPtr(_unmaxWindowHandler),
         minWindowHandlerPtr = GetCallbackPtr(_minWindowHandler),

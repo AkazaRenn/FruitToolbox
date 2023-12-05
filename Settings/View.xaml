@@ -55,25 +55,25 @@
                             <ToggleSwitch IsOn="{x:Bind settings:Core.DisableCapsLockOnLanguageChange, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
-                    <wuc:SimpleSettingsGroup Header="Maximizer"
+                    <wuc:SimpleSettingsGroup Header="Max To Desktop"
                                              Visibility="Visible">
                         <wuc:SettingsCard Header="Enable">
-                            <ToggleSwitch x:Name="MaximizerEnableToggle"
-                                          IsOn="{x:Bind settings:Core.MaximizerEnabled, Mode=TwoWay}"/>
+                            <ToggleSwitch x:Name="MaxToDesktopEnableToggle"
+                                          IsOn="{x:Bind settings:Core.MaxToDesktopEnabled, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
                         <wuc:SettingsCard Header="Don't switch desktops when in fullscreen"
                                           Description="Including games, presentations, videos, etc."
-                                          IsEnabled="{x:Bind MaximizerEnableToggle.IsOn, Mode=OneWay}">
+                                          IsEnabled="{x:Bind MaxToDesktopEnableToggle.IsOn, Mode=OneWay}">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.DisableSwapInFullscreen, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
                         <wuc:SettingsCard Header="Swap GUI + Arrow and GUI + Ctrl + Arrow"
                                           Description="If you perfer having virtual desktops more accessible"
-                                          IsEnabled="{x:Bind MaximizerEnableToggle.IsOn, Mode=OneWay}">
+                                          IsEnabled="{x:Bind MaxToDesktopEnableToggle.IsOn, Mode=OneWay}">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.SwapVirtualDesktopHotkeysEnabled, Mode=TwoWay}" />
                         </wuc:SettingsCard>
                         <wuc:SettingsCard Header="Interval before reordering desktops"
                                           Description="How long to move current desktop after switching desktops"
-                                          IsEnabled="{x:Bind MaximizerEnableToggle.IsOn, Mode=OneWay}">
+                                          IsEnabled="{x:Bind MaxToDesktopEnableToggle.IsOn, Mode=OneWay}">
                             <NumberBox Width="120"
                                        HorizontalAlignment="Left"
                                        Header="Milliseconds"

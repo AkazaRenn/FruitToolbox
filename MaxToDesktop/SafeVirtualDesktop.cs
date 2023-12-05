@@ -2,7 +2,7 @@
 
 using WindowsDesktop;
 
-namespace FruitToolbox.Maximizer;
+namespace FruitToolbox.MaxToDesktop;
 
 internal class SafeVirtualDesktop {
     const int DefaultRetry = 10;
@@ -13,62 +13,57 @@ internal class SafeVirtualDesktop {
     private static readonly AutoHotkeyEngine AHKEngine = AutoHotkeyEngine.Instance;
     private readonly Guid WrappedDesktopId;
 
-    public SafeVirtualDesktop(Guid id) {
+    public SafeVirtualDesktop(Guid id) =>
         WrappedDesktopId = id;
-    }
 
-    public SafeVirtualDesktop(VirtualDesktop desktop) {
+    public SafeVirtualDesktop(VirtualDesktop desktop) =>
         WrappedDesktopId = desktop.Id;
-    }
 
     public Guid Id {
-        get {
-            return WrappedDesktopId;
-        }
+        get => WrappedDesktopId;
     }
 
     public string Name {
-        get {
-            return Try(() => VirtualDesktop.FromId(WrappedDesktopId)?.Name);
-        }
-        set {
+        get =>
+            Try(() => VirtualDesktop.FromId(WrappedDesktopId)?.Name);
+        set =>
             Try(() => VirtualDesktop.FromId(WrappedDesktopId).Name = value);
-        }
     }
 
     public bool IsAutoCreated {
-        get {
-            return Name.EndsWith(CreatedDesktopNamePostfix);
-        }
+        get =>
+            Name.EndsWith(CreatedDesktopNamePostfix);
     }
 
     public static SafeVirtualDesktop Current {
-        get {
-            return Try(() => new SafeVirtualDesktop(VirtualDesktop.Current));
-        }
+        get =>
+            Try(() => new SafeVirtualDesktop(VirtualDesktop.Current));
     }
 
     public static SafeVirtualDesktop CurrentLeft {
-        get {
-            return Current.Left;
-        }
+        get =>
+            Current.Left;
     }
 
     public static SafeVirtualDesktop CurrentRight {
-        get {
-            return Current.Right;
-        }
+        get =>
+            Current.Right;
     }
 
     public static SafeVirtualDesktop[] Desktops {
-        get {
-            return Try(() => VirtualDesktop.GetDesktops().Select(desktop => new SafeVirtualDesktop(desktop)).ToArray());
-        }
+        get =>
+            Try(() => VirtualDesktop.GetDesktops().Select(desktop => new SafeVirtualDesktop(desktop)).ToArray());
     }
 
-    public static SafeVirtualDesktop Create() {
-        return Try(() => new SafeVirtualDesktop(VirtualDesktop.Create()));
-    }
+    public static SafeVirtualDesktop Create() =>
+        Try(() => new SafeVirtualDesktop(VirtualDesktop.Create()));
+
+    public static SafeVirtualDesktop Create(nint hwnd) =>
+        Try(() => {
+            SafeVirtualDesktop d = new(VirtualDesktop.Create());
+            d.Rename(hwnd);
+            return d;
+            });
 
     public SafeVirtualDesktop Left {
         get {
@@ -106,48 +101,33 @@ internal class SafeVirtualDesktop {
         }
     }
 
-    public static SafeVirtualDesktop FromId(Guid id) {
-        return Try(() => new SafeVirtualDesktop(VirtualDesktop.FromId(id)));
-    }
+    public static SafeVirtualDesktop FromId(Guid id) =>
+        Try(() => new SafeVirtualDesktop(VirtualDesktop.FromId(id)));
 
-    public static void PinWindow(nint window) {
+    public static void PinWindow(nint window) =>
         Try(() => VirtualDesktop.PinWindow(window));
-    }
 
-    public static void UnpinWindow(nint window) {
+    public static void UnpinWindow(nint window) =>
         Try(() => VirtualDesktop.UnpinWindow(window));
-    }
 
-    public void MoveWindow(nint window) {
+    public void MoveWindow(nint window) =>
         Try(() => VirtualDesktop.MoveToDesktop(window, VirtualDesktop.FromId(WrappedDesktopId)));
-    }
 
-    public static void MoveToDesktop(nint window, Guid id) {
+    public static void MoveToDesktop(nint window, Guid id) =>
         Try(() => VirtualDesktop.MoveToDesktop(window, VirtualDesktop.FromId(id)));
-    }
 
-    public void Switch() {
+    public void Switch() =>
         Try(() => VirtualDesktop.FromId(WrappedDesktopId)?.Switch());
-    }
 
     public static void Switch(Guid id) {
         new SafeVirtualDesktop(id).Switch();
     }
 
-    public void Move(int index) {
+    public void Move(int index) =>
         Try(() => VirtualDesktop.FromId(WrappedDesktopId)?.Move(index));
-    }
 
     public static void Move(Guid id, int index) {
         new SafeVirtualDesktop(id).Move(index);
-    }
-
-    public static void SwitchLeft() {
-        Utils.SwitchLeftDesktop();
-    }
-
-    public static void SwitchRight() {
-        Utils.SwitchRightDesktop();
     }
 
     public void Rename(nint hwnd) =>

@@ -15,8 +15,8 @@ internal class Core : IDisposable {
     public const int WindowActivateWaitMs = 500;
 
     static Flyout NewLangFlyout = null;
-    public static event EventHandler<Constants.LanguageEvent> NewLanguageEvent;
-    public static event EventHandler<Constants.LanguageEvent> SwapCategoryEvent;
+    public static event EventHandler<Utils.LanguageEvent> NewLanguageEvent;
+    public static event EventHandler<Utils.LanguageEvent> SwapCategoryEvent;
 
     private Core() {
         if (Started) {
@@ -48,7 +48,7 @@ internal class Core : IDisposable {
 
                 if (!Started) {
                     new ToastContentBuilder()
-                        .AddText("Unable to enable language switcher")
+                        .AddText("Unable to enable Language Switcher")
                         .AddText("Please make sure you have both keyboard languages and IME languages installed")
                         .Show();
                 } else {
@@ -99,12 +99,12 @@ internal class Core : IDisposable {
     }
     private static void InvokeSwapCategoryEvent(int lcid, bool imeMode) {
         SetScrollLock(imeMode);
-        SwapCategoryEvent?.Invoke(null, new Constants.LanguageEvent(lcid, imeMode));
+        SwapCategoryEvent?.Invoke(null, new Utils.LanguageEvent(lcid, imeMode));
     }
 
     private static void InvokeNewLanguageEvent(int lcid, bool imeMode) {
         SetScrollLock(imeMode);
-        NewLanguageEvent?.Invoke(null, new Constants.LanguageEvent(lcid, imeMode));
+        NewLanguageEvent?.Invoke(null, new Utils.LanguageEvent(lcid, imeMode));
         if(Settings.Core.DisableCapsLockOnLanguageChange) {
             Utils.DisableCapsLock();
         }

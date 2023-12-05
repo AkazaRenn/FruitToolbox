@@ -15,8 +15,8 @@ public sealed partial class App: Application {
 
     private static readonly LanguageSwitcher.Core LanguageSwitcher =
         FruitToolbox.LanguageSwitcher.Core.Instance;
-    private static readonly Maximizer.Core Maximizer =
-        FruitToolbox.Maximizer.Core.Instance;
+    private static readonly MaxToDesktop.Core MaxToDesktop =
+        FruitToolbox.MaxToDesktop.Core.Instance;
     private static readonly Hotkey.Core Hotkey =
         FruitToolbox.Hotkey.Core.Instance;
 
@@ -76,7 +76,7 @@ public sealed partial class App: Application {
 
     private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
         LanguageSwitcher?.Dispose();
-        Maximizer?.Dispose();
+        MaxToDesktop?.Dispose();
         Hotkey?.Dispose();
         TrayIcon?.Dispose();
         Environment.Exit(0);

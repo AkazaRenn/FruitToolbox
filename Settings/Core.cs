@@ -14,7 +14,7 @@ internal class Entries {
     public bool DisableCapsLockOnLanguageChange { get; set; } = false;
     public bool RAltModifierEnabled { get; set; } = true;
 
-    public bool MaximizerEnabled { get; set; } = false;
+    public bool MaxToDesktopEnabled { get; set; } = false;
     public bool DisableSwapInFullscreen { get; set; } = true;
     public bool SwapVirtualDesktopHotkeysEnabled { get; set; } = false;
     public uint ReorgnizeDesktopIntervalMs { get; set; } = 5000;
@@ -148,21 +148,21 @@ public static class Core {
         }
     }
 
-    public static bool MaximizerEnabled {
+    public static bool MaxToDesktopEnabled {
         get {
             EnsureLoaded();
-            return SettingsEntries.MaximizerEnabled;
+            return SettingsEntries.MaxToDesktopEnabled;
         }
         set {
             EnsureLoaded();
-            SettingsEntries.MaximizerEnabled = value;
+            SettingsEntries.MaxToDesktopEnabled = value;
             OnSettingsUpdate();
         }
     }
 
     public static bool DisableSwapInFullscreen {
         get {
-            return MaximizerEnabled &&
+            return MaxToDesktopEnabled &&
                 SettingsEntries.DisableSwapInFullscreen;
         }
         set {
@@ -174,7 +174,7 @@ public static class Core {
 
     public static bool SwapVirtualDesktopHotkeysEnabled {
         get {
-            return MaximizerEnabled &&
+            return MaxToDesktopEnabled &&
                 SettingsEntries.SwapVirtualDesktopHotkeysEnabled;
         }
         set {

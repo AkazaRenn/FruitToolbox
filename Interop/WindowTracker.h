@@ -13,6 +13,7 @@ class WindowTracker
 {
 private:
     static onWindowChangeCallback newFloatWindowHandler;
+    static onWindowChangeCallback taskViewHandler;
     static onWindowChangeCallback maxWindowHandler;
     static onWindowChangeCallback unmaxWindowHandler;
     static onWindowChangeCallback minWindowHandler;
@@ -22,10 +23,14 @@ private:
     static vector<HWINEVENTHOOK> hooks;
     static set<HWND> maxWindows;
 
-    static inline bool isWindow(HWND hwnd, LONG idObject, LONG idChild) {
+    static inline bool validSource(LONG idObject, LONG idChild) {
         return
             (idObject == OBJID_WINDOW) &&
-            (idChild == CHILDID_SELF) &&
+            (idChild == CHILDID_SELF);
+    }
+
+    static inline bool isWindow(HWND hwnd) {
+        return
             (IsWindow(hwnd)) &&
             (IsWindowVisible(hwnd)) &&
             (GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_OVERLAPPEDWINDOW) &&
@@ -38,14 +43,15 @@ private:
 
     static bool CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
 
-    static void CALLBACK onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-    static void CALLBACK onMaxUnmaxWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+    static void CALLBACK onForeground(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+    static void CALLBACK onObjMove(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
     static void CALLBACK onMinWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-    static void CALLBACK onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
-    static void CALLBACK onWindowTitleChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+    static void CALLBACK onObjDestroy(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
+    static void CALLBACK obObjNameChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime);
 public:
     static bool start(
         onWindowChangeCallback _newFloatWindowHandler,
+        onWindowChangeCallback _taskViewHandler,
         onWindowChangeCallback _maxWindowHandler,
         onWindowChangeCallback _unmaxWindowHandler,
         onWindowChangeCallback _minWindowHandler,

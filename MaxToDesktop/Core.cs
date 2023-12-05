@@ -2,9 +2,9 @@
 
 using WindowsDesktop;
 
-using static FruitToolbox.Constants;
+using static FruitToolbox.Utils;
 
-namespace FruitToolbox.Maximizer;
+namespace FruitToolbox.MaxToDesktop;
 
 internal class Core : IDisposable {
     private static bool Started = false;
@@ -41,7 +41,7 @@ internal class Core : IDisposable {
 
         ToggleStartedState(true);
         Settings.Core.SettingsChangedEventHandler += OnSettingsUpdate;
-        Settings.Core.MaximizerEnabled = Started;
+        Settings.Core.MaxToDesktopEnabled = Started;
     }
 
     ~Core() {
@@ -59,7 +59,7 @@ internal class Core : IDisposable {
 
     private static void ToggleStartedState(bool enable) {
         if (enable && !Started) {
-            if (Settings.Core.MaximizerEnabled) {
+            if (Settings.Core.MaxToDesktopEnabled) {
                 EnableSwitchingDesktop = false;
 
                 InitializeDesktops();
@@ -71,14 +71,11 @@ internal class Core : IDisposable {
 
                 if (!Started) {
                     new ToastContentBuilder()
-                        .AddText("Unable to enable maximizer")
+                        .AddText("Unable to enable Max To Desktop")
                         .Show();
-                } else {
-                    ToggleExternalHooks(true);
                 }
             }
         } else if (!enable && Started) {
-            ToggleExternalHooks(false);
             ToggleWindowTrackerHooks(false);
             ToggleInternalHooks(false);
             ClearAutoDesktops();
@@ -91,6 +88,7 @@ internal class Core : IDisposable {
     private static void ToggleWindowTrackerHooks(bool enable) {
         if (enable) {
             WindowTracker.NewFloatWindowEvent += OnFloatWindow;
+            WindowTracker.TaskViewEvent += OnTaskView;
             WindowTracker.MaxWindowEvent += OnMax;
             WindowTracker.UnmaxWindowEvent += OnUnmax;
             WindowTracker.MinWindowEvent += OnMin;
@@ -98,6 +96,7 @@ internal class Core : IDisposable {
             WindowTracker.WindowTitleChangeEvent += OnWindowTitleChange;
         } else {
             WindowTracker.NewFloatWindowEvent -= OnFloatWindow;
+            WindowTracker.TaskViewEvent -= OnTaskView;
             WindowTracker.MaxWindowEvent -= OnMax;
             WindowTracker.UnmaxWindowEvent -= OnUnmax;
             WindowTracker.MinWindowEvent -= OnMin;
@@ -106,22 +105,16 @@ internal class Core : IDisposable {
         }
     }
 
-    private static void ToggleExternalHooks(bool enable) {
-        if (enable) {
-            Hotkey.Core.GuiUpEvent += OnTaskView;
-        } else {
-            Hotkey.Core.GuiUpEvent -= OnTaskView;
-        }
-    }
-
     private static void ToggleInternalHooks(bool enable) {
         if (enable) {
             ReorderDesktopTimer.Elapsed += OnReorderDesktopTimer;
-            VirtualDesktop.CurrentChanged += OnDesktopSwitched;
+            VirtualDesktop.CurrentChanged += OnDesktopSwitch;
+            VirtualDesktop.Created += OnDesktopCreate;
             VirtualDesktop.Destroyed += OnDesktopDestroy;
         } else {
             ReorderDesktopTimer.Elapsed -= OnReorderDesktopTimer;
-            VirtualDesktop.CurrentChanged -= OnDesktopSwitched;
+            VirtualDesktop.CurrentChanged -= OnDesktopSwitch;
+            VirtualDesktop.Created -= OnDesktopCreate;
             VirtualDesktop.Destroyed -= OnDesktopDestroy;
         }
     }
@@ -131,20 +124,32 @@ internal class Core : IDisposable {
             ReorderDesktopTimer.Interval = Settings.Core.ReorgnizeDesktopIntervalMs;
         }
 
-        if (Started != Settings.Core.MaximizerEnabled) {
-            ToggleStartedState(Settings.Core.MaximizerEnabled);
-            Settings.Core.MaximizerEnabled = Started;
+        if (Started != Settings.Core.MaxToDesktopEnabled) {
+            ToggleStartedState(Settings.Core.MaxToDesktopEnabled);
+            Settings.Core.MaxToDesktopEnabled = Started;
         }
     }
 
-    private static void OnTaskView(object _, EventArgs e) {
-        ReorderDesktopTimer.Stop();
-        Utils.TaskView();
+    private static void OnDesktopCreate(object _, VirtualDesktop e) {
+        Thread.Sleep(200);
+        if (e.Id != HomeDesktopId &&
+            !new SafeVirtualDesktop(e).IsAutoCreated) {
+            SafeVirtualDesktop.Remove(e.Id, HomeDesktopId);
+        }
     }
 
     private static void OnDesktopDestroy(object _, VirtualDesktopDestroyEventArgs e) {
         if (e.Destroyed.Id == CurrentDesktopId) {
             CurrentDesktopId = SafeVirtualDesktop.CurrentRight.Id;
+        }
+
+        if (e.Destroyed.Id == HomeDesktopId) {
+            if (SafeVirtualDesktop.Current.IsAutoCreated) {
+                HomeDesktopId = SafeVirtualDesktop.Create().Id;
+            } else {
+                HomeDesktopId = SafeVirtualDesktop.Current.Id;
+            }
+            SafeVirtualDesktop.Move(HomeDesktopId, UserCreatedDesktopCount - 1);
         }
     }
 
@@ -155,7 +160,7 @@ internal class Core : IDisposable {
         }
     }
 
-    private static void OnDesktopSwitched(object _, VirtualDesktopChangedEventArgs e) {
+    private static void OnDesktopSwitch(object _, VirtualDesktopChangedEventArgs e) {
         CurrentDesktopId = e.NewDesktop.Id;
 
         if (CurrentDesktopId == HomeDesktopId) {
@@ -165,18 +170,14 @@ internal class Core : IDisposable {
         }
     }
 
-    public static void GoHome() {
-        SafeVirtualDesktop.Current.Move(UserCreatedDesktopCount);
-        SafeVirtualDesktop.SwitchLeft();
-        Interop.Utils.Unfocus();
-    }
-
-    public static void OnFloatWindow(object _, WindowEvent e) =>
+    private static void OnFloatWindow(object _, WindowEvent e) =>
         SafeVirtualDesktop.PinWindow(e.HWnd);
 
-    public static void OnMax(object _, WindowEvent e) {
-        var desktop = SafeVirtualDesktop.Create();
-        desktop.Rename(e.HWnd);
+    private static void OnTaskView(object _, WindowEvent e) =>
+        ReorderDesktopTimer.Stop();
+
+    private static void OnMax(object _, WindowEvent e) {
+        var desktop = SafeVirtualDesktop.Create(e.HWnd);
 
         if (CanSwitchDesktop) {
             desktop.Switch();
@@ -187,13 +188,13 @@ internal class Core : IDisposable {
         SafeVirtualDesktop.UnpinWindow(e.HWnd);
     }
 
-    public static void OnUnmax(object _, WindowEvent e) {
+    private static void OnUnmax(object _, WindowEvent e) {
         SafeVirtualDesktop.PinWindow(e.HWnd);
 
         OnClose(_, e);
     }
 
-    public static void OnMin(object _, WindowEvent e) {
+    private static void OnMin(object _, WindowEvent e) {
         if (HwndDesktopMap.TryGetValue(e.HWnd, out Guid desktopId) &&
             SafeVirtualDesktop.Current.Id == desktopId) {
             SafeVirtualDesktop.Switch(HomeDesktopId);
@@ -203,7 +204,7 @@ internal class Core : IDisposable {
         }
     }
 
-    public static void OnClose(object _, WindowEvent e) {
+    private static void OnClose(object _, WindowEvent e) {
         if (HwndDesktopMap.TryGetValue(e.HWnd, out Guid desktopId) &&
             SafeVirtualDesktop.Current.Id == desktopId) {
             //SafeVirtualDesktop.Switch(CurrentDesktopId);
@@ -216,14 +217,15 @@ internal class Core : IDisposable {
         HwndDesktopMap.Remove(e.HWnd);
     }
 
-    public static void OnWindowTitleChange(object _, WindowEvent e) {
+    private static void OnWindowTitleChange(object _, WindowEvent e) {
         if (HwndDesktopMap.TryGetValue(e.HWnd, out Guid id)) {
             new SafeVirtualDesktop(id).Rename(e.HWnd);
         }
     }
 
-    public static void InitializeDesktops() {
+    private static void InitializeDesktops() {
         ClearAutoDesktops();
+        Interop.Utils.Unfocus();
 
         var curr = SafeVirtualDesktop.Current;
 
@@ -237,7 +239,7 @@ internal class Core : IDisposable {
         }
     }
 
-    public static void ClearAutoDesktops() {
+    private static void ClearAutoDesktops() {
         foreach (var d in SafeVirtualDesktop.Desktops) {
             if (d.IsAutoCreated) {
                 Thread.Sleep(50);

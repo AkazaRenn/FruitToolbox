@@ -1,30 +1,37 @@
 #include "pch.h"
 
 #include "WindowTracker.h"
+#include <bitset>
 
 using namespace std;
 using namespace FruitToolbox::Interop::Unmanaged;
 
-void CALLBACK WindowTracker::onNewFloatWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    if (isWindow(hwnd, idObject, idChild) &&
+void CALLBACK WindowTracker::onForeground(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
+    if (validSource(idObject, idChild) &&
+        !maxWindows.contains(hwnd) &&
         !IsZoomed(hwnd) &&
-        !maxWindows.contains(hwnd)) {
+        isWindow(hwnd)) {
         thread(newFloatWindowHandler, hwnd).detach();
+    } else if (GetWindowLong(hwnd, GWL_EXSTYLE) == 0x8200088L) {
+        thread(taskViewHandler, hwnd).detach();
     }
 }
 
-void CALLBACK WindowTracker::onMaxUnmaxWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    if (isWindow(hwnd, idObject, idChild)) {
-        if (!maxWindows.contains(hwnd) &&
-            IsZoomed(hwnd)) {
+void CALLBACK WindowTracker::onObjMove(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
+    if (validSource(idObject, idChild)) {
+        if (maxWindows.contains(hwnd)) {
+            if (
+                !IsZoomed(hwnd) &&
+                !IsIconic(hwnd) &&
+                isWindow(hwnd)) {
+                maxWindows.erase(hwnd);
+                thread(unmaxWindowHandler, hwnd).detach();
+            }
+        } else if (
+            IsZoomed(hwnd) &&
+            isWindow(hwnd)) {
             maxWindows.insert(hwnd);
             thread(maxWindowHandler, hwnd).detach();
-        } else if (
-            maxWindows.contains(hwnd) &&
-            !IsZoomed(hwnd) &&
-            !IsIconic(hwnd)) {
-            maxWindows.erase(hwnd);
-            thread(unmaxWindowHandler, hwnd).detach();
         }
     }
 }
@@ -35,9 +42,8 @@ void CALLBACK WindowTracker::onMinWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEv
     }
 }
 
-void CALLBACK WindowTracker::onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    if (idObject == OBJID_WINDOW &&
-        idChild == CHILDID_SELF &&
+void CALLBACK WindowTracker::onObjDestroy(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
+    if (validSource(idObject, idChild) &&
         maxWindows.contains(hwnd)) {
         Sleep(100);
         if (!IsWindow(hwnd)) {
@@ -47,9 +53,10 @@ void CALLBACK WindowTracker::onCloseWindow(HWINEVENTHOOK hWinEventHook, DWORD dw
     }
 }
 
-void CALLBACK WindowTracker::onWindowTitleChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
-    if (isWindow(hwnd, OBJID_WINDOW, CHILDID_SELF) &&
-        maxWindows.contains(hwnd)) {
+void CALLBACK WindowTracker::obObjNameChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
+    if (validSource(idObject, idChild) &&
+        maxWindows.contains(hwnd) &&
+        isWindow(hwnd)) {
         thread(windowTitleChangeHandler, hwnd).detach();
     }
 }
@@ -57,7 +64,7 @@ void CALLBACK WindowTracker::onWindowTitleChange(HWINEVENTHOOK hWinEventHook, DW
 bool WindowTracker::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
     if (hwnd != GetShellWindow() &&
         hwnd != GetDesktopWindow() &&
-        isWindow(hwnd, OBJID_WINDOW, CHILDID_SELF)) {
+        isWindow(hwnd)) {
         if (IsZoomed(hwnd)) {
             maxWindows.insert(hwnd);
             maxWindowHandler(hwnd);
@@ -71,6 +78,7 @@ bool WindowTracker::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
 
 // Need to match resetFields()
 onWindowChangeCallback WindowTracker::newFloatWindowHandler = nullptr;
+onWindowChangeCallback WindowTracker::taskViewHandler = nullptr;
 onWindowChangeCallback WindowTracker::maxWindowHandler = nullptr;
 onWindowChangeCallback WindowTracker::unmaxWindowHandler = nullptr;
 onWindowChangeCallback WindowTracker::minWindowHandler = nullptr;
@@ -81,6 +89,7 @@ vector<HWINEVENTHOOK> WindowTracker::hooks = {};
 set<HWND> WindowTracker::maxWindows = {};
 void WindowTracker::resetFields() {
     newFloatWindowHandler = nullptr;
+    taskViewHandler = nullptr;
     maxWindowHandler = nullptr;
     unmaxWindowHandler = nullptr;
     minWindowHandler = nullptr;
@@ -97,6 +106,7 @@ void WindowTracker::sortCurrentWindows() {
 
 bool WindowTracker::start(
     onWindowChangeCallback _newFloatWindowHandler,
+    onWindowChangeCallback _taskViewHandler,
     onWindowChangeCallback _maxWindowHandler,
     onWindowChangeCallback _unmaxWindowHandler,
     onWindowChangeCallback _minWindowHandler,
@@ -106,6 +116,7 @@ bool WindowTracker::start(
     if (!hooks.empty()) return false;
 
     if (((newFloatWindowHandler = _newFloatWindowHandler) == nullptr) ||
+        ((taskViewHandler = _taskViewHandler) == nullptr) ||
         ((maxWindowHandler = _maxWindowHandler) == nullptr) ||
         ((unmaxWindowHandler = _unmaxWindowHandler) == nullptr) ||
         ((minWindowHandler = _minWindowHandler) == nullptr) ||
@@ -117,11 +128,11 @@ bool WindowTracker::start(
 
     sortCurrentWindows();
 
-    hooks.push_back(SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, onNewFloatWindow, 0, 0, WINEVENT_OUTOFCONTEXT));
-    hooks.push_back(SetWinEventHook(EVENT_OBJECT_LOCATIONCHANGE, EVENT_OBJECT_LOCATIONCHANGE, NULL, onMaxUnmaxWindow, 0, 0, WINEVENT_OUTOFCONTEXT));
+    hooks.push_back(SetWinEventHook(EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND, NULL, onForeground, 0, 0, WINEVENT_OUTOFCONTEXT));
+    hooks.push_back(SetWinEventHook(EVENT_OBJECT_LOCATIONCHANGE, EVENT_OBJECT_LOCATIONCHANGE, NULL, onObjMove, 0, 0, WINEVENT_OUTOFCONTEXT));
     hooks.push_back(SetWinEventHook(EVENT_SYSTEM_MINIMIZESTART, EVENT_SYSTEM_MINIMIZESTART, NULL, onMinWindow, 0, 0, WINEVENT_OUTOFCONTEXT));
-    hooks.push_back(SetWinEventHook(EVENT_OBJECT_DESTROY, EVENT_OBJECT_DESTROY, NULL, onCloseWindow, 0, 0, WINEVENT_OUTOFCONTEXT));
-    hooks.push_back(SetWinEventHook(EVENT_OBJECT_NAMECHANGE, EVENT_OBJECT_NAMECHANGE, NULL, onWindowTitleChange, 0, 0, WINEVENT_OUTOFCONTEXT));
+    hooks.push_back(SetWinEventHook(EVENT_OBJECT_DESTROY, EVENT_OBJECT_DESTROY, NULL, onObjDestroy, 0, 0, WINEVENT_OUTOFCONTEXT));
+    hooks.push_back(SetWinEventHook(EVENT_OBJECT_NAMECHANGE, EVENT_OBJECT_NAMECHANGE, NULL, obObjNameChange, 0, 0, WINEVENT_OUTOFCONTEXT));
 
     for (const auto hook : hooks) {
         if (hook == nullptr) {

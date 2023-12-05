@@ -29,6 +29,7 @@ public:
 
     static bool Start(
         WindowChangedCallbackDelegate^ _newFloatWindowHandler,
+        WindowChangedCallbackDelegate^ _taskViewHandler,
         WindowChangedCallbackDelegate^ _maxWindowHandler,
         WindowChangedCallbackDelegate^ _unmaxWindowHandler,
         WindowChangedCallbackDelegate^ _minWindowHandler,
