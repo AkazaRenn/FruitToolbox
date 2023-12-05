@@ -2,7 +2,7 @@
 
 using WindowsDesktop;
 
-using static FruitToolbox.Constants;
+using static FruitToolbox.Utils;
 
 namespace FruitToolbox.Maximizer;
 
@@ -16,11 +16,10 @@ internal class Core : IDisposable {
         }
     }
 
-    const int UserCreatedDesktopCount = 1;
-
-    static readonly Dictionary<nint, Guid> HwndDesktopMap = [];
+    static readonly BidirectionalDictionary<nint, Guid> HwndDesktopMap = new();
     static readonly System.Timers.Timer ReorderDesktopTimer = new(Settings.Core.ReorgnizeDesktopIntervalMs);
 
+    static int UserCreatedDesktopCount = 1;
     static Guid HomeDesktopId;
     static Guid CurrentDesktopId;
 
@@ -117,11 +116,13 @@ internal class Core : IDisposable {
     private static void ToggleInternalHooks(bool enable) {
         if (enable) {
             ReorderDesktopTimer.Elapsed += OnReorderDesktopTimer;
-            VirtualDesktop.CurrentChanged += OnDesktopSwitched;
+            VirtualDesktop.CurrentChanged += OnDesktopSwitch;
+            VirtualDesktop.Created += OnDesktopCreate;
             VirtualDesktop.Destroyed += OnDesktopDestroy;
         } else {
             ReorderDesktopTimer.Elapsed -= OnReorderDesktopTimer;
-            VirtualDesktop.CurrentChanged -= OnDesktopSwitched;
+            VirtualDesktop.CurrentChanged -= OnDesktopSwitch;
+            VirtualDesktop.Created -= OnDesktopCreate;
             VirtualDesktop.Destroyed -= OnDesktopDestroy;
         }
     }
@@ -139,12 +140,29 @@ internal class Core : IDisposable {
 
     private static void OnTaskView(object _, EventArgs e) {
         ReorderDesktopTimer.Stop();
-        Utils.TaskView();
+        TaskView();
+    }
+
+    private static void OnDesktopCreate(object _, VirtualDesktop e) {
+        Thread.Sleep(200);
+        if (!new SafeVirtualDesktop(e).IsAutoCreated) {
+            UserCreatedDesktopCount++;
+        }
     }
 
     private static void OnDesktopDestroy(object _, VirtualDesktopDestroyEventArgs e) {
         if (e.Destroyed.Id == CurrentDesktopId) {
             CurrentDesktopId = SafeVirtualDesktop.CurrentRight.Id;
+        }
+
+        if (new SafeVirtualDesktop(e.Destroyed.Id).IsAutoCreated) {
+            HwndDesktopMap.RemoveValue(e.Destroyed.Id);
+        } else {
+            UserCreatedDesktopCount--;
+            if (e.Destroyed.Id == HomeDesktopId) {
+                SafeVirtualDesktop curr = SafeVirtualDesktop.RightMost;
+
+            }
         }
     }
 
@@ -155,7 +173,7 @@ internal class Core : IDisposable {
         }
     }
 
-    private static void OnDesktopSwitched(object _, VirtualDesktopChangedEventArgs e) {
+    private static void OnDesktopSwitch(object _, VirtualDesktopChangedEventArgs e) {
         CurrentDesktopId = e.NewDesktop.Id;
 
         if (CurrentDesktopId == HomeDesktopId) {
@@ -165,24 +183,17 @@ internal class Core : IDisposable {
         }
     }
 
-    public static void GoHome() {
-        SafeVirtualDesktop.Current.Move(UserCreatedDesktopCount);
-        SafeVirtualDesktop.SwitchLeft();
-        Interop.Utils.Unfocus();
-    }
-
     public static void OnFloatWindow(object _, WindowEvent e) =>
         SafeVirtualDesktop.PinWindow(e.HWnd);
 
     public static void OnMax(object _, WindowEvent e) {
-        var desktop = SafeVirtualDesktop.Create();
-        desktop.Rename(e.HWnd);
+        var desktop = SafeVirtualDesktop.AutoCreate(e.HWnd);
 
         if (CanSwitchDesktop) {
             desktop.Switch();
         }
         desktop.MoveWindow(e.HWnd);
-        HwndDesktopMap[e.HWnd] = desktop.Id;
+        HwndDesktopMap.Add(e.HWnd, desktop.Id);
 
         SafeVirtualDesktop.UnpinWindow(e.HWnd);
     }
@@ -213,7 +224,7 @@ internal class Core : IDisposable {
         }
 
         SafeVirtualDesktop.Remove(desktopId);
-        HwndDesktopMap.Remove(e.HWnd);
+        HwndDesktopMap.RemoveKey(e.HWnd);
     }
 
     public static void OnWindowTitleChange(object _, WindowEvent e) {
@@ -225,15 +236,13 @@ internal class Core : IDisposable {
     public static void InitializeDesktops() {
         ClearAutoDesktops();
 
-        var curr = SafeVirtualDesktop.Current;
-
-        while (curr.Left != null) {
-            curr = curr.Left;
-        }
+        var curr = SafeVirtualDesktop.RightMost;
         HomeDesktopId = curr.Id;
 
-        while (curr.Right != null) {
-            curr.Right.Remove();
+        while (curr.Left != null) {
+            //curr.Right.Remove();
+            curr = curr.Left;
+            UserCreatedDesktopCount++;
         }
     }
 

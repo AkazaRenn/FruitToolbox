@@ -60,6 +60,26 @@ internal class SafeVirtualDesktop {
         }
     }
 
+    public static SafeVirtualDesktop LeftMost {
+        get {
+            SafeVirtualDesktop curr = Current;
+            while (curr.Left != null) {
+                curr = curr.Left;
+            }
+            return curr;
+        }
+    }
+
+    public static SafeVirtualDesktop RightMost {
+        get {
+            SafeVirtualDesktop curr = Current;
+            while (curr.Right != null) {
+                curr = curr.Right;
+            }
+            return curr;
+        }
+    }
+
     public static SafeVirtualDesktop[] Desktops {
         get {
             return Try(() => VirtualDesktop.GetDesktops().Select(desktop => new SafeVirtualDesktop(desktop)).ToArray());
@@ -69,6 +89,12 @@ internal class SafeVirtualDesktop {
     public static SafeVirtualDesktop Create() {
         return Try(() => new SafeVirtualDesktop(VirtualDesktop.Create()));
     }
+
+    public static SafeVirtualDesktop AutoCreate(nint hwnd) => Try(() => {
+        SafeVirtualDesktop d = Create();
+        d.Rename(hwnd);
+        return d;
+    });
 
     public SafeVirtualDesktop Left {
         get {
@@ -140,14 +166,6 @@ internal class SafeVirtualDesktop {
 
     public static void Move(Guid id, int index) {
         new SafeVirtualDesktop(id).Move(index);
-    }
-
-    public static void SwitchLeft() {
-        Utils.SwitchLeftDesktop();
-    }
-
-    public static void SwitchRight() {
-        Utils.SwitchRightDesktop();
     }
 
     public void Rename(nint hwnd) =>

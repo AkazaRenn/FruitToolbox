@@ -61,7 +61,7 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
         IsTitleBarVisible = false;
         IsAlwaysOnTop = true;
 
-        VirtualDesktop.PinApplication(Constants.AppID);
+        VirtualDesktop.PinApplication(Utils.AppID);
         HwndExtensions.SetExtendedWindowStyle(this.GetWindowHandle(),
             ExtendedWindowStyle.Transparent | ExtendedWindowStyle.NoActivate | ExtendedWindowStyle.ToolWindow);
         Interop.Utils.SetBorderlessWindow(this.GetWindowHandle());
@@ -96,7 +96,7 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
         HideFlyoutTimer.Stop();
     }
 
-    public void OnSwapCategory(object sender, Constants.LanguageEvent e) {
+    public void OnSwapCategory(object sender, Utils.LanguageEvent e) {
         ShowFlyout(new CultureInfo(e.LCID).NativeName);
     }
 
