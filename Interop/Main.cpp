@@ -100,7 +100,7 @@ void Utils::SetBorderlessWindow(IntPtr hwnd) {
 
 void Utils::UnminimizeInBackground(IntPtr hwnd) {
     ShowWindow(static_cast<HWND>(hwnd.ToPointer()), SW_SHOWNOACTIVATE);
-}   
+}
 
 String^ Utils::GetWindowTitle(IntPtr hwnd) {
     wchar_t title[MAX_PATH];
@@ -119,4 +119,26 @@ bool Utils::InFullScreen() {
         (state == QUNS_BUSY) ||
         (state == QUNS_RUNNING_D3D_FULL_SCREEN) ||
         (state == QUNS_PRESENTATION_MODE);
+}
+
+MonitorInfo Utils::GetWindowMonitorInfo(IntPtr hwnd) {
+    MonitorInfo rc{};
+    HMONITOR monitor = MonitorFromWindow(static_cast<HWND>(hwnd.ToPointer()), MONITOR_DEFAULTTOPRIMARY);
+
+    MONITORINFOEX miex;
+    miex.cbSize = sizeof(miex);
+    if (GetMonitorInfo(monitor, &miex)) {
+        rc.X = miex.rcMonitor.left;
+        rc.Y = miex.rcMonitor.top;
+        rc.Width = miex.rcMonitor.right - miex.rcMonitor.left;
+        rc.Height = miex.rcMonitor.bottom - miex.rcMonitor.top;
+        rc.TaskbarHeight = miex.rcMonitor.bottom - miex.rcWork.bottom;
+    }
+
+    // scaling
+    UINT dpiX, dpiY;
+    GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
+    rc.Scaling = dpiX / 96.0f;
+
+    return rc;
 }

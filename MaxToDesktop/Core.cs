@@ -17,6 +17,7 @@ internal class Core : IDisposable {
     }
 
     const int UserCreatedDesktopCount = 1;
+    const int WindowsAnimationMs = 250;
 
     static readonly Dictionary<nint, Guid> HwndDesktopMap = [];
     static readonly System.Timers.Timer ReorderDesktopTimer = new(Settings.Core.ReorgnizeDesktopIntervalMs);
@@ -145,7 +146,9 @@ internal class Core : IDisposable {
 
         if (e.Destroyed.Id == HomeDesktopId) {
             if (SafeVirtualDesktop.Current.IsAutoCreated) {
-                HomeDesktopId = SafeVirtualDesktop.Create().Id;
+                SafeVirtualDesktop newDesktop = SafeVirtualDesktop.Create();
+                HomeDesktopId = newDesktop.Id;
+                newDesktop.Name = e.Destroyed.Name;
             } else {
                 HomeDesktopId = SafeVirtualDesktop.Current.Id;
             }
@@ -177,7 +180,9 @@ internal class Core : IDisposable {
         ReorderDesktopTimer.Stop();
 
     private static void OnMax(object _, WindowEvent e) {
+        SafeVirtualDesktop.PinWindow(e.HWnd);
         var desktop = SafeVirtualDesktop.Create(e.HWnd);
+        Thread.Sleep(WindowsAnimationMs);
 
         if (CanSwitchDesktop) {
             desktop.Switch();

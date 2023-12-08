@@ -1,7 +1,6 @@
 #include "pch.h"
 
 #include "WindowTracker.h"
-#include <bitset>
 
 using namespace std;
 using namespace FruitToolbox::Interop::Unmanaged;
@@ -71,7 +70,7 @@ bool WindowTracker::EnumWindowsProc(HWND hwnd, LPARAM lParam) {
         } else {
             newFloatWindowHandler(hwnd);
         }
-        Sleep(200);
+        Sleep(50);
     }
     return true;
 }

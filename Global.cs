@@ -4,6 +4,7 @@ namespace FruitToolbox;
 
 internal class Utils {
     public const string AppID = "AkazaRenn.82975CBC0BB1_fhf2jh1qk9hx4!App";
+    public const String AppName = "FruitToolbox";
 
     public class LanguageEvent(int lcid, bool imeLanguage): EventArgs {
         public int LCID { get; } = lcid;

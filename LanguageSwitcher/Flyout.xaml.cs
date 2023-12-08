@@ -8,12 +8,9 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.Win32;
 
-using Windows.Foundation;
 using Windows.UI.ViewManagement;
 
 using WindowsDesktop;
-
-using WindowsDisplayAPI;
 
 using WinUIEx;
 
@@ -31,13 +28,8 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
     private readonly DispatcherQueueTimer HideFlyoutTimer;
     private static readonly UISettings UISettings = new();
 
-    private static double ScaleFactor = 1;
-    private static Point MainDisplay = new(0, 0);
-    private static Point MainDisplayOffset = new(0, 0);
-
     public Flyout() {
         InitializeComponent();
-        UpdateScaleFactor();
         UpdateTheme();
 
         HideFlyoutTimer = DispatcherQueue.CreateTimer();
@@ -65,7 +57,6 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
         HwndExtensions.SetExtendedWindowStyle(this.GetWindowHandle(),
             ExtendedWindowStyle.Transparent | ExtendedWindowStyle.NoActivate | ExtendedWindowStyle.ToolWindow);
         Interop.Utils.SetBorderlessWindow(this.GetWindowHandle());
-        MoveToDestination();
         ToggleExternalHooks(true);
     }
 
@@ -115,6 +106,7 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
         }
 
         DispatcherQueue.TryEnqueue(() => {
+            MoveToDestination();
             FlyoutText.Text = newText;
 
             this.Show();
@@ -123,28 +115,12 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
         });
     }
 
-    public void Reload() {
-        MoveToDestination();
-    }
-
     private void MoveToDestination() {
-        foreach (var display in Display.GetDisplays()) {
-            if (display.IsGDIPrimary) {
-                MainDisplayOffset = new(display.CurrentSetting.Position.X, display.CurrentSetting.Position.Y);
-                MainDisplay = new(display.CurrentSetting.Resolution.Width, display.CurrentSetting.Resolution.Height);
-                break;
-            }
-        }
+        var monitorInfo = Interop.Utils.GetWindowMonitorInfo(this.GetWindowHandle());
 
-        this.Move((int)(MainDisplayOffset.X + (MainDisplay.X - AppWindow.Size.Width) / 2),
-             (int)(MainDisplayOffset.Y + MainDisplay.Y - AppWindow.Size.Height - ScaleFactor * WindowMarginFromBottom));
-    }
-
-    private void UpdateScaleFactor() {
-        var currentWidth = Width;
-        Width = 1000;
-        ScaleFactor = AppWindow.Size.Width / Width;
-        Width = currentWidth;
+        this.Move(
+            (int)(monitorInfo.X + (monitorInfo.Width - AppWindow.Size.Width) / 2),
+            (int)(monitorInfo.Y + monitorInfo.Height - AppWindow.Size.Height - monitorInfo.Scaling * WindowMarginFromBottom));
     }
 
     private void UpdateTheme() {

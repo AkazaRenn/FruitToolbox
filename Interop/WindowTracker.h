@@ -30,11 +30,13 @@ private:
     }
 
     static inline bool isWindow(HWND hwnd) {
+        LONG exStyle;
+
         return
             (IsWindow(hwnd)) &&
             (IsWindowVisible(hwnd)) &&
-            (GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_OVERLAPPEDWINDOW) &&
-            !(GetWindowLong(hwnd, GWL_EXSTYLE) & WS_EX_MDICHILD) &&
+            ((exStyle = GetWindowLong(hwnd, GWL_EXSTYLE)) & WS_EX_OVERLAPPEDWINDOW) &&
+            !(exStyle & WS_EX_MDICHILD) &&
             (GetWindowTextLengthW(hwnd) > 0);
     }
 

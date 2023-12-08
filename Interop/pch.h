@@ -12,6 +12,7 @@
 #include <WinUser.h>
 #include <dwmapi.h>
 #include <shellapi.h>
+#include <shellscalingapi.h>
 
 #include <iostream>
 #include <set>

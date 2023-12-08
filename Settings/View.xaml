@@ -87,7 +87,7 @@
                     <wuc:SimpleSettingsGroup Header="Additional Tools"
                                              Visibility="Visible">
                         <wuc:SettingsCard Header="Remap left Super/GUI/Win key"
-                                          Description="Sends super + alt + ctrl + shift + S instead when clicked alone">
+                                          Description="Sends Ctrl + GUI + Alt + Shift + NumpadEnter instead when clicked alone">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.LGuiRemapEnabled, Mode=TwoWay}" />
                         </wuc:SettingsCard>
                         <wuc:SettingsCard Header="Reverse scrolling direction"

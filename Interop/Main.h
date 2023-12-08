@@ -4,6 +4,8 @@
 #include "LanguageSwitcher.h"
 #include "WindowTracker.h"
 
+using namespace System;
+
 namespace FruitToolbox {
 namespace Interop {
 public ref class LanguageSwitcher {
@@ -25,7 +27,7 @@ private:
 
 public ref class WindowTracker {
 public:
-    delegate void WindowChangedCallbackDelegate(System::IntPtr hwnd);
+    delegate void WindowChangedCallbackDelegate(IntPtr hwnd);
 
     static bool Start(
         WindowChangedCallbackDelegate^ _newFloatWindowHandler,
@@ -41,13 +43,23 @@ private:
 };
 
 
+public value struct MonitorInfo {
+    int X;
+    int Y;
+    int Width;
+    int Height;
+    int TaskbarHeight;
+    double Scaling;
+};
+
 public ref class Utils {
 public:
-    static void SetBorderlessWindow(System::IntPtr hwnd);
-    static void UnminimizeInBackground(System::IntPtr hwnd);
-    static System::String^ GetWindowTitle(System::IntPtr hwnd);
+    static void SetBorderlessWindow(IntPtr hwnd);
+    static void UnminimizeInBackground(IntPtr hwnd);
+    static String^ GetWindowTitle(IntPtr hwnd);
     static void Unfocus();
     static bool InFullScreen();
+    static MonitorInfo GetWindowMonitorInfo(IntPtr hwnd);
 };
 }
 }

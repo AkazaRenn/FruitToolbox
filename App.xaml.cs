@@ -10,7 +10,7 @@ namespace FruitToolbox;
 /// <summary>
 /// Provides application-specific behavior to supplement the default Application class.
 /// </summary>
-public sealed partial class App: Application {
+public sealed partial class App: Application, IDisposable {
     #region Properties
 
     private static readonly LanguageSwitcher.Core LanguageSwitcher =
@@ -34,6 +34,15 @@ public sealed partial class App: Application {
     /// </summary>
     public App() {
         InitializeComponent();
+        UnhandledException += OnUnhandledException;
+    }
+
+    public void Dispose() {
+        LanguageSwitcher?.Dispose();
+        MaxToDesktop?.Dispose();
+        Hotkey?.Dispose();
+        TrayIcon?.Dispose();
+        Environment.Exit(0);
     }
 
     #endregion
@@ -51,16 +60,16 @@ public sealed partial class App: Application {
 
     private void InitializeTrayIcon() {
         var OpenSettingsCommand = (XamlUICommand)Resources["OpenSettingsCommand"];
-        OpenSettingsCommand.ExecuteRequested += OpenSettingsCommand_ExecuteRequested;
+        OpenSettingsCommand.ExecuteRequested += OnOpenSettingsCommand;
 
         var ExitApplicationCommand = (XamlUICommand)Resources["ExitApplicationCommand"];
-        ExitApplicationCommand.ExecuteRequested += ExitApplicationCommand_ExecuteRequested;
+        ExitApplicationCommand.ExecuteRequested += OnExitApplicationCommand;
 
         TrayIcon = (TaskbarIcon)Resources["TrayIcon"];
         TrayIcon.ForceCreate();
     }
 
-    private void OpenSettingsCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
+    private void OnOpenSettingsCommand(object _, ExecuteRequestedEventArgs args) {
         if (SettingsWindow == null) {
             SettingsWindow = new();
             SettingsWindow.Closed += (e, s) => {
@@ -74,12 +83,21 @@ public sealed partial class App: Application {
         SettingsWindow.Show();
     }
 
-    private void ExitApplicationCommand_ExecuteRequested(object _, ExecuteRequestedEventArgs args) {
-        LanguageSwitcher?.Dispose();
-        MaxToDesktop?.Dispose();
-        Hotkey?.Dispose();
-        TrayIcon?.Dispose();
-        Environment.Exit(0);
+    private void OnExitApplicationCommand(object _, ExecuteRequestedEventArgs args) =>
+        Dispose();
+
+    private void OnUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs args) {
+        Dispose();
+
+        var folder = Path.Combine(Path.GetTempPath(), Utils.AppName);
+        if (!Directory.Exists(folder)) {
+            Directory.CreateDirectory(folder);
+        }
+
+        var filename = $"{DateTime.Now:yyyy-MM-dd-hh-mm-ss}.log";
+        var path = Path.Combine(folder, filename);
+
+        File.AppendAllText(path, args.Exception.StackTrace);
     }
 
     #endregion
