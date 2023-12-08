@@ -116,7 +116,7 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
     }
 
     private void MoveToDestination() {
-        var monitorInfo = Interop.Utils.GetWindowMonitorInfo(this.GetWindowHandle());
+        var monitorInfo = Interop.Utils.GetActiveMonitorInfo();
 
         this.Move(
             (int)(monitorInfo.X + (monitorInfo.Width - AppWindow.Size.Width) / 2),

@@ -121,9 +121,9 @@ bool Utils::InFullScreen() {
         (state == QUNS_PRESENTATION_MODE);
 }
 
-MonitorInfo Utils::GetWindowMonitorInfo(IntPtr hwnd) {
+MonitorInfo Utils::GetActiveMonitorInfo() {
     MonitorInfo rc{};
-    HMONITOR monitor = MonitorFromWindow(static_cast<HWND>(hwnd.ToPointer()), MONITOR_DEFAULTTOPRIMARY);
+    HMONITOR monitor = MonitorFromWindow(GetActiveWindow(), MONITOR_DEFAULTTOPRIMARY);
 
     MONITORINFOEX miex;
     miex.cbSize = sizeof(miex);

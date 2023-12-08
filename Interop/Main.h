@@ -59,7 +59,7 @@ public:
     static String^ GetWindowTitle(IntPtr hwnd);
     static void Unfocus();
     static bool InFullScreen();
-    static MonitorInfo GetWindowMonitorInfo(IntPtr hwnd);
+    static MonitorInfo GetActiveMonitorInfo();
 };
 }
 }
