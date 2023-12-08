@@ -128,11 +128,9 @@ MonitorInfo Utils::GetActiveMonitorInfo() {
     MONITORINFOEX miex;
     miex.cbSize = sizeof(miex);
     if (GetMonitorInfo(monitor, &miex)) {
-        rc.X = miex.rcMonitor.left;
-        rc.Y = miex.rcMonitor.top;
-        rc.Width = miex.rcMonitor.right - miex.rcMonitor.left;
-        rc.Height = miex.rcMonitor.bottom - miex.rcMonitor.top;
-        rc.TaskbarHeight = miex.rcMonitor.bottom - miex.rcWork.bottom;
+        rc.Left = miex.rcMonitor.left;
+        rc.Right = miex.rcMonitor.right;
+        rc.Bottom = miex.rcWork.bottom;
     }
 
     // scaling

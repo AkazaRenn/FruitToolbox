@@ -44,11 +44,9 @@ private:
 
 
 public value struct MonitorInfo {
-    int X;
-    int Y;
-    int Width;
-    int Height;
-    int TaskbarHeight;
+    int Left;
+    int Right;
+    int Bottom;
     double Scaling;
 };
 

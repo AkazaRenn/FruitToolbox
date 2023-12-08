@@ -182,9 +182,9 @@ internal class Core : IDisposable {
     private static void OnMax(object _, WindowEvent e) {
         SafeVirtualDesktop.PinWindow(e.HWnd);
         var desktop = SafeVirtualDesktop.Create(e.HWnd);
-        Thread.Sleep(WindowsAnimationMs);
 
         if (CanSwitchDesktop) {
+            Thread.Sleep(WindowsAnimationMs);
             desktop.Switch();
         }
         desktop.MoveWindow(e.HWnd);
