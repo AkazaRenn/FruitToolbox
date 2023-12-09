@@ -133,10 +133,5 @@ MonitorInfo Utils::GetActiveMonitorInfo() {
         rc.Bottom = miex.rcWork.bottom;
     }
 
-    // scaling
-    UINT dpiX, dpiY;
-    GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &dpiX, &dpiY);
-    rc.Scaling = dpiX / 96.0f;
-
     return rc;
 }

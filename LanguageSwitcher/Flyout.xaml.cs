@@ -23,8 +23,6 @@ namespace FruitToolbox.LanguageSwitcher;
 /// An empty window that can be used on its own or navigated to within a Frame.
 /// </summary>
 internal sealed partial class Flyout: WindowEx, IDisposable {
-    private const double WindowMarginFromBottom = 38;
-
     private readonly DispatcherQueueTimer HideFlyoutTimer;
     private static readonly UISettings UISettings = new();
 
@@ -119,8 +117,9 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
         var monitorInfo = Interop.Utils.GetActiveMonitorInfo();
 
         this.Move(
-            (int)((monitorInfo.Left + monitorInfo.Right - AppWindow.Size.Width) / 2),
-            (int)(monitorInfo.Bottom - AppWindow.Size.Height - monitorInfo.Scaling * WindowMarginFromBottom));
+            (monitorInfo.Left + monitorInfo.Right - AppWindow.Size.Width) / 2,
+            monitorInfo.Bottom - AppWindow.Size.Height
+        );
     }
 
     private void UpdateTheme() {

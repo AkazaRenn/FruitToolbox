@@ -47,7 +47,6 @@ public value struct MonitorInfo {
     int Left;
     int Right;
     int Bottom;
-    double Scaling;
 };
 
 public ref class Utils {
