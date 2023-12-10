@@ -19,7 +19,8 @@
                     <wuc:SimpleSettingsGroup Header="General"
                                              Visibility="Visible">
                         <wuc:SettingsCard Header="Start up">
-                            <ToggleSwitch IsOn="{x:Bind settings:Core.StartUp, Mode=TwoWay}"/>
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.StartUp}"
+                                          Toggled="StartUp_Toggle"/>
                         </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
                     <wuc:SimpleSettingsGroup Header="Language Switcher"
@@ -43,7 +44,7 @@
                                           IsEnabled="{x:Bind LanguageSwitcherEnableToggle.IsOn, Mode=OneWay}">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.RAltModifierEnabled, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard Header="Turn on Scroll Lock on IME Language"
+                        <wuc:SettingsCard Header="Turn on Scroll Lock on IME language"
                                           Description="As an indication"
                                           IsEnabled="{x:Bind LanguageSwitcherEnableToggle.IsOn, Mode=OneWay}">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.ScrollLockForImeLanguage, Mode=TwoWay}"/>

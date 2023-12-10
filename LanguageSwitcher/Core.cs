@@ -45,24 +45,26 @@ internal class Core : IDisposable {
     }
 
     private static void ToggleStartedState(bool enable) {
-        if (enable && !Started) {
-            if (LanguageSwitcherEnabled) {
-                Started = Interop.LanguageSwitcher.Start(InvokeSwapCategoryEvent, InvokeNewLanguageEvent);
+        if (enable != Started) {
+            if (Started == false) {
+                if (LanguageSwitcherEnabled) {
+                    Started = Interop.LanguageSwitcher.Start(InvokeSwapCategoryEvent, InvokeNewLanguageEvent);
 
-                if (!Started) {
-                    new ToastContentBuilder()
-                        .AddText("Unable to enable Language Switcher")
-                        .AddText("Please make sure you have both keyboard languages and IME languages installed")
-                        .Show();
-                } else {
-                    ToggleExternalHooks(true);
+                    if (!Started) {
+                        new ToastContentBuilder()
+                            .AddText("Unable to enable Language Switcher")
+                            .AddText("Please make sure you have both keyboard languages and IME languages installed")
+                            .Show();
+                    } else {
+                        ToggleExternalHooks(true);
+                    }
                 }
+            } else {
+                ToggleExternalHooks(false);
+                ToggleFlyoutEnabled(false);
+                Interop.LanguageSwitcher.Stop();
+                Started = false;
             }
-        } else if (!enable && Started) {
-            ToggleExternalHooks(false);
-            ToggleFlyoutEnabled(false);
-            Interop.LanguageSwitcher.Stop();
-            Started = false;
         }
     }
 

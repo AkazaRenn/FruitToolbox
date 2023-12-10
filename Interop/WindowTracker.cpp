@@ -44,7 +44,7 @@ void CALLBACK WindowTracker::onMinWindow(HWINEVENTHOOK hWinEventHook, DWORD dwEv
 void CALLBACK WindowTracker::onObjDestroy(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (validSource(idObject, idChild) &&
         maxWindows.contains(hwnd)) {
-        Sleep(100);
+        Sleep(50);
         if (!IsWindow(hwnd)) {
             maxWindows.erase(hwnd);
             thread(closeWindowHandler, hwnd).detach();

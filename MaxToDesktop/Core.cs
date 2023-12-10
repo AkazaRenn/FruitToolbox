@@ -61,30 +61,32 @@ internal class Core : IDisposable {
     }
 
     private static void ToggleStartedState(bool enable) {
-        if (enable && !Started) {
-            if (Settings.Core.MaxToDesktopEnabled) {
-                EnableSwitchingDesktop = false;
+        if (enable != Started) {
+            if (Started == false) {
+                if (Settings.Core.MaxToDesktopEnabled) {
+                    EnableSwitchingDesktop = false;
 
-                InitializeDesktops();
-                ToggleWindowTrackerHooks(true);
-                Started = WindowTracker.Start();
-                ToggleInternalHooks(true);
+                    InitializeDesktops();
+                    ToggleWindowTrackerHooks(true);
+                    Started = WindowTracker.Start();
+                    ToggleInternalHooks(true);
 
-                EnableSwitchingDesktop = true;
+                    EnableSwitchingDesktop = true;
 
-                if (!Started) {
-                    new ToastContentBuilder()
-                        .AddText("Unable to enable Max To Desktop")
-                        .Show();
+                    if (!Started) {
+                        new ToastContentBuilder()
+                            .AddText("Unable to enable Max To Desktop")
+                            .Show();
+                    }
                 }
+            } else {
+                ToggleWindowTrackerHooks(false);
+                ToggleInternalHooks(false);
+                ClearAutoDesktops();
+                ReorderDesktopTimer.Stop();
+                WindowTracker.Stop();
+                Started = false;
             }
-        } else if (!enable && Started) {
-            ToggleWindowTrackerHooks(false);
-            ToggleInternalHooks(false);
-            ClearAutoDesktops();
-            ReorderDesktopTimer.Stop();
-            WindowTracker.Stop();
-            Started = false;
         }
     }
 
@@ -158,14 +160,14 @@ internal class Core : IDisposable {
         }
 
         if (HwndDesktopMap.TryGetKey(e.Destroyed.Id, out nint hwnd)) {
-            SafeVirtualDesktop.MoveToDesktop(hwnd, HomeDesktopId);
             HwndDesktopMap.Remove(hwnd);
+            SafeVirtualDesktop.MoveToDesktop(hwnd, HomeDesktopId);
         }
     }
 
     private static void OnReorderDesktopTimer(object _, EventArgs e) {
         ReorderDesktopTimer.Stop();
-        if (SafeVirtualDesktop.Current.Id != HomeDesktopId) {
+        if (CurrentDesktopId != HomeDesktopId) {
             SafeVirtualDesktop.Current.Move(UserCreatedDesktopCount);
         }
     }
@@ -198,6 +200,7 @@ internal class Core : IDisposable {
         HwndDesktopMap[e.HWnd] = desktop.Id;
 
         SafeVirtualDesktop.UnpinWindow(e.HWnd);
+        desktop.Move(UserCreatedDesktopCount);
     }
 
     private static void OnUnmax(object _, WindowEvent e) {
@@ -208,7 +211,7 @@ internal class Core : IDisposable {
 
     private static void OnMin(object _, WindowEvent e) {
         if (HwndDesktopMap.TryGetValue(e.HWnd, out Guid desktopId) &&
-            SafeVirtualDesktop.Current.Id == desktopId) {
+            CurrentDesktopId == desktopId) {
             SafeVirtualDesktop.Switch(HomeDesktopId);
 
             Thread.Sleep(100);
@@ -218,7 +221,7 @@ internal class Core : IDisposable {
 
     private static void OnClose(object _, WindowEvent e) {
         if (HwndDesktopMap.TryGetValue(e.HWnd, out Guid desktopId) &&
-            SafeVirtualDesktop.Current.Id == desktopId) {
+            CurrentDesktopId == desktopId) {
             //SafeVirtualDesktop.Switch(CurrentDesktopId);
             // Logically should switch to CurrentDesktopId
             // but the there's no animation in that case

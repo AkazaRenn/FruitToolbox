@@ -1,5 +1,7 @@
 using System.Globalization;
 
+using FruitToolbox.Utils;
+
 using H.NotifyIcon;
 
 using Microsoft.UI.Dispatching;
@@ -9,8 +11,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.Win32;
 
 using Windows.UI.ViewManagement;
-
-using WindowsDesktop;
 
 using WinUIEx;
 
@@ -53,7 +53,7 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
         IsTitleBarVisible = false;
         IsAlwaysOnTop = true;
 
-        VirtualDesktop.PinApplication(AppID);
+        SafeVirtualDesktop.PinApplication(AppID);
         HwndExtensions.SetExtendedWindowStyle(this.GetWindowHandle(),
             ExtendedWindowStyle.Transparent | ExtendedWindowStyle.NoActivate | ExtendedWindowStyle.ToolWindow);
         Interop.Utils.SetBorderlessWindow(this.GetWindowHandle());
