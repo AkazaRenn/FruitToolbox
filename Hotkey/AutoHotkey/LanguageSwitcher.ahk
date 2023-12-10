@@ -21,4 +21,10 @@
         KeyWait, LWin, U
         DllCall(onLanguageChangePtr)
     Return
+
+    #if (RAltModifierEnabled)
+        $RAlt Up::
+            DllCall(onRAltUpPtr)
+        Return
+    #if
 #if

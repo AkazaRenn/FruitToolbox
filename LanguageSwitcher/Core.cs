@@ -1,5 +1,8 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
 
+using static FruitToolbox.Utils.Constants;
+using static FruitToolbox.Settings.Core;
+
 namespace FruitToolbox.LanguageSwitcher;
 
 internal class Core : IDisposable {
@@ -15,8 +18,8 @@ internal class Core : IDisposable {
     public const int WindowActivateWaitMs = 500;
 
     static Flyout NewLangFlyout = null;
-    public static event EventHandler<Utils.LanguageEvent> NewLanguageEvent;
-    public static event EventHandler<Utils.LanguageEvent> SwapCategoryEvent;
+    public static event EventHandler<LanguageEvent> NewLanguageEvent;
+    public static event EventHandler<LanguageEvent> SwapCategoryEvent;
 
     private Core() {
         if (Started) {
@@ -24,8 +27,8 @@ internal class Core : IDisposable {
         }
 
         ToggleStartedState(true);
-        Settings.Core.SettingsChangedEventHandler += OnSettingsUpdate;
-        Settings.Core.LanguageSwitcherEnabled = Started;
+        SettingsChangedEventHandler += OnSettingsUpdate;
+        LanguageSwitcherEnabled = Started;
     }
 
     ~Core() {
@@ -36,14 +39,14 @@ internal class Core : IDisposable {
         if (Started) {
             ToggleStartedState(false);
         }
-        Settings.Core.SettingsChangedEventHandler -= OnSettingsUpdate;
+        SettingsChangedEventHandler -= OnSettingsUpdate;
         _Instance = null;
         GC.SuppressFinalize(this);
     }
 
     private static void ToggleStartedState(bool enable) {
         if (enable && !Started) {
-            if (Settings.Core.LanguageSwitcherEnabled) {
+            if (LanguageSwitcherEnabled) {
                 Started = Interop.LanguageSwitcher.Start(InvokeSwapCategoryEvent, InvokeNewLanguageEvent);
 
                 if (!Started) {
@@ -77,12 +80,12 @@ internal class Core : IDisposable {
 
     private static void OnSettingsUpdate(object sender, EventArgs e) {
         if (Started) {
-            ToggleFlyoutEnabled(Settings.Core.FlyoutEnabled);
+            ToggleFlyoutEnabled(FlyoutEnabled);
         }
 
-        if (Started != Settings.Core.LanguageSwitcherEnabled) {
-            ToggleStartedState(Settings.Core.LanguageSwitcherEnabled);
-            Settings.Core.LanguageSwitcherEnabled = Started;
+        if (Started != LanguageSwitcherEnabled) {
+            ToggleStartedState(LanguageSwitcherEnabled);
+            LanguageSwitcherEnabled = Started;
         }
     }
 
@@ -99,20 +102,20 @@ internal class Core : IDisposable {
     }
     private static void InvokeSwapCategoryEvent(int lcid, bool imeMode) {
         SetScrollLock(imeMode);
-        SwapCategoryEvent?.Invoke(null, new Utils.LanguageEvent(lcid, imeMode));
+        SwapCategoryEvent?.Invoke(null, new LanguageEvent(lcid, imeMode));
     }
 
     private static void InvokeNewLanguageEvent(int lcid, bool imeMode) {
         SetScrollLock(imeMode);
-        NewLanguageEvent?.Invoke(null, new Utils.LanguageEvent(lcid, imeMode));
-        if(Settings.Core.DisableCapsLockOnLanguageChange) {
-            Utils.DisableCapsLock();
+        NewLanguageEvent?.Invoke(null, new LanguageEvent(lcid, imeMode));
+        if(DisableCapsLockOnLanguageChange) {
+            DisableCapsLock();
         }
     }
 
     private static void SetScrollLock(bool enable) {
-        if (Settings.Core.ScrollLockForImeLanguage) {
-            Utils.SetScrollLock(enable);
+        if (ScrollLockForImeLanguage) {
+            Utils.Constants.SetScrollLock(enable);
         }
     }
 

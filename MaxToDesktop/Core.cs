@@ -1,8 +1,10 @@
-﻿using Microsoft.Toolkit.Uwp.Notifications;
+﻿using FruitToolbox.Utils;
+
+using Microsoft.Toolkit.Uwp.Notifications;
 
 using WindowsDesktop;
 
-using static FruitToolbox.Utils;
+using static FruitToolbox.Utils.Constants;
 
 namespace FruitToolbox.MaxToDesktop;
 
@@ -17,9 +19,9 @@ internal class Core : IDisposable {
     }
 
     const int UserCreatedDesktopCount = 1;
-    const int WindowsAnimationMs = 250;
+    const int WindowsAnimationMs = 200;
 
-    static readonly Dictionary<nint, Guid> HwndDesktopMap = [];
+    static readonly BidirectionalDictionary<nint, Guid> HwndDesktopMap = [];
     static readonly System.Timers.Timer ReorderDesktopTimer = new(Settings.Core.ReorgnizeDesktopIntervalMs);
 
     static Guid HomeDesktopId;
@@ -154,6 +156,11 @@ internal class Core : IDisposable {
             }
             SafeVirtualDesktop.Move(HomeDesktopId, UserCreatedDesktopCount - 1);
         }
+
+        if (HwndDesktopMap.TryGetKey(e.Destroyed.Id, out nint hwnd)) {
+            SafeVirtualDesktop.MoveToDesktop(hwnd, HomeDesktopId);
+            HwndDesktopMap.Remove(hwnd);
+        }
     }
 
     private static void OnReorderDesktopTimer(object _, EventArgs e) {
@@ -219,7 +226,6 @@ internal class Core : IDisposable {
         }
 
         SafeVirtualDesktop.Remove(desktopId);
-        HwndDesktopMap.Remove(e.HWnd);
     }
 
     private static void OnWindowTitleChange(object _, WindowEvent e) {

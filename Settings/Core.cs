@@ -16,11 +16,11 @@ internal class Entries {
 
     public bool MaxToDesktopEnabled { get; set; } = false;
     public bool DisableSwapInFullscreen { get; set; } = true;
-    public bool SwapVirtualDesktopHotkeysEnabled { get; set; } = false;
     public uint ReorgnizeDesktopIntervalMs { get; set; } = 5000;
 
     public bool LGuiRemapEnabled { get; set; } = false;
     public bool ReverseMouseWheelEnabled { get; set; } = false;
+    public bool SwapVirtualDesktopHotkeysEnabled { get; set; } = false;
 }
 
 public static class Core {
@@ -65,8 +65,8 @@ public static class Core {
 
     public static bool FlyoutEnabled {
         get {
-            return LanguageSwitcherEnabled &&
-                SettingsEntries.FlyoutEnabled;
+            EnsureLoaded();
+            return SettingsEntries.FlyoutEnabled;
         }
         set {
             EnsureLoaded();
@@ -77,9 +77,8 @@ public static class Core {
 
     public static bool DisableFlyoutInFullscreen {
         get {
-            return LanguageSwitcherEnabled &&
-                FlyoutEnabled &&
-                SettingsEntries.DisableFlyoutInFullscreen;
+            EnsureLoaded();
+            return SettingsEntries.DisableFlyoutInFullscreen;
         }
         set {
             EnsureLoaded();
@@ -90,8 +89,8 @@ public static class Core {
 
     public static bool ScrollLockForImeLanguage {
         get {
-            return LanguageSwitcherEnabled &&
-                SettingsEntries.ScrollLockForImeLanguage;
+            EnsureLoaded();
+            return SettingsEntries.ScrollLockForImeLanguage;
         }
         set {
             EnsureLoaded();
@@ -102,8 +101,8 @@ public static class Core {
 
     public static bool DisableCapsLockOnLanguageChange {
         get {
-            return LanguageSwitcherEnabled &&
-                SettingsEntries.DisableCapsLockOnLanguageChange;
+            EnsureLoaded();
+            return SettingsEntries.DisableCapsLockOnLanguageChange;
         }
         set {
             EnsureLoaded();
@@ -114,8 +113,8 @@ public static class Core {
 
     public static bool RAltModifierEnabled {
         get {
-            return LanguageSwitcherEnabled &&
-                SettingsEntries.RAltModifierEnabled;
+            EnsureLoaded();
+            return SettingsEntries.RAltModifierEnabled;
         }
         set {
             EnsureLoaded();
@@ -162,8 +161,8 @@ public static class Core {
 
     public static bool DisableSwapInFullscreen {
         get {
-            return MaxToDesktopEnabled &&
-                SettingsEntries.DisableSwapInFullscreen;
+            EnsureLoaded();
+            return SettingsEntries.DisableSwapInFullscreen;
         }
         set {
             EnsureLoaded();
@@ -174,8 +173,8 @@ public static class Core {
 
     public static bool SwapVirtualDesktopHotkeysEnabled {
         get {
-            return MaxToDesktopEnabled &&
-                SettingsEntries.SwapVirtualDesktopHotkeysEnabled;
+            EnsureLoaded();
+            return SettingsEntries.SwapVirtualDesktopHotkeysEnabled;
         }
         set {
             EnsureLoaded();

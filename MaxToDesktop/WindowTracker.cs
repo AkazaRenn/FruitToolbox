@@ -1,43 +1,45 @@
-﻿namespace FruitToolbox.MaxToDesktop;
+﻿using static FruitToolbox.Utils.Constants;
+
+namespace FruitToolbox.MaxToDesktop;
 
 internal class WindowTracker {
     public const int WindowAnimationWaitMs = 500;
 
     private delegate void WindowChangeCallbackDelegate(nint hwnd);
 
-    public static event EventHandler<Utils.WindowEvent> NewFloatWindowEvent;
+    public static event EventHandler<WindowEvent> NewFloatWindowEvent;
     private static void InvokeNewFloatWindowEvent(nint hwnd) {
-        NewFloatWindowEvent?.Invoke(null, new Utils.WindowEvent(hwnd));
+        NewFloatWindowEvent?.Invoke(null, new WindowEvent(hwnd));
     }
 
-    public static event EventHandler<Utils.WindowEvent> TaskViewEvent;
+    public static event EventHandler<WindowEvent> TaskViewEvent;
     private static void InvokeTaskViewEvent(nint hwnd) {
-        TaskViewEvent?.Invoke(null, new Utils.WindowEvent(hwnd));
+        TaskViewEvent?.Invoke(null, new WindowEvent(hwnd));
     }
 
-    public static event EventHandler<Utils.WindowEvent> MaxWindowEvent;
+    public static event EventHandler<WindowEvent> MaxWindowEvent;
     private static void InvokeMaxWindowEvent(nint hwnd) {
-        MaxWindowEvent?.Invoke(null, new Utils.WindowEvent(hwnd));
+        MaxWindowEvent?.Invoke(null, new WindowEvent(hwnd));
     }
 
-    public static event EventHandler<Utils.WindowEvent> UnmaxWindowEvent;
+    public static event EventHandler<WindowEvent> UnmaxWindowEvent;
     private static void InvokeUnmaxWindowEvent(nint hwnd) {
-        UnmaxWindowEvent?.Invoke(null, new Utils.WindowEvent(hwnd));
+        UnmaxWindowEvent?.Invoke(null, new WindowEvent(hwnd));
     }
 
-    public static event EventHandler<Utils.WindowEvent> MinWindowEvent;
+    public static event EventHandler<WindowEvent> MinWindowEvent;
     private static void InvokeMinWindowEvent(nint hwnd) {
-        MinWindowEvent?.Invoke(null, new Utils.WindowEvent(hwnd));
+        MinWindowEvent?.Invoke(null, new WindowEvent(hwnd));
     }
 
-    public static event EventHandler<Utils.WindowEvent> CloseWindowEvent;
+    public static event EventHandler<WindowEvent> CloseWindowEvent;
     private static void InvokeCloseWindowEvent(nint hwnd) {
-        CloseWindowEvent?.Invoke(null, new Utils.WindowEvent(hwnd));
+        CloseWindowEvent?.Invoke(null, new WindowEvent(hwnd));
     }
 
-    public static event EventHandler<Utils.WindowEvent> WindowTitleChangeEvent;
+    public static event EventHandler<WindowEvent> WindowTitleChangeEvent;
     private static void InvokeWindowTitleChangeEvent(nint hwnd) {
-        WindowTitleChangeEvent?.Invoke(null, new Utils.WindowEvent(hwnd));
+        WindowTitleChangeEvent?.Invoke(null, new WindowEvent(hwnd));
     }
 
     public static bool Start() => Interop.WindowTracker.Start(

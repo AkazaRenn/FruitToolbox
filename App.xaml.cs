@@ -3,6 +3,8 @@ using H.NotifyIcon;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
 
+using static FruitToolbox.Utils.Constants;
+
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -89,7 +91,7 @@ public sealed partial class App: Application, IDisposable {
     private void OnUnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs args) {
         Dispose();
 
-        var folder = Path.Combine(Path.GetTempPath(), Utils.AppName);
+        var folder = Path.Combine(Path.GetTempPath(), AppName);
         if (!Directory.Exists(folder)) {
             Directory.CreateDirectory(folder);
         }

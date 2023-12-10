@@ -14,6 +14,8 @@ using WindowsDesktop;
 
 using WinUIEx;
 
+using static FruitToolbox.Utils.Constants;
+
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
@@ -51,7 +53,7 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
         IsTitleBarVisible = false;
         IsAlwaysOnTop = true;
 
-        VirtualDesktop.PinApplication(Utils.AppID);
+        VirtualDesktop.PinApplication(AppID);
         HwndExtensions.SetExtendedWindowStyle(this.GetWindowHandle(),
             ExtendedWindowStyle.Transparent | ExtendedWindowStyle.NoActivate | ExtendedWindowStyle.ToolWindow);
         Interop.Utils.SetBorderlessWindow(this.GetWindowHandle());
@@ -85,7 +87,7 @@ internal sealed partial class Flyout: WindowEx, IDisposable {
         HideFlyoutTimer.Stop();
     }
 
-    public void OnSwapCategory(object sender, Utils.LanguageEvent e) {
+    public void OnSwapCategory(object sender, LanguageEvent e) {
         ShowFlyout(new CultureInfo(e.LCID).NativeName);
     }
 

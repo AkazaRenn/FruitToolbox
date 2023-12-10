@@ -83,16 +83,6 @@ namespace FruitToolbox.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] RAltModifier {
-            get {
-                object obj = ResourceManager.GetObject("RAltModifier", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] ReverseMouseWheel {
             get {
                 object obj = ResourceManager.GetObject("ReverseMouseWheel", resourceCulture);

@@ -19,8 +19,7 @@
                     <wuc:SimpleSettingsGroup Header="General"
                                              Visibility="Visible">
                         <wuc:SettingsCard Header="Start up">
-                            <ToggleSwitch IsOn="{x:Bind settings:Core.StartUp}"
-                                          Toggled="StartUp_Toggle"/>
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.StartUp, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
                     <wuc:SimpleSettingsGroup Header="Language Switcher"
@@ -66,11 +65,6 @@
                                           IsEnabled="{x:Bind MaxToDesktopEnableToggle.IsOn, Mode=OneWay}">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.DisableSwapInFullscreen, Mode=TwoWay}"/>
                         </wuc:SettingsCard>
-                        <wuc:SettingsCard Header="Swap GUI + Arrow and GUI + Ctrl + Arrow"
-                                          Description="If you perfer having virtual desktops more accessible"
-                                          IsEnabled="{x:Bind MaxToDesktopEnableToggle.IsOn, Mode=OneWay}">
-                            <ToggleSwitch IsOn="{x:Bind settings:Core.SwapVirtualDesktopHotkeysEnabled, Mode=TwoWay}" />
-                        </wuc:SettingsCard>
                         <wuc:SettingsCard Header="Interval before reordering desktops"
                                           Description="How long to move current desktop after switching desktops"
                                           IsEnabled="{x:Bind MaxToDesktopEnableToggle.IsOn, Mode=OneWay}">
@@ -93,6 +87,10 @@
                         <wuc:SettingsCard Header="Reverse scrolling direction"
                                           Description="Note that it may make the trackpad hard to scroll, disable it in that case">
                             <ToggleSwitch IsOn="{x:Bind settings:Core.ReverseMouseWheelEnabled, Mode=TwoWay}" />
+                        </wuc:SettingsCard>
+                        <wuc:SettingsCard Header="Swap GUI + Arrow and GUI + Ctrl + Arrow"
+                                          Description="If you perfer having virtual desktops more accessible">
+                            <ToggleSwitch IsOn="{x:Bind settings:Core.SwapVirtualDesktopHotkeysEnabled, Mode=TwoWay}" />
                         </wuc:SettingsCard>
                     </wuc:SimpleSettingsGroup>
                 </StackPanel>

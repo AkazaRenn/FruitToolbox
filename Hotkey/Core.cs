@@ -62,15 +62,12 @@ internal class Core : IDisposable {
         AHKEngine.SetVar("onCapsLockOnPtr", GetActionDelegateStr(OnCapsLockOn));
         AHKEngine.SetVar("onCapsLockOffPtr", GetActionDelegateStr(OnCapsLockOffEvent));
         AHKEngine.SetVar("onLanguageChangePtr", GetActionDelegateStr(OnLanguageChange));
+        AHKEngine.SetVar("onRAltUpPtr", GetActionDelegateStr(OnRAltUp));
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.LanguageSwitcher));
-
-        AHKEngine.SetVar("onRaltUpPtr", GetActionDelegateStr(OnRAltUp));
-        AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.RAltModifier));
-
-        AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.SwapVirtualDesktopHotkeys));
 
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.LGuiRemap));
         AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.ReverseMouseWheel));
+        AHKEngine.LoadScript(System.Text.Encoding.Default.GetString(Properties.Resources.SwapVirtualDesktopHotkeys));
     }
 
     private static void SetVarOnSettings() {
