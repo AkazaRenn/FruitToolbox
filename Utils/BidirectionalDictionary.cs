@@ -18,29 +18,4 @@ public class BidirectionalDictionary<K, V>: Dictionary<K, V> {
         reverse.Remove(base[key]);
         return base.Remove(key);
     }
-
-    public new void Add(K key, V value) {
-        base.Add(key, value);
-        reverse.Add(value, key);
-    }
-
-    public new void TryAdd(K key, V value) {
-        base.TryAdd(key, value);
-        reverse.TryAdd(value, key);
-    }
-
-    public new void EnsureCapacity(int capacity) {
-        base.EnsureCapacity(capacity);
-        reverse.EnsureCapacity(capacity);
-    }
-
-    public new void TrimExcess() {
-        base.TrimExcess();
-        reverse.TrimExcess();
-    }
-
-    public new void Clear() {
-        base.Clear();
-        reverse.Clear();
-    }
 }

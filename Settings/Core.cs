@@ -7,16 +7,20 @@ namespace FruitToolbox.Settings;
 
 [Serializable]
 internal class Entries {
+#region Language Switcher
     public bool LanguageSwitcherEnabled { get; set; } = false;
     public bool FlyoutEnabled { get; set; } = true;
     public bool DisableFlyoutInFullscreen { get; set; } = true;
     public bool ScrollLockForImeLanguage { get; set; } = true;
     public bool DisableCapsLockOnLanguageChange { get; set; } = false;
     public bool RAltModifierEnabled { get; set; } = true;
+#endregion
 
+#region Max To Desktop
     public bool MaxToDesktopEnabled { get; set; } = false;
     public bool DisableSwapInFullscreen { get; set; } = true;
     public uint ReorgnizeDesktopIntervalMs { get; set; } = 5000;
+#endregion
 
     public bool LGuiRemapEnabled { get; set; } = false;
     public bool ReverseMouseWheelEnabled { get; set; } = false;
@@ -51,6 +55,7 @@ public static class Core {
         }
     }
 
+#region Entries Accessor
     public static bool LanguageSwitcherEnabled {
         get {
             EnsureLoaded();
@@ -135,6 +140,30 @@ public static class Core {
         }
     }
 
+    public static bool DisableSwapInFullscreen {
+        get {
+            EnsureLoaded();
+            return SettingsEntries.DisableSwapInFullscreen;
+        }
+        set {
+            EnsureLoaded();
+            SettingsEntries.DisableSwapInFullscreen = value;
+            OnSettingsUpdate();
+        }
+    }
+
+    public static uint ReorgnizeDesktopIntervalMs {
+        get {
+            EnsureLoaded();
+            return SettingsEntries.ReorgnizeDesktopIntervalMs;
+        }
+        set {
+            EnsureLoaded();
+            SettingsEntries.ReorgnizeDesktopIntervalMs = value;
+            OnSettingsUpdate();
+        }
+    }
+
     public static bool ReverseMouseWheelEnabled {
         get {
             EnsureLoaded();
@@ -159,18 +188,6 @@ public static class Core {
         }
     }
 
-    public static bool DisableSwapInFullscreen {
-        get {
-            EnsureLoaded();
-            return SettingsEntries.DisableSwapInFullscreen;
-        }
-        set {
-            EnsureLoaded();
-            SettingsEntries.DisableSwapInFullscreen = value;
-            OnSettingsUpdate();
-        }
-    }
-
     public static bool SwapVirtualDesktopHotkeysEnabled {
         get {
             EnsureLoaded();
@@ -182,18 +199,7 @@ public static class Core {
             OnSettingsUpdate();
         }
     }
-
-    public static uint ReorgnizeDesktopIntervalMs {
-        get {
-            EnsureLoaded();
-            return SettingsEntries.ReorgnizeDesktopIntervalMs;
-        }
-        set {
-            EnsureLoaded();
-            SettingsEntries.ReorgnizeDesktopIntervalMs = value;
-            OnSettingsUpdate();
-        }
-    }
+#endregion
 
     public static void OnSettingsUpdate() {
         SettingsChangedEventHandler?.Invoke(null, EventArgs.Empty);
