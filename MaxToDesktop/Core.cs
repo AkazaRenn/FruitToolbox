@@ -144,9 +144,15 @@ internal class Core : IDisposable {
     }
 
     private static void OnDesktopDestroy(object _, VirtualDesktopDestroyEventArgs e) {
-        if (e.Destroyed.Id == CurrentDesktopId) {
-            CurrentDesktopId = SafeVirtualDesktop.CurrentRight.Id;
+        if (HwndDesktopMap.TryGet(e.Destroyed.Id, out nint hwnd)) {
+            Interop.Utils.CloseWindow(hwnd);
+            HwndDesktopMap.Remove(hwnd);
+            //SafeVirtualDesktop.MoveToDesktop(hwnd, HomeDesktopId);
         }
+
+        //if (e.Destroyed.Id == CurrentDesktopId) {
+        //    CurrentDesktopId = SafeVirtualDesktop.CurrentRight.Id;
+        //}
 
         if (e.Destroyed.Id == HomeDesktopId) {
             if (SafeVirtualDesktop.Current.IsAutoCreated) {
@@ -157,11 +163,6 @@ internal class Core : IDisposable {
                 HomeDesktopId = SafeVirtualDesktop.Current.Id;
             }
             SafeVirtualDesktop.Move(HomeDesktopId, UserCreatedDesktopCount - 1);
-        }
-
-        if (HwndDesktopMap.TryGet(e.Destroyed.Id, out nint hwnd)) {
-            HwndDesktopMap.Remove(hwnd);
-            SafeVirtualDesktop.MoveToDesktop(hwnd, HomeDesktopId);
         }
     }
 
@@ -220,15 +221,16 @@ internal class Core : IDisposable {
     }
 
     private static void OnClose(object _, WindowEvent e) {
-        if (HwndDesktopMap.TryGet(e.HWnd, out Guid desktopId) &&
-            CurrentDesktopId == desktopId) {
-            //SafeVirtualDesktop.Switch(CurrentDesktopId);
-            // Logically should switch to CurrentDesktopId
-            // but the there's no animation in that case
-            SafeVirtualDesktop.Switch(HomeDesktopId);
+        if (HwndDesktopMap.TryGet(e.HWnd, out Guid desktopId)) {
+            if (CurrentDesktopId == desktopId) {
+                //SafeVirtualDesktop.Switch(CurrentDesktopId);
+                // Logically should switch to CurrentDesktopId
+                // but the there's no animation in that case
+                SafeVirtualDesktop.Switch(HomeDesktopId);
+            }
+            SafeVirtualDesktop.Remove(desktopId);
         }
 
-        SafeVirtualDesktop.Remove(desktopId);
     }
 
     private static void OnWindowTitleChange(object _, WindowEvent e) {

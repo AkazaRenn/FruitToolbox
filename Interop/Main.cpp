@@ -102,6 +102,10 @@ void Utils::UnminimizeInBackground(IntPtr hwnd) {
     ShowWindow(static_cast<HWND>(hwnd.ToPointer()), SW_SHOWNOACTIVATE);
 }
 
+bool Utils::CloseWindow(IntPtr hwnd) {
+    return SendMessage(static_cast<HWND>(hwnd.ToPointer()), WM_CLOSE, 0, 0);
+}
+
 String^ Utils::GetWindowTitle(IntPtr hwnd) {
     wchar_t title[MAX_PATH];
     GetWindowTextW(static_cast<HWND>(hwnd.ToPointer()), title, ARRAYSIZE(title));

@@ -53,6 +53,7 @@ public ref class Utils {
 public:
     static void SetBorderlessWindow(IntPtr hwnd);
     static void UnminimizeInBackground(IntPtr hwnd);
+    static bool CloseWindow(IntPtr hwnd);
     static String^ GetWindowTitle(IntPtr hwnd);
     static bool InFullScreen();
     static MonitorInfo GetActiveMonitorInfo();
