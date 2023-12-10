@@ -239,7 +239,6 @@ internal class Core : IDisposable {
 
     private static void InitializeDesktops() {
         ClearAutoDesktops();
-        Interop.Utils.Unfocus();
 
         var curr = SafeVirtualDesktop.Current;
 

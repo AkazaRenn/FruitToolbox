@@ -108,10 +108,6 @@ String^ Utils::GetWindowTitle(IntPtr hwnd) {
     return Marshal::PtrToStringUni(static_cast<IntPtr>(title));
 }
 
-void Utils::Unfocus() {
-    SetForegroundWindow(GetShellWindow());
-}
-
 bool Utils::InFullScreen() {
     QUERY_USER_NOTIFICATION_STATE state;
     SHQueryUserNotificationState(&state);

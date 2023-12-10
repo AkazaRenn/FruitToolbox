@@ -54,7 +54,6 @@ public:
     static void SetBorderlessWindow(IntPtr hwnd);
     static void UnminimizeInBackground(IntPtr hwnd);
     static String^ GetWindowTitle(IntPtr hwnd);
-    static void Unfocus();
     static bool InFullScreen();
     static MonitorInfo GetActiveMonitorInfo();
 };
