@@ -101,6 +101,9 @@ internal class SafeVirtualDesktop {
     public static SafeVirtualDesktop FromId(Guid id) =>
         Try(() => new SafeVirtualDesktop(VirtualDesktop.FromId(id)));
 
+    public static SafeVirtualDesktop FromHwnd(nint hwnd) =>
+        Try(() => new SafeVirtualDesktop(VirtualDesktop.FromHwnd(hwnd)));
+
     public static void PinWindow(nint window) =>
         Try(() => VirtualDesktop.PinWindow(window));
 
@@ -119,16 +122,14 @@ internal class SafeVirtualDesktop {
     public void Switch() =>
         Try(() => VirtualDesktop.FromId(WrappedDesktopId)?.Switch());
 
-    public static void Switch(Guid id) {
+    public static void Switch(Guid id) =>
         new SafeVirtualDesktop(id).Switch();
-    }
 
     public void Move(int index) =>
         Try(() => VirtualDesktop.FromId(WrappedDesktopId)?.Move(index));
 
-    public static void Move(Guid id, int index) {
+    public static void Move(Guid id, int index) =>
         new SafeVirtualDesktop(id).Move(index);
-    }
 
     public void Rename(nint hwnd) =>
         Name = GetWindowTitle(hwnd) + CreatedDesktopNamePostfix;

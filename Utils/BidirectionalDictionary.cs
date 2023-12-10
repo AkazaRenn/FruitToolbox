@@ -1,21 +1,25 @@
 ﻿namespace FruitToolbox.Utils;
 
-public class BidirectionalDictionary<K, V>: Dictionary<K, V> {
-    readonly Dictionary<V, K> reverse = [];
+public class BidirectionalDictionary<TKey, TValue> {
+    readonly Dictionary<TKey, TValue> forward = [];
+    readonly Dictionary<TValue, TKey> reverse = [];
 
-    public new V this[K key] {
-        get => base[key];
+    public TValue this[TKey key] {
+        get => forward[key];
         set {
-            base[key] = value;
+            forward[key] = value;
             reverse[value] = key;
         }
     }
 
-    public bool TryGetKey(V value, out K key) =>
+    public bool TryGet(TKey key, out TValue value) =>
+        forward.TryGetValue(key, out value);
+
+    public bool TryGet(TValue value, out TKey key) =>
         reverse.TryGetValue(value, out key);
 
-    public new bool Remove(K key) {
-        reverse.Remove(base[key]);
-        return base.Remove(key);
+    public bool Remove(TKey key) {
+        reverse.Remove(forward[key]);
+        return forward.Remove(key);
     }
 }

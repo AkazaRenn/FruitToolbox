@@ -21,7 +21,7 @@ internal class Core : IDisposable {
     const int UserCreatedDesktopCount = 1;
     const int WindowsAnimationMs = 200;
 
-    static readonly BidirectionalDictionary<nint, Guid> HwndDesktopMap = [];
+    static readonly BidirectionalDictionary<nint, Guid> HwndDesktopMap = new();
     static readonly System.Timers.Timer ReorderDesktopTimer = new(Settings.Core.ReorgnizeDesktopIntervalMs);
 
     static Guid HomeDesktopId;
@@ -159,7 +159,7 @@ internal class Core : IDisposable {
             SafeVirtualDesktop.Move(HomeDesktopId, UserCreatedDesktopCount - 1);
         }
 
-        if (HwndDesktopMap.TryGetKey(e.Destroyed.Id, out nint hwnd)) {
+        if (HwndDesktopMap.TryGet(e.Destroyed.Id, out nint hwnd)) {
             HwndDesktopMap.Remove(hwnd);
             SafeVirtualDesktop.MoveToDesktop(hwnd, HomeDesktopId);
         }
@@ -210,7 +210,7 @@ internal class Core : IDisposable {
     }
 
     private static void OnMin(object _, WindowEvent e) {
-        if (HwndDesktopMap.TryGetValue(e.HWnd, out Guid desktopId) &&
+        if (HwndDesktopMap.TryGet(e.HWnd, out Guid desktopId) &&
             CurrentDesktopId == desktopId) {
             SafeVirtualDesktop.Switch(HomeDesktopId);
 
@@ -220,7 +220,7 @@ internal class Core : IDisposable {
     }
 
     private static void OnClose(object _, WindowEvent e) {
-        if (HwndDesktopMap.TryGetValue(e.HWnd, out Guid desktopId) &&
+        if (HwndDesktopMap.TryGet(e.HWnd, out Guid desktopId) &&
             CurrentDesktopId == desktopId) {
             //SafeVirtualDesktop.Switch(CurrentDesktopId);
             // Logically should switch to CurrentDesktopId
@@ -232,7 +232,7 @@ internal class Core : IDisposable {
     }
 
     private static void OnWindowTitleChange(object _, WindowEvent e) {
-        if (HwndDesktopMap.TryGetValue(e.HWnd, out Guid id)) {
+        if (HwndDesktopMap.TryGet(e.HWnd, out Guid id)) {
             new SafeVirtualDesktop(id).Rename(e.HWnd);
         }
     }
