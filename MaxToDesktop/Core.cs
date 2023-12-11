@@ -204,17 +204,7 @@ internal class Core : IDisposable {
     private static void OnUnmax(object _, WindowEvent e) {
         if (SafeVirtualDesktop.TryFromHwnd(e.HWnd, out Guid desktopId)) {
             SafeVirtualDesktop.PinWindow(e.HWnd);
-
-            if (CurrentDesktopId == desktopId) {
-                //SafeVirtualDesktop.Switch(CurrentDesktopId);
-                // Logically should switch to CurrentDesktopId
-                // but the there's no animation in that case
-                SafeVirtualDesktop.Switch(HomeDesktopId);
-            }
-            // remove in advance, so destroy event handler
-            // doesn't close the window
-            DesktopWindowMap.Remove(desktopId);
-            SafeVirtualDesktop.Remove(desktopId);
+            RemoveDesktop(desktopId);
         }
     }
 
@@ -230,16 +220,7 @@ internal class Core : IDisposable {
 
     private static void OnClose(object _, WindowEvent e) {
         if (SafeVirtualDesktop.TryFromHwnd(e.HWnd, out Guid desktopId)) {
-            if (CurrentDesktopId == desktopId) {
-                //SafeVirtualDesktop.Switch(CurrentDesktopId);
-                // Logically should switch to CurrentDesktopId
-                // but the there's no animation in that case
-                SafeVirtualDesktop.Switch(HomeDesktopId);
-            }
-            // remove in advance, so destroy event handler
-            // doesn't close the window
-            DesktopWindowMap.Remove(desktopId);
-            SafeVirtualDesktop.Remove(desktopId);
+            RemoveDesktop(desktopId);
         }
     }
 
@@ -267,5 +248,18 @@ internal class Core : IDisposable {
                 d.Remove();
             }
         }
+    }
+
+    private static void RemoveDesktop(Guid desktopId) {
+        if (CurrentDesktopId == desktopId) {
+            //SafeVirtualDesktop.Switch(CurrentDesktopId);
+            // Logically should switch to CurrentDesktopId
+            // but the there's no animation in that case
+            SafeVirtualDesktop.Switch(HomeDesktopId);
+        }
+        // remove in advance, so destroy event handler
+        // doesn't close the window
+        DesktopWindowMap.Remove(desktopId);
+        SafeVirtualDesktop.Remove(desktopId);
     }
 }
