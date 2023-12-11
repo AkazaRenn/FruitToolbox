@@ -116,11 +116,13 @@ internal class Core : IDisposable {
             VirtualDesktop.CurrentChanged += OnDesktopSwitch;
             VirtualDesktop.Created += OnDesktopCreate;
             VirtualDesktop.Destroyed += OnDesktopDestroy;
+            VirtualDesktop.DestroyBegin += OnDesktopDestroyBegin;
         } else {
             ReorderDesktopTimer.Elapsed -= OnReorderDesktopTimer;
             VirtualDesktop.CurrentChanged -= OnDesktopSwitch;
             VirtualDesktop.Created -= OnDesktopCreate;
             VirtualDesktop.Destroyed -= OnDesktopDestroy;
+            VirtualDesktop.DestroyBegin -= OnDesktopDestroyBegin;
         }
     }
 
@@ -142,14 +144,17 @@ internal class Core : IDisposable {
             SafeVirtualDesktop.Remove(e.Id, HomeDesktopId);
         }
     }
+    private static void OnDesktopDestroyBegin(object _, VirtualDesktopDestroyEventArgs e) {
+        if (HwndDesktopMap.TryGet(e.Destroyed.Id, out HashSet<nint> hwndSet)) {
+            foreach (var hwnd in hwndSet) {
+                Interop.Utils.CloseWindow(hwnd);
+                HwndDesktopMap.Remove(hwnd);
+                //SafeVirtualDesktop.MoveToDesktop(hwnd, HomeDesktopId);
+            }
+        }
+    }
 
     private static void OnDesktopDestroy(object _, VirtualDesktopDestroyEventArgs e) {
-        if (HwndDesktopMap.TryGet(e.Destroyed.Id, out nint hwnd)) {
-            Interop.Utils.CloseWindow(hwnd);
-            HwndDesktopMap.Remove(hwnd);
-            //SafeVirtualDesktop.MoveToDesktop(hwnd, HomeDesktopId);
-        }
-
         //if (e.Destroyed.Id == CurrentDesktopId) {
         //    CurrentDesktopId = SafeVirtualDesktop.CurrentRight.Id;
         //}
@@ -228,6 +233,9 @@ internal class Core : IDisposable {
                 // but the there's no animation in that case
                 SafeVirtualDesktop.Switch(HomeDesktopId);
             }
+            // remove in advance, so destroy event handler
+            // doesn't close the window
+            HwndDesktopMap.Remove(e.HWnd);
             SafeVirtualDesktop.Remove(desktopId);
         }
 

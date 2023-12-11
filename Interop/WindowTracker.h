@@ -22,6 +22,7 @@ private:
 
     static vector<HWINEVENTHOOK> hooks;
     static set<HWND> maxWindows;
+    static set<HWND> snappedWindows;
 
     static inline bool validSource(LONG idObject, LONG idChild) {
         return
@@ -42,6 +43,7 @@ private:
 
     static void resetFields();
     static void sortCurrentWindows();
+    static bool isSnappedWindow(HWND hwnd);
 
     static bool CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam);
 
