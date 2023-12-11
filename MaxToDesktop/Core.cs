@@ -114,13 +114,11 @@ internal class Core : IDisposable {
             ReorderDesktopTimer.Elapsed += OnReorderDesktopTimer;
             VirtualDesktop.CurrentChanged += OnDesktopSwitch;
             VirtualDesktop.Created += OnDesktopCreate;
-            VirtualDesktop.Destroyed += OnDesktopDestroy;
             VirtualDesktop.DestroyBegin += OnDesktopDestroyBegin;
         } else {
             ReorderDesktopTimer.Elapsed -= OnReorderDesktopTimer;
             VirtualDesktop.CurrentChanged -= OnDesktopSwitch;
             VirtualDesktop.Created -= OnDesktopCreate;
-            VirtualDesktop.Destroyed -= OnDesktopDestroy;
             VirtualDesktop.DestroyBegin -= OnDesktopDestroyBegin;
         }
     }
@@ -140,27 +138,16 @@ internal class Core : IDisposable {
         SafeVirtualDesktop.Move(e.Id, 1);
 
     private static void OnDesktopDestroyBegin(object _, VirtualDesktopDestroyEventArgs e) {
-        if (DesktopWindowMap.TryGetValue(e.Destroyed.Id, out nint hwnd)) {
+        if (e.Destroyed.Id == HomeDesktopId) {
+            SafeVirtualDesktop newDesktop = SafeVirtualDesktop.Create();
+            HomeDesktopId = newDesktop.Id;
+            newDesktop.Name = e.Destroyed.Name;
+
+            SafeVirtualDesktop.Move(HomeDesktopId, 0);
+        } else if (DesktopWindowMap.TryGetValue(e.Destroyed.Id, out nint hwnd)) {
             Interop.Utils.CloseWindow(hwnd);
             //SafeVirtualDesktop.MoveToDesktop(hwnd, HomeDesktopId);
             DesktopWindowMap.Remove(e.Destroyed.Id);
-        }
-    }
-
-    private static void OnDesktopDestroy(object _, VirtualDesktopDestroyEventArgs e) {
-        //if (e.Destroyed.Id == CurrentDesktopId) {
-        //    CurrentDesktopId = SafeVirtualDesktop.CurrentRight.Id;
-        //}
-
-        if (e.Destroyed.Id == HomeDesktopId) {
-            if (SafeVirtualDesktop.Current.IsAutoCreated) {
-                SafeVirtualDesktop newDesktop = SafeVirtualDesktop.Create();
-                HomeDesktopId = newDesktop.Id;
-                newDesktop.Name = e.Destroyed.Name;
-            } else {
-                HomeDesktopId = SafeVirtualDesktop.Current.Id;
-            }
-            SafeVirtualDesktop.Move(HomeDesktopId, 0);
         }
     }
 
