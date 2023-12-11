@@ -101,8 +101,8 @@ internal class SafeVirtualDesktop {
     public static SafeVirtualDesktop FromId(Guid id) =>
         Try(() => new SafeVirtualDesktop(VirtualDesktop.FromId(id)));
 
-    public static SafeVirtualDesktop FromHwnd(nint hwnd) =>
-        Try(() => new SafeVirtualDesktop(VirtualDesktop.FromHwnd(hwnd)));
+    public static bool TryFromHwnd(nint hwnd, out Guid result) =>
+        (result = Try(() => VirtualDesktop.FromHwnd(hwnd)?.Id) ?? default) != default;
 
     public static void PinWindow(nint window) =>
         Try(() => VirtualDesktop.PinWindow(window));

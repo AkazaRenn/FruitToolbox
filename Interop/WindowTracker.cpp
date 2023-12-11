@@ -1,7 +1,6 @@
 #include "pch.h"
 
 #include "WindowTracker.h"
-#include <bitset>
 
 using namespace std;
 using namespace FruitToolbox::Interop::Unmanaged;
@@ -26,7 +25,7 @@ void CALLBACK WindowTracker::onObjMove(HWINEVENTHOOK hWinEventHook, DWORD dwEven
                 maxWindows.erase(hwnd);
                 if (isSnappedWindow(hwnd)) {
                     snappedWindows.insert(hwnd);
-                    // max to snapped, rename desktop
+                    // max to snapped, rename desktop to empty string for user to name
                 } else {
                     thread(unmaxWindowHandler, hwnd).detach();
                 }
@@ -71,8 +70,7 @@ void CALLBACK WindowTracker::onObjDestroy(HWINEVENTHOOK hWinEventHook, DWORD dwE
 
 void CALLBACK WindowTracker::obObjNameChange(HWINEVENTHOOK hWinEventHook, DWORD dwEvent, HWND hwnd, LONG idObject, LONG idChild, DWORD dwEventThread, DWORD dwmsEventTime) {
     if (validSource(idObject, idChild) &&
-        maxWindows.contains(hwnd) &&
-        isWindow(hwnd)) {
+        maxWindows.contains(hwnd)) {
         thread(windowTitleChangeHandler, hwnd).detach();
     }
 }

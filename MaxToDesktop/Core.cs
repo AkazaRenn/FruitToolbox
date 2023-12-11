@@ -18,10 +18,9 @@ internal class Core : IDisposable {
         }
     }
 
-    const int UserCreatedDesktopCount = 1;
     const int WindowsAnimationMs = 200;
 
-    static readonly BidirectionalDictionary<nint, Guid> HwndDesktopMap = new();
+    static readonly Dictionary<Guid, nint> DesktopWindowMap = [];
     static readonly System.Timers.Timer ReorderDesktopTimer = new(Settings.Core.ReorgnizeDesktopIntervalMs);
 
     static Guid HomeDesktopId;
@@ -137,20 +136,14 @@ internal class Core : IDisposable {
         }
     }
 
-    private static void OnDesktopCreate(object _, VirtualDesktop e) {
-        Thread.Sleep(200);
-        if (e.Id != HomeDesktopId &&
-            !new SafeVirtualDesktop(e).IsAutoCreated) {
-            SafeVirtualDesktop.Remove(e.Id, HomeDesktopId);
-        }
-    }
+    private static void OnDesktopCreate(object sender, VirtualDesktop e) =>
+        SafeVirtualDesktop.Move(e.Id, 1);
+
     private static void OnDesktopDestroyBegin(object _, VirtualDesktopDestroyEventArgs e) {
-        if (HwndDesktopMap.TryGet(e.Destroyed.Id, out HashSet<nint> hwndSet)) {
-            foreach (var hwnd in hwndSet) {
-                Interop.Utils.CloseWindow(hwnd);
-                HwndDesktopMap.Remove(hwnd);
-                //SafeVirtualDesktop.MoveToDesktop(hwnd, HomeDesktopId);
-            }
+        if (DesktopWindowMap.TryGetValue(e.Destroyed.Id, out nint hwnd)) {
+            Interop.Utils.CloseWindow(hwnd);
+            //SafeVirtualDesktop.MoveToDesktop(hwnd, HomeDesktopId);
+            DesktopWindowMap.Remove(e.Destroyed.Id);
         }
     }
 
@@ -167,14 +160,14 @@ internal class Core : IDisposable {
             } else {
                 HomeDesktopId = SafeVirtualDesktop.Current.Id;
             }
-            SafeVirtualDesktop.Move(HomeDesktopId, UserCreatedDesktopCount - 1);
+            SafeVirtualDesktop.Move(HomeDesktopId, 0);
         }
     }
 
     private static void OnReorderDesktopTimer(object _, EventArgs e) {
         ReorderDesktopTimer.Stop();
         if (CurrentDesktopId != HomeDesktopId) {
-            SafeVirtualDesktop.Current.Move(UserCreatedDesktopCount);
+            SafeVirtualDesktop.Current.Move(1);
         }
     }
 
@@ -203,20 +196,30 @@ internal class Core : IDisposable {
             desktop.Switch();
         }
         desktop.MoveWindow(e.HWnd);
-        HwndDesktopMap[e.HWnd] = desktop.Id;
+        DesktopWindowMap.Add(desktop.Id, e.HWnd);
 
-        SafeVirtualDesktop.UnpinWindow(e.HWnd);
-        desktop.Move(UserCreatedDesktopCount);
+        desktop.Move(1);
     }
 
     private static void OnUnmax(object _, WindowEvent e) {
-        SafeVirtualDesktop.PinWindow(e.HWnd);
+        if (SafeVirtualDesktop.TryFromHwnd(e.HWnd, out Guid desktopId)) {
+            SafeVirtualDesktop.PinWindow(e.HWnd);
 
-        OnClose(_, e);
+            if (CurrentDesktopId == desktopId) {
+                //SafeVirtualDesktop.Switch(CurrentDesktopId);
+                // Logically should switch to CurrentDesktopId
+                // but the there's no animation in that case
+                SafeVirtualDesktop.Switch(HomeDesktopId);
+            }
+            // remove in advance, so destroy event handler
+            // doesn't close the window
+            DesktopWindowMap.Remove(desktopId);
+            SafeVirtualDesktop.Remove(desktopId);
+        }
     }
 
     private static void OnMin(object _, WindowEvent e) {
-        if (HwndDesktopMap.TryGet(e.HWnd, out Guid desktopId) &&
+        if (SafeVirtualDesktop.TryFromHwnd(e.HWnd, out Guid desktopId) &&
             CurrentDesktopId == desktopId) {
             SafeVirtualDesktop.Switch(HomeDesktopId);
 
@@ -226,7 +229,7 @@ internal class Core : IDisposable {
     }
 
     private static void OnClose(object _, WindowEvent e) {
-        if (HwndDesktopMap.TryGet(e.HWnd, out Guid desktopId)) {
+        if (SafeVirtualDesktop.TryFromHwnd(e.HWnd, out Guid desktopId)) {
             if (CurrentDesktopId == desktopId) {
                 //SafeVirtualDesktop.Switch(CurrentDesktopId);
                 // Logically should switch to CurrentDesktopId
@@ -235,15 +238,14 @@ internal class Core : IDisposable {
             }
             // remove in advance, so destroy event handler
             // doesn't close the window
-            HwndDesktopMap.Remove(e.HWnd);
+            DesktopWindowMap.Remove(desktopId);
             SafeVirtualDesktop.Remove(desktopId);
         }
-
     }
 
     private static void OnWindowTitleChange(object _, WindowEvent e) {
-        if (HwndDesktopMap.TryGet(e.HWnd, out Guid id)) {
-            new SafeVirtualDesktop(id).Rename(e.HWnd);
+        if (SafeVirtualDesktop.TryFromHwnd(e.HWnd, out Guid id)) {
+            SafeVirtualDesktop.Rename(id, e.HWnd);
         }
     }
 
@@ -256,10 +258,6 @@ internal class Core : IDisposable {
             curr = curr.Left;
         }
         HomeDesktopId = curr.Id;
-
-        while (curr.Right != null) {
-            curr.Right.Remove();
-        }
     }
 
     private static void ClearAutoDesktops() {
